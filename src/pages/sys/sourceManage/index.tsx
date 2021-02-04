@@ -1,13 +1,13 @@
 import {PlusOutlined} from '@ant-design/icons';
-import {Button, Divider, message, Modal} from 'antd';
-import React, {useEffect, useRef, useState} from 'react';
+import {Button, message, Drawer, Modal, Divider} from 'antd';
+import React, {useState, useRef, useEffect} from 'react';
 import {PageContainer} from '@ant-design/pro-layout';
-import ProTable, {ActionType, ProColumns} from '@ant-design/pro-table';
+import ProTable, {ProColumns, ActionType} from '@ant-design/pro-table';
+import ProDescriptions from '@ant-design/pro-descriptions';
 import CreateForm from './components/CreateForm';
 import UpdateForm from './components/UpdateForm';
 import {TableListItem} from './data';
-import {add, getByParentId, getByPermission, query, remove, update} from './service';
-import Authorized from "@/utils/Authorized";
+import {query, update, add, remove, getByParentId, getByPermission} from './service';
 
 /**
  * 添加节点
@@ -88,6 +88,7 @@ const TableList: React.FC<{}> = () => {
   const [updateFormValues, setUpdateFormValues] = useState({});
   const actionRef = useRef<ActionType>();
   const [, setRowLoading] = useState<boolean>();
+  const [row, setRow] = useState<TableListItem>();
   const [permission, setPermission] = useState([]);
 
   useEffect(() => {
@@ -113,7 +114,10 @@ const TableList: React.FC<{}> = () => {
             message: '必填项',
           },
         ],
-      }
+      },
+      render: (dom, entity) => {
+        return <a onClick={() => setRow(entity)}>{dom}</a>;
+      },
     },
     {
       title: "href",
@@ -170,37 +174,31 @@ const TableList: React.FC<{}> = () => {
       valueType: 'option',
       render: (_, record) => (
         <>
-          <Authorized authority="sys:source:del" noMatch={null}>
-            <a
-              onClick={() => {
-                Modal.confirm({
-                  title: "您确定删除？",
-                  okText: "确定",
-                  cancelText: "取消",
-                  onOk() {
-                    const state = handleRemove([record]);
-                    state.then(() => {
-                      if (actionRef.current) {
-                        actionRef.current.reload();
-                      }
-                    })
-                  }
-                })
-              }
-              }
-            >
-              删除
-            </a>
-            <Divider type="vertical"/>
-          </Authorized>
-          <Authorized authority="sys:source:edit" noMatch={null}>
-            <a onClick={() => {
-              setUpdateFormValues(record);
-              handleUpdateModalVisible(true);
-            }}>
-              编辑
-            </a>
-          </Authorized>
+          <a
+            onClick={() => {
+              Modal.confirm({
+                title: "您确定删除？",
+                okText: "确定",
+                cancelText: "取消",
+                onOk() {
+                  const state = handleRemove([record]);
+                  state.then(() => {
+                    actionRef.current.reload();
+                  })
+                }
+              })
+            }
+            }
+          >
+            删除
+          </a>
+          <Divider type="vertical"/>
+          <a onClick={() => {
+            setUpdateFormValues(record);
+            handleUpdateModalVisible(true);
+          }}>
+            编辑
+          </a>
         </>
       ),
     },
@@ -216,11 +214,9 @@ const TableList: React.FC<{}> = () => {
           labelWidth: 120,
         }}
         toolBarRender={() => [
-          <Authorized authority="sys:source:add" noMatch={null}>
-            <Button key="1" type="primary" onClick={() => handleModalVisible(true)}>
-              <PlusOutlined/> 新建
-            </Button>
-          </Authorized>
+          <Button key="1" type="primary" onClick={() => handleModalVisible(true)}>
+            <PlusOutlined/> 新建
+          </Button>,
         ]}
         request={(params, sorter, filter) => query({...params, sorter, filter})}
         columns={columns}
@@ -275,6 +271,29 @@ const TableList: React.FC<{}> = () => {
           values={updateFormValues}
         />
       ) : null}
+
+      <Drawer
+        width={600}
+        visible={!!row}
+        onClose={() => {
+          setRow(undefined);
+        }}
+        closable={false}
+      >
+        {row?.label && (
+          <ProDescriptions<TableListItem>
+            column={2}
+            title={row?.label}
+            request={async () => ({
+              data: row || {},
+            })}
+            params={{
+              id: row?.label,
+            }}
+            columns={columns}
+          />
+        )}
+      </Drawer>
     </PageContainer>
   );
 };

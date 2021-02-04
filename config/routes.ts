@@ -73,7 +73,12 @@
     path: '/monitor/redis',
     component: './monitor/redis',
   },
-
+  {
+    name: 'sys.log',
+    icon: 'table',
+    path: '/sys/log',
+    component: './sys/log',
+  },
   {
     path: '/',
     redirect: '/welcome',

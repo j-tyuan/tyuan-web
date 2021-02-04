@@ -17,16 +17,15 @@ interface CreateFormProps {
 }
 
 const CreateForm: React.FC<CreateFormProps> = (props) => {
-  const {modalVisible, onClose, onSubmit} = props;
+  const {modalVisible, onClose} = props;
   const formRef = React.createRef<FormInstance>();
-  const [permissionId, setPermissionId] = useState<any>()
-  const [pid, setPid] = useState<any>()
+  const [permissionId, setPermissionId] = useState()
+  const [pid, setPid] = useState()
   const finish = (values: TableListItem) => {
-    if (values) {
-      onSubmit({...values, permissionId, parentId: pid});
-      return;
-    }
-    console.error("错误的values")
+    // eslint-disable-next-line no-param-reassign
+    values["permissionId "] = permissionId;
+    values["parentId "] = pid;
+    props.onSubmit(values)
   }
   return (
     <Drawer

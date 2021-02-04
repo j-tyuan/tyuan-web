@@ -30,7 +30,7 @@ const Settings: LayoutSettings & {
   // 可动态修改 -----------------
   layout: 'mix',
   // layout 的左上角 的 title
-  title: 'Ant Design Pro (defaultSettings)',
+  title: 'Tyuan企业级基础开发平台',
   // end -----------------
 
   fixSiderbar: true,
