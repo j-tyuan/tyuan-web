@@ -26,13 +26,17 @@ const Settings: LayoutSettings & {
   // 拂晓蓝
   primaryColor: '#1890ff',
   // 'side' | 'top' | 'mix';
+
+  // 可动态修改 -----------------
   layout: 'mix',
-  contentWidth: 'Fluid',
-  fixedHeader: false,
-  fixSiderbar: true,
-  colorWeak: false,
   // layout 的左上角 的 title
   title: 'Ant Design Pro (defaultSettings)',
+  // end -----------------
+
+  fixSiderbar: true,
+  contentWidth: 'Fluid',
+  fixedHeader: false,
+  colorWeak: false,
   pwa: false,
   // layout 的左上角 logo 的 url
   logo: 'https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg',

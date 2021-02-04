@@ -9,6 +9,7 @@ import {TableListItem} from './data';
 import {add, disable, query, remove, update} from './service';
 import Settings from "../../../../config/defaultSettings";
 import KBPassword from "./components/KBPassword";
+import Authorized from "@/utils/Authorized";
 
 /**
  * 添加节点
@@ -99,7 +100,6 @@ const TableList: React.FC<{}> = () => {
   const [updateModalVisible, handleUpdateModalVisible] = useState<boolean>(false);
   const [updateFormValues, setUpdateFormValues] = useState({});
   const actionRef = useRef<ActionType>();
-
 
   const columns: ProColumns<TableListItem>[] = [
     {
@@ -217,6 +217,7 @@ const TableList: React.FC<{}> = () => {
     {
       dataIndex: "userType",
       hideInForm: true,
+      hideInTable: true
     },
     {
       title: '操作',
@@ -224,47 +225,50 @@ const TableList: React.FC<{}> = () => {
       valueType: 'option',
       render: (_, record) => (
         <>
-          <Button
-            type="link"
-            disabled={record.userType === 1}
-            onClick={() => {
-              Modal.confirm({
-                title: "您确定删除？",
-                okText: "确定",
-                cancelText: "取消",
-                onOk() {
-                  const state = handleRemove([record]);
-                  state.then(() => {
-                    if (actionRef.current) {
-                      actionRef.current.reload();
-                    }
-                  })
-                }
-              })
-            }
-            }
-          >
-            删除
-          </Button>
-          <Divider type="vertical"/>
-          <Button
-            type="link"
-            disabled={record.userType === 1}
-            onClick={() => {
-              setUpdateFormValues(record);
-              handleUpdateModalVisible(true);
+          <Authorized authority="sys:user:del" noMatch={null}>
+            <a disabled={record.userType === 1}
+              onClick={() => {
+                Modal.confirm({
+                  title: "您确定删除？",
+                  okText: "确定",
+                  cancelText: "取消",
+                  onOk() {
+                    const state = handleRemove([record]);
+                    state.then(() => {
+                      if (actionRef.current) {
+                        actionRef.current.reload();
+                      }
+                    })
+                  }
+                })
+              }
+              }
+            >
+              删除
+            </a>
+            <Divider type="vertical"/>
+          </Authorized>
+          <Authorized authority="sys:user:edit" noMatch={null}>
+            <a
+              disabled={record.userType === 1}
+              onClick={() => {
+                setUpdateFormValues(record);
+                handleUpdateModalVisible(true);
+              }}>
+              编辑
+            </a>
+            <Divider type="vertical"/>
+          </Authorized>
+          <Authorized authority="sys:user:disable" noMatch={null}>
+            <a type="link" disabled={record.userType === 1} onClick={async () => {
+              const success = await handleDisable(record)
+              if (success && actionRef.current) {
+                actionRef.current.reload();
+              }
             }}>
-            编辑
-          </Button>
-          <Divider type="vertical"/>
-          <Button type="link" disabled={record.userType === 1} onClick={async () => {
-            const success = await handleDisable(record)
-            if (success && actionRef.current) {
-              actionRef.current.reload();
-            }
-          }}>
-            {record.disabled ? '启用' : '停用'}
-          </Button>
+              {record.disabled ? '启用' : '停用'}
+            </a>
+          </Authorized>
         </>
       ),
     },
@@ -280,9 +284,11 @@ const TableList: React.FC<{}> = () => {
           labelWidth: 120,
         }}
         toolBarRender={() => [
-          <Button key="1" type="primary" onClick={() => handleModalVisible(true)}>
-            <PlusOutlined/> 新建
-          </Button>,
+          <Authorized authority="sys:user:add" noMatch={null}>
+            <Button key="1" type="primary" onClick={() => handleModalVisible(true)}>
+              <PlusOutlined/> 新建
+            </Button>
+          </Authorized>
         ]}
         request={(params, sorter, filter) => query({...params, sorter, filter})}
         columns={columns}

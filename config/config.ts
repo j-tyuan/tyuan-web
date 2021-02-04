@@ -13,7 +13,7 @@ export default defineConfig({
     hmr: true,
   },
   layout: {
-    name: 'Ant Design Pro',
+    name: 'Ant Design Pro --- -',
     locale: true,
     siderWidth: 208,
     fromDrawerWidth: 500,

@@ -7,7 +7,8 @@ import Footer from '@/components/Footer';
 import {ResponseError, ResponseInterceptor} from 'umi-request';
 import {queryCurrent} from './services/user';
 import defaultSettings from '../config/defaultSettings';
-import {queryMenuData} from "@/services/sys";
+import {permissions, queryMenuData} from "@/services/sys";
+import {setAuthority} from "@/utils/authority";
 
 /**
  * 获取用户信息比较慢的时候会展示一个 loading
@@ -35,7 +36,7 @@ export async function getInitialState(): Promise<{
         avatar: data.photo,
         userid: data.id,
         email: data.email,
-        phone: data.moblie,
+        phone: data.moblie
       }
       return userInfo;
     } catch (error) {
@@ -43,28 +44,35 @@ export async function getInitialState(): Promise<{
     }
     return undefined;
   };
-  // 如果是登录页面，不执行
   if (history.location.pathname !== '/user/login') {
+    // 已登陆
     const currentUser = await fetchUserInfo();
     const result = await queryMenuData();
     const menuData = result.data;
+    const promise = permissions();
+    promise.then(e => {
+      const {errorCode, data} = e;
+      if (errorCode === -1) {
+        const {permission} = data;
+        setAuthority(permission)
+      }
+    })
+
     return {
       menuData,
       fetchUserInfo,
       currentUser,
-      settings: defaultSettings,
+      settings: {...defaultSettings},
     };
   }
   return {
     menuData: [],
     fetchUserInfo,
-    settings: defaultSettings,
+    settings: {...defaultSettings},
   };
 }
 
-export const layout = ({
-                         initialState,
-                       }: {
+export const layout = ({initialState}: {
   initialState: { settings?: LayoutSettings; currentUser?: API.CurrentUser, menuData: MenuDataItem[]; };
 }): BasicLayoutProps => {
   return {

@@ -8,6 +8,7 @@ import UpdateForm from './components/UpdateForm';
 import {TableListItem} from './data';
 import {add, getAuthByUid, getByPermission, query, remove, update} from './service';
 import ConfigUser from "./components/ConfigUser";
+import Authorized from "@/utils/Authorized";
 
 /**
  * 添加节点
@@ -81,14 +82,17 @@ const handlePermission = async () => {
   return permission.data;
 }
 
-const loop = (treeData: { [x: string]: any; }, pid: any) => {
+const loop = (treeData, pid: any) => {
   // @ts-ignore
   const arr = []
   // eslint-disable-next-line guard-for-in,no-restricted-syntax
   for (const i in treeData) {
     const val = treeData[i];
     if (val.parentId === pid) {
-      const item: { title?: string, key?: any, children?: any[], isLeaf?: boolean } = {};
+      const item = {
+        title: val.name,
+        key: val.id,
+      }
       item.children = loop(treeData, val.id)
       item.isLeaf = item.children.length === 0;
       arr.push(item)
@@ -96,9 +100,8 @@ const loop = (treeData: { [x: string]: any; }, pid: any) => {
   }
   return arr;
 }
-const getOneLevelId = (treeData: any[]) => {
+const getOneLevelId = (treeData) => {
   const arr = [];
-  // eslint-disable-next-line no-restricted-syntax
   for (const i in treeData) {
     if (treeData[i].parentId === 0) {
       arr.push(treeData[i].id)
@@ -112,9 +115,9 @@ const TableList: React.FC<{}> = () => {
   const [configUserModalVisible, handleConfigUserModalVisible] = useState<boolean>(false);
   const [createModalVisible, handleModalVisible] = useState<boolean>(false);
   const [updateModalVisible, handleUpdateModalVisible] = useState<boolean>(false);
-  const [updateFormValue, setUpdateFormValue] = useState<TableListItem>();
+  const [updateFormValue, setUpdateFormValue] = useState({});
   const actionRef = useRef<ActionType>();
-  const [permission, setPermission] = useState<any[]>([]);
+  const [permission, setPermission] = useState<[]>([]);
   const [oneLevelIds, setOneLevelIds] = useState<Key[]>([]);
   const [initSelectAuth, setInitSelectAuth] = useState<Key[]>()
 
@@ -173,49 +176,56 @@ const TableList: React.FC<{}> = () => {
       valueType: 'option',
       render: (_, record) => (
         <>
-          <a
-            onClick={() => {
-              Modal.confirm({
-                title: "您确定删除？",
-                okText: "确定",
-                cancelText: "取消",
-                onOk() {
-                  const state = handleRemove([record]);
-                  state.then(() => {
-                    if (actionRef.current) {
-                      actionRef.current.reload();
-                    }
-                  })
-                }
+          <Authorized authority="sys:role:del" noMatch={null}>
+            <a
+              onClick={() => {
+                Modal.confirm({
+                  title: "您确定删除？",
+                  okText: "确定",
+                  cancelText: "取消",
+                  onOk() {
+                    const state = handleRemove([record]);
+                    state.then(() => {
+                      if (actionRef.current) {
+                        actionRef.current.reload();
+                      }
+                    })
+                  }
+                })
+              }
+              }
+            >
+              删除
+            </a>
+            <Divider type="vertical"/>
+          </Authorized>
+          <Authorized authority="sys:role:del" noMatch={null}>
+            <a onClick={() => {
+              setUpdateFormValue(record);
+              const promise = getAuthByUid(record.id)
+              promise.then(e => {
+                setInitSelectAuth(e.data)
+                handleUpdateModalVisible(true);
               })
-            }
-            }
-          >
-            删除
-          </a>
-          <Divider type="vertical"/>
-          <a onClick={() => {
-            setUpdateFormValue(record);
-            const promise = getAuthByUid(record.id)
-            promise.then(e => {
-              setInitSelectAuth(e.data)
-              handleUpdateModalVisible(true);
-            })
-          }}>
-            编辑
-          </a>
-          <Divider type="vertical"/>
-          <a onClick={() => {
-            setUpdateFormValue(record);
-            handleConfigUserModalVisible(true);
-          }}>
-            用户管理
-          </a>
+            }}>
+              编辑
+            </a>
+            <Divider type="vertical"/>
+          </Authorized>
+          <Authorized authority="sys:role:binduser" noMatch={null}>
+            <a onClick={() => {
+              setUpdateFormValue(record);
+              handleConfigUserModalVisible(true);
+            }}>
+              用户管理
+            </a>
+          </Authorized>
         </>
       ),
     },
   ];
 
+  // @ts-ignore
   return (
     <PageContainer>
       <ProTable<TableListItem>
@@ -226,9 +236,11 @@ const TableList: React.FC<{}> = () => {
           labelWidth: 120,
         }}
         toolBarRender={() => [
-          <Button key="1" type="primary" onClick={() => handleModalVisible(true)}>
-            <PlusOutlined/> 新建
-          </Button>,
+          <Authorized authority="sys:role:add" noMatch={null}>
+            <Button key="1" type="primary" onClick={() => handleModalVisible(true)}>
+              <PlusOutlined/> 新建
+            </Button>
+          </Authorized>
         ]}
         request={(params, sorter, filter) => query({...params, sorter, filter})}
         columns={columns}
@@ -250,7 +262,8 @@ const TableList: React.FC<{}> = () => {
             const success = await handleUpdate(value);
             if (success) {
               handleUpdateModalVisible(false);
-              setUpdateFormValue(undefined);
+              setUpdateFormValue(() => {
+              });
               if (actionRef.current) {
                 actionRef.current.reload();
               }
@@ -259,7 +272,7 @@ const TableList: React.FC<{}> = () => {
           onClose={() => {
             handleUpdateModalVisible(false);
             setTimeout(() => {
-              setUpdateFormValue(undefined);
+              setUpdateFormValue({});
             }, 300)
           }}
           values={updateFormValue}
