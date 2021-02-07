@@ -1,5 +1,6 @@
 export interface TableListItem {
   id: number;
+  requestId: string;
   updateDate: Date;
   createDate: Date;
   type: string;
@@ -11,6 +12,7 @@ export interface TableListItem {
   requestUri: string;
   method: string;
   exception: string;
+  duration:any;
 
 }
 

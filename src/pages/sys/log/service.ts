@@ -9,3 +9,10 @@ export async function query(params?: TableListParams) {
     }
   });
 }
+
+export async function getLogType() {
+  return request('/api/sys/log/type', {
+    method: 'GET'
+  });
+}
+

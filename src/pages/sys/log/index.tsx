@@ -1,8 +1,8 @@
-import React, {useEffect, useRef} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {PageContainer} from '@ant-design/pro-layout';
 import ProTable, {ActionType, ProColumns} from '@ant-design/pro-table';
 import {TableListItem} from './data';
-import {query} from './service';
+import {getLogType, query} from './service';
 import {Input, Modal, Tooltip} from "antd";
 import ReactJson from "react-json-view";
 import "./log.less"
@@ -19,38 +19,65 @@ const getJSONObject = (val: any) => {
 
 const TableList: React.FC<{}> = () => {
   const actionRef = useRef<ActionType>();
-  useEffect(() => {
+  const [valueType, setValueType] = useState();
 
+  useEffect(() => {
+    const promise = getLogType();
+    promise.then((request) => {
+      const {errorCode, data} = request;
+      if (errorCode === -1) {
+        setValueType(data)
+      }
+    })
   }, [])
 
   const columns: ProColumns<TableListItem>[] = [
     {
-      title: "日志类型",
-      dataIndex: "type"
+      title: "请求ID",
+      dataIndex: "requestId",
+      ellipsis: true,
+      width: 200,
+      fixed: 'left',
+      render(_, item) {
+        const val = item.requestId;
+        return (
+          <CopyToClipboard text={val} onCopy={() => {
+            message.success("已拷贝")
+          }}>
+            <Tooltip title={val}>
+              <a className="ant-typography-ellipsis-single-line">{val}</a>
+            </Tooltip>
+          </CopyToClipboard>)
+      }
     },
     {
+      title: "日志类型",
+      width: 100,
+      dataIndex: "type",
+      valueType: "select",
+      valueEnum: valueType
+    },
+    {
+      width: 200,
       title: "日志标题",
       dataIndex: "title",
     },
     {
       title: "操作人",
-      dataIndex: "userName",
-      render(_, item) {
-        return `${item.userName} id: ${item.userId}`
-      }
+      width: 150,
+      dataIndex: "userName"
     },
     {
       title: "操作人IP",
-      dataIndex: "remoteAddr"
-    },
-    {
-      title: "请求地址",
-      dataIndex: "requestUri"
+      dataIndex: "remoteAddr",
+      width: 150,
+      search: false,
     },
     {
       title: "请求方法",
       dataIndex: "method",
-      width: 200,
+      search: false,
+      width: 100,
       render(_, item) {
         const val = item.method;
         return (<>
@@ -67,8 +94,8 @@ const TableList: React.FC<{}> = () => {
     {
       title: "提交参数",
       ellipsis: true,
-      width: 200,
       dataIndex: "userAgent",
+      search: false,
       render(_, item) {
         const obj = getJSONObject(item.userAgent);
         let show;
@@ -96,7 +123,8 @@ const TableList: React.FC<{}> = () => {
     {
       title: "异常信息",
       ellipsis: true,
-      width: 200,
+      search:false,
+      width: 100,
       dataIndex: "exception",
       render(_, item) {
         const obj = getJSONObject(item.exception);
@@ -117,7 +145,7 @@ const TableList: React.FC<{}> = () => {
                   content: show
                 })
               }} className="ant-typography-ellipsis-single-line">{obj["异常信息"]}</a> :
-              "-"
+              "无"
           }
         </>
       }
@@ -130,6 +158,15 @@ const TableList: React.FC<{}> = () => {
       search: false,
       valueType: 'dateTime',
     },
+    {
+      title: "耗时",
+      dataIndex: "duration",
+      hideInForm: true,
+      search: false,
+      render(_, item) {
+        return `${item.duration}ms`
+      }
+    },
   ];
 
   return (
@@ -138,6 +175,7 @@ const TableList: React.FC<{}> = () => {
         headerTitle="查询表格"
         actionRef={actionRef}
         rowKey="id"
+        scroll={{x: 1400}}
         search={{
           labelWidth: 120,
         }}
