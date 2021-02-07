@@ -10,7 +10,7 @@ import {TableListItem} from "../data";
 interface UpdateFormProps {
   modalVisible: boolean;
   onClose: () => void;
-  values: Object;
+  values: TableListItem;
   onSubmit: (values: TableListItem) => Promise<void>;
 }
 
@@ -42,8 +42,10 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
           name="id">
           <Input/>
         </Form.Item>
-        <Form.Item
-          name="account" label="登陆账号" rules={[{required: true}]}>
+        <Form.Item name="no" label="员工编号">
+          {props.values.no}
+        </Form.Item>
+        <Form.Item name="account" label="登陆账号" rules={[{required: true}]}>
           <Input/>
         </Form.Item>
         <Form.Item name="password" label="密码">

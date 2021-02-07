@@ -103,6 +103,18 @@ const TableList: React.FC<{}> = () => {
 
   const columns: ProColumns<TableListItem>[] = [
     {
+      title: "员工编号",
+      dataIndex: "no",
+      formItemProps: {
+        rules: [
+          {
+            required: true,
+            message: '必填项',
+          },
+        ],
+      },
+    },
+    {
       title: "登陆账号",
       dataIndex: "account",
       formItemProps: {

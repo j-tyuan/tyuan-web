@@ -5,6 +5,7 @@ export interface TableListItem {
   updateDate: Date;
   createDate: Date;
 
+  no: string,
   name: string;
   href: string;
   target: string;
