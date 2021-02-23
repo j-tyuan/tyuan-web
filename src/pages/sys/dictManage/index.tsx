@@ -1,13 +1,13 @@
 import {PlusOutlined} from '@ant-design/icons';
-import {Button, message, Drawer, Modal, Divider} from 'antd';
-import React, {useState, useRef, useEffect} from 'react';
+import {Button, Divider, Drawer, message, Modal} from 'antd';
+import React, {useEffect, useRef, useState} from 'react';
 import {PageContainer} from '@ant-design/pro-layout';
-import ProTable, {ProColumns, ActionType} from '@ant-design/pro-table';
+import ProTable, {ActionType, ProColumns} from '@ant-design/pro-table';
 import ProDescriptions from '@ant-design/pro-descriptions';
 import CreateForm from './components/CreateForm';
 import UpdateForm from './components/UpdateForm';
 import {TableListItem} from './data';
-import {queryRule, update, add, remove, queryTypes} from './service';
+import {add, queryRule, queryTypes, remove} from './service';
 import Settings from "../../../../config/defaultSettings";
 import Authorized from "@/utils/Authorized";
 
@@ -32,26 +32,6 @@ const handleAdd = async (fields: TableListItem) => {
   }
 };
 
-/**
- * 更新节点
- * @param fields
- */
-const handleUpdate = async (fields: TableListItem) => {
-  const hide = message.loading('正在配置');
-  try {
-    const v = await update({...fields});
-    hide();
-    if (v.errorCode === -1) {
-      message.success('配置成功');
-      return true;
-    }
-    return false;
-  } catch (error) {
-    hide();
-    message.error('配置失败请重试！');
-    return false;
-  }
-};
 
 /**
  *  删除节点
@@ -250,15 +230,9 @@ const TableList: React.FC<{}> = () => {
         <UpdateForm
           modalVisible={updateModalVisible}
           types={types}
-          onSubmit={async (value) => {
-            const success = await handleUpdate(value);
-            if (success) {
-              handleUpdateModalVisible(false);
-              setUpdateFormValues(() => {
-              });
-              if (actionRef.current) {
-                actionRef.current.reload();
-              }
+          onFinish={(success) => {
+            if (success && actionRef.current) {
+              actionRef.current.reload();
             }
           }}
           onClose={() => {

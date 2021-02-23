@@ -6,51 +6,10 @@ import ProTable, {ActionType, ProColumns} from '@ant-design/pro-table';
 import CreateForm from './components/CreateForm';
 import UpdateForm from './components/UpdateForm';
 import {TableListItem} from './data';
-import {add, getAuthByUid, getByPermission, query, remove, update} from './service';
+import {getAuthByUid, getByPermission, query, remove} from './service';
 import ConfigUser from "./components/ConfigUser";
 import Authorized from "@/utils/Authorized";
 
-/**
- * 添加节点
- * @param fields
- */
-const handleAdd = async (fields: TableListItem) => {
-  const hide = message.loading('正在添加');
-  try {
-    const v = await add({...fields});
-    hide();
-    if (v.errorCode === -1) {
-      message.success('添加成功');
-      return true;
-    }
-    return null;
-  } catch (error) {
-    hide();
-    message.error('添加失败请重试！');
-    return false;
-  }
-};
-
-/**
- * 更新节点
- * @param fields
- */
-const handleUpdate = async (fields: TableListItem) => {
-  const hide = message.loading('正在配置');
-  try {
-    const v = await update({...fields});
-    hide();
-    if (v.errorCode === -1) {
-      message.success('配置成功');
-      return true;
-    }
-    return false;
-  } catch (error) {
-    hide();
-    message.error('配置失败请重试！');
-    return false;
-  }
-};
 
 /**
  *  删除节点
@@ -100,13 +59,13 @@ const loop = (treeData, pid: any) => {
   }
   return arr;
 }
-const getOneLevelId = (treeData) => {
-  const arr = [];
-  for (const i in treeData) {
-    if (treeData[i].parentId === 0) {
-      arr.push(treeData[i].id)
+const getOneLevelId = (treeData: any[]) => {
+  const arr: any[] = [];
+  treeData.forEach(e => {
+    if (e.parentId === 0) {
+      arr.push(e.id)
     }
-  }
+  })
   return arr;
 }
 
@@ -258,15 +217,9 @@ const TableList: React.FC<{}> = () => {
           permission={permission}
           oneLevelIds={oneLevelIds}
           modalVisible={updateModalVisible}
-          onSubmit={async (value) => {
-            const success = await handleUpdate(value);
-            if (success) {
-              handleUpdateModalVisible(false);
-              setUpdateFormValue(() => {
-              });
-              if (actionRef.current) {
-                actionRef.current.reload();
-              }
+          onFinish={(success) => {
+            if (success && actionRef.current) {
+              actionRef.current.reload();
             }
           }}
           onClose={() => {
@@ -283,13 +236,9 @@ const TableList: React.FC<{}> = () => {
         onClose={() => handleModalVisible(false)}
         permission={permission}
         oneLevelIds={oneLevelIds}
-        onSubmit={async (value) => {
-          const success = await handleAdd(value);
-          if (success) {
-            handleModalVisible(false);
-            if (actionRef.current) {
-              actionRef.current.reload();
-            }
+        onFinish={(success) => {
+          if (success && actionRef.current) {
+            actionRef.current.reload();
           }
         }}
         modalVisible={createModalVisible}/>) : null}

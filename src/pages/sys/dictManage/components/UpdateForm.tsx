@@ -1,23 +1,46 @@
-import React from 'react';
-import {Button, Drawer, Form, Input, Select, Space} from 'antd';
+import React, {useState} from 'react';
+import {Button, Drawer, Form, Input, message, Select, Space} from 'antd';
 import {TableListItem} from '../data';
 import {FormInstance} from "antd/es/form";
 import Settings from "../../../../../config/defaultSettings";
 import {useIntl} from "umi";
 import {Option} from "antd/es/mentions";
+import {update} from "@/pages/sys/dictManage/service";
 
+/**
+ * 更新节点
+ * @param fields
+ */
+const handleUpdate = async (fields: TableListItem) => {
+  const hide = message.loading('正在配置');
+  try {
+    const v = await update({...fields});
+    hide();
+    if (v.errorCode === -1) {
+      message.success('配置成功');
+      return true;
+    }
+    return false;
+  } catch (error) {
+    hide();
+    message.error('配置失败请重试！');
+    return false;
+  }
+};
 
 export interface UpdateFormProps {
   onClose: (flag?: boolean, formVals?: TableListItem) => void;
-  onSubmit: (values: TableListItem) => Promise<void>;
+
+  onFinish: (success: boolean) => void;
   modalVisible: boolean;
   types: Object;
   values: Partial<TableListItem>;
 }
 
 const UpdateForm: React.FC<UpdateFormProps> = (props) => {
-  const {modalVisible, onClose} = props;
+  const {modalVisible, onClose, onFinish} = props;
   const formRef = React.createRef<FormInstance>();
+  const [loading, setLoading] = useState<boolean>(false);
 
   return (
     <Drawer
@@ -35,7 +58,17 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
             initialValues={
               props.values
             }
-            onFinish={props.onSubmit}
+            onFinish={(e) => {
+              setLoading(true)
+              const promise = handleUpdate(e);
+              promise.then(result => {
+                if (result) {
+                  onClose();
+                }
+                onFinish(result)
+                setLoading(false)
+              })
+            }}
             layout="horizontal"
       >
         <Form.Item
@@ -67,7 +100,7 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
             <Button htmlType="button" onClick={() => onClose()}>
               {useIntl().formatMessage({id: 'app.form.cancel'})}
             </Button>
-            <Button type="primary" htmlType="submit">
+            <Button type="primary" htmlType="submit" loading={loading}>
               {useIntl().formatMessage({id: 'app.form.submit'})}
             </Button>
           </Space>

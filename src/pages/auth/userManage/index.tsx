@@ -6,7 +6,7 @@ import ProTable, {ActionType, ProColumns} from '@ant-design/pro-table';
 import CreateForm from './components/CreateForm';
 import UpdateForm from './components/UpdateForm';
 import {TableListItem} from './data';
-import {add, disable, query, remove, update} from './service';
+import {add, disable, query, remove} from './service';
 import Settings from "../../../../config/defaultSettings";
 import KBPassword from "./components/KBPassword";
 import Authorized from "@/utils/Authorized";
@@ -22,36 +22,19 @@ const handleAdd = async (fields: TableListItem) => {
     hide();
     if (v.errorCode === -1) {
       message.success('添加成功');
+
       return true;
     }
+
     return null;
   } catch (error) {
     hide();
     message.error('添加失败请重试！');
+
     return false;
   }
 };
 
-/**
- * 更新节点
- * @param fields
- */
-const handleUpdate = async (fields: TableListItem) => {
-  const hide = message.loading('正在配置');
-  try {
-    const v = await update({...fields});
-    hide();
-    if (v.errorCode === -1) {
-      message.success('修改成功');
-      return true;
-    }
-    return false;
-  } catch (error) {
-    hide();
-    message.error('配置失败请重试！');
-    return false;
-  }
-};
 
 const handleDisable = async (row: TableListItem) => {
   const hide = message.loading('正在操作')
@@ -60,12 +43,15 @@ const handleDisable = async (row: TableListItem) => {
     hide();
     if (v.errorCode === -1) {
       message.success('操作成功');
+
       return true;
     }
+
     return null;
   } catch (error) {
     hide()
     message.error("操作失败，请重试")
+
     return false;
   }
 }
@@ -98,7 +84,7 @@ const handleRemove = async (selectedRows: TableListItem[]) => {
 const TableList: React.FC<{}> = () => {
   const [createModalVisible, handleModalVisible] = useState<boolean>(false);
   const [updateModalVisible, handleUpdateModalVisible] = useState<boolean>(false);
-  const [updateFormValues, setUpdateFormValues] = useState({});
+  const [updateFormValues, setUpdateFormValues] = useState<any>({});
   const actionRef = useRef<ActionType>();
 
   const columns: ProColumns<TableListItem>[] = [
@@ -326,15 +312,9 @@ const TableList: React.FC<{}> = () => {
       {updateFormValues && Object.keys(updateFormValues).length ? (
         <UpdateForm
           modalVisible={updateModalVisible}
-          onSubmit={async (value) => {
-            const success = await handleUpdate(value);
-            if (success) {
-              handleUpdateModalVisible(false);
-              setUpdateFormValues(() => {
-              });
-              if (actionRef.current) {
-                actionRef.current.reload();
-              }
+          onFinish={(success) => {
+            if (success && actionRef.current) {
+              actionRef.current.reload();
             }
           }}
           onClose={() => {

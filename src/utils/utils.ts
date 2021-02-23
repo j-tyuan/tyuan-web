@@ -18,3 +18,19 @@ export const isAntDesignProOrDev = (): boolean => {
   }
   return isAntDesignPro();
 };
+
+
+export const hashCode = (val: string) => {
+  let hash = 0; let i; let chr;
+  if (val.length === 0) return hash;
+  // eslint-disable-next-line no-plusplus
+  for (i = 0; i < val.length; i++) {
+    chr = val.charCodeAt(i);
+    // eslint-disable-next-line no-bitwise
+    hash = ((hash << 5) - hash) + chr;
+    // eslint-disable-next-line no-bitwise
+    hash |= 0; // Convert to 32bit integer
+  }
+  return hash;
+};
+

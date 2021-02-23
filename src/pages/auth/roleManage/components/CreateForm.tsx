@@ -1,26 +1,46 @@
-import React, {Key} from 'react';
-import {Button, Drawer, Form, Input, Radio, Space, Tree} from 'antd';
+import React, {Key, useState} from 'react';
+import {Button, Drawer, Form, Input, message, Radio, Space, Tree} from 'antd';
 import Settings from "../../../../../config/defaultSettings";
 import TextArea from "antd/es/input/TextArea";
 import {useIntl} from "umi";
 import {FormInstance} from "antd/es/form";
 import {TableListItem} from "../data";
+import {add} from "@/pages/auth/roleManage/service";
 
 interface CreateFormProps {
   modalVisible: boolean;
   onClose: () => void;
   permission: any[];
   oneLevelIds: Key[];
-  onSubmit: (values: TableListItem) => Promise<void>;
+  onFinish: (success: boolean) => void;
 }
 
+/**
+ * 添加节点
+ * @param fields
+ */
+const handleAdd = async (fields: TableListItem) => {
+  const hide = message.loading('正在添加');
+  try {
+    const v = await add({...fields});
+    hide();
+    if (v.errorCode === -1) {
+      message.success('添加成功');
+      return true;
+    }
+    return false;
+  } catch (error) {
+    hide();
+    message.error('添加失败请重试！');
+    return false;
+  }
+};
 
 const CreateForm: React.FC<CreateFormProps> = (props) => {
-  const {modalVisible, onClose, permission, oneLevelIds} = props;
+  const {modalVisible, onClose, permission, oneLevelIds,onFinish} = props;
   const formRef = React.createRef<FormInstance>();
+  const [loading, setLoading] = useState<boolean>(false);
 
-  // @ts-ignore
-  // @ts-ignore
   return (
     <Drawer
       destroyOnClose
@@ -34,7 +54,17 @@ const CreateForm: React.FC<CreateFormProps> = (props) => {
             {...Settings.form.formItemLayout}
             name="control-ref"
             labelAlign="right"
-            onFinish={props.onSubmit}
+            onFinish={(e) => {
+              setLoading(true)
+              const promise = handleAdd(e);
+              promise.then(result => {
+                if (result) {
+                  onClose();
+                }
+                onFinish(result)
+                setLoading(false)
+              })
+            }}
             layout="horizontal"
       >
         <Form.Item
@@ -69,7 +99,7 @@ const CreateForm: React.FC<CreateFormProps> = (props) => {
             <Button htmlType="button" onClick={() => onClose()}>
               {useIntl().formatMessage({id: 'app.form.cancel'})}
             </Button>
-            <Button type="primary" htmlType="submit">
+            <Button type="primary" htmlType="submit" loading={loading}>
               {useIntl().formatMessage({id: 'app.form.submit'})}
             </Button>
           </Space>

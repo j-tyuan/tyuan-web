@@ -1,56 +1,13 @@
 import {PlusOutlined} from '@ant-design/icons';
-import {Button, message, Drawer, Modal, Divider} from 'antd';
-import React, {useState, useRef, useEffect} from 'react';
+import {Button, Divider, message, Modal} from 'antd';
+import React, {useEffect, useRef, useState} from 'react';
 import {PageContainer} from '@ant-design/pro-layout';
-import ProTable, {ProColumns, ActionType} from '@ant-design/pro-table';
-import ProDescriptions from '@ant-design/pro-descriptions';
+import ProTable, {ActionType, ProColumns} from '@ant-design/pro-table';
 import CreateForm from './components/CreateForm';
 import UpdateForm from './components/UpdateForm';
 import {TableListItem} from './data';
-import {query, update, add, remove, getByParentId, getByPermission} from './service';
+import {getByParentId, getByPermission, query, remove} from './service';
 
-/**
- * 添加节点
- * @param fields
- */
-const handleAdd = async (fields: TableListItem) => {
-  const hide = message.loading('正在添加');
-  try {
-    const v = await add({...fields});
-    hide();
-    if (v.errorCode === -1) {
-      message.success('添加成功');
-      return true;
-    }
-    return false;
-    return true;
-  } catch (error) {
-    hide();
-    message.error('添加失败请重试！');
-    return false;
-  }
-};
-
-/**
- * 更新节点
- * @param fields
- */
-const handleUpdate = async (fields: TableListItem) => {
-  const hide = message.loading('正在配置');
-  try {
-    const v = await update({...fields});
-    hide();
-    if (v.errorCode === -1) {
-      message.success('配置成功');
-      return true;
-    }
-    return false;
-  } catch (error) {
-    hide();
-    message.error('配置失败请重试！');
-    return false;
-  }
-};
 
 /**
  *  删除节点
@@ -88,7 +45,6 @@ const TableList: React.FC<{}> = () => {
   const [updateFormValues, setUpdateFormValues] = useState({});
   const actionRef = useRef<ActionType>();
   const [, setRowLoading] = useState<boolean>();
-  const [row, setRow] = useState<TableListItem>();
   const [permission, setPermission] = useState([]);
 
   useEffect(() => {
@@ -114,10 +70,7 @@ const TableList: React.FC<{}> = () => {
             message: '必填项',
           },
         ],
-      },
-      render: (dom, entity) => {
-        return <a onClick={() => setRow(entity)}>{dom}</a>;
-      },
+      }
     },
     {
       title: "href",
@@ -183,7 +136,9 @@ const TableList: React.FC<{}> = () => {
                 onOk() {
                   const state = handleRemove([record]);
                   state.then(() => {
-                    actionRef.current.reload();
+                    if (actionRef.current){
+                      actionRef.current.reload();
+                    }
                   })
                 }
               })
@@ -236,13 +191,9 @@ const TableList: React.FC<{}> = () => {
       {permission && permission.length ? (
         <CreateForm
           permission={permission}
-          onSubmit={async (value) => {
-            const success = await handleAdd(value);
-            if (success) {
-              handleModalVisible(false);
-              if (actionRef.current) {
-                actionRef.current.reload();
-              }
+          onFinish={(success) => {
+            if (success && actionRef.current) {
+              actionRef.current.reload();
             }
           }}
           onClose={() => handleModalVisible(false)} modalVisible={createModalVisible}/>) : null}
@@ -251,15 +202,9 @@ const TableList: React.FC<{}> = () => {
         <UpdateForm
           permission={permission}
           modalVisible={updateModalVisible}
-          onSubmit={async (value) => {
-            const success = await handleUpdate(value);
-            if (success) {
-              handleUpdateModalVisible(false);
-              setUpdateFormValues(() => {
-              });
-              if (actionRef.current) {
-                actionRef.current.reload();
-              }
+          onFinish={(success) => {
+            if (success && actionRef.current) {
+              actionRef.current.reload();
             }
           }}
           onClose={() => {
@@ -271,29 +216,6 @@ const TableList: React.FC<{}> = () => {
           values={updateFormValues}
         />
       ) : null}
-
-      <Drawer
-        width={600}
-        visible={!!row}
-        onClose={() => {
-          setRow(undefined);
-        }}
-        closable={false}
-      >
-        {row?.label && (
-          <ProDescriptions<TableListItem>
-            column={2}
-            title={row?.label}
-            request={async () => ({
-              data: row || {},
-            })}
-            params={{
-              id: row?.label,
-            }}
-            columns={columns}
-          />
-        )}
-      </Drawer>
     </PageContainer>
   );
 };
