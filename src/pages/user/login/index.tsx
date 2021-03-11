@@ -73,11 +73,11 @@ const Login: React.FC<{}> = () => {
         <div className={styles.top}>
           <div className={styles.header}>
             <Link to="/">
-              <img alt="logo" className={styles.logo} src="/logo.svg"/>
-              <span className={styles.title}>Ant Design</span>
+              <img alt="logo" className={styles.logo} src="/icons/icon-128x128.png"/>
+              <span className={styles.title}>Tyuan Design</span>
             </Link>
           </div>
-          <div className={styles.desc}>Ant Design 是西湖区最具影响力的 Web 设计规范</div>
+          <div className={styles.desc}>Tyuan Design 是基于<a href="https://pro.ant.design/index-cn">Ant Design设计规范</a>的企业级基础开发平台</div>
         </div>
 
         <div className={styles.main}>
@@ -114,6 +114,7 @@ const Login: React.FC<{}> = () => {
                 })}
               />
               <Tabs.TabPane
+                disabled
                 key="mobile"
                 tab={intl.formatMessage({
                   id: 'pages.login.phoneLogin.tab',
@@ -126,7 +127,7 @@ const Login: React.FC<{}> = () => {
               <LoginMessage
                 content={intl.formatMessage({
                   id: 'pages.login.accountLogin.errorMessage',
-                  defaultMessage: '账户或密码错误（admin/ant.design)',
+                  defaultMessage: '账户或密码错误（admin/tyuan)',
                 })}
               />
             )}
@@ -140,7 +141,7 @@ const Login: React.FC<{}> = () => {
                   }}
                   placeholder={intl.formatMessage({
                     id: 'pages.login.username.placeholder',
-                    defaultMessage: '用户名: admin or user',
+                    defaultMessage: '用户名: admin',
                   })}
                   rules={[
                     {
@@ -162,7 +163,7 @@ const Login: React.FC<{}> = () => {
                   }}
                   placeholder={intl.formatMessage({
                     id: 'pages.login.password.placeholder',
-                    defaultMessage: '密码: ant.design',
+                    defaultMessage: '密码: tyuan',
                   })}
                   rules={[
                     {

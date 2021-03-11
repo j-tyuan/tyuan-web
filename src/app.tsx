@@ -143,15 +143,16 @@ const errorHandler = (error: ResponseError) => {
 const responseInterceptors: ResponseInterceptor[] = [
   async (response: Response) => {
     const result = await response.clone().json()
-    if (result.errorCode === 2001) {
+    const {errorCode, errorMessage} = result;
+    if (errorCode === 2001) {
       history.push('/user/login');
-      if (result.errorMessage) {
-        message.error(result.errorMessage)
+      if (errorMessage) {
+        message.error(errorMessage)
       }
       return response;
     }
-    if (result.errorCode !== -1) {
-      message.error(result.errorMessage)
+    if (errorCode && errorCode !== -1) {
+      message.error(errorMessage)
     }
     return response;
   }
