@@ -15,6 +15,7 @@ import Footer from '@/components/Footer';
 import {accountLogin, getFakeCaptcha, LoginParamsType} from '@/services/login';
 
 import styles from './index.less';
+import {API} from "@/services/API";
 
 const LoginMessage: React.FC<{
   content: string;
@@ -35,7 +36,11 @@ const LoginMessage: React.FC<{
 const goto = () => {
   const {query} = history.location;
   const {redirect} = query as { redirect: string };
-  window.location.href = redirect || '/';
+  if (redirect) {
+    window.location.href = redirect;
+    return;
+  }
+  window.location.href = '/';
 };
 
 const Login: React.FC<{}> = () => {
@@ -77,7 +82,8 @@ const Login: React.FC<{}> = () => {
               <span className={styles.title}>Tyuan Design</span>
             </Link>
           </div>
-          <div className={styles.desc}>Tyuan Design 是基于<a href="https://pro.ant.design/index-cn">Ant Design设计规范</a>的企业级基础开发平台</div>
+          <div className={styles.desc}>Tyuan Design 是基于<a href="https://pro.ant.design/index-cn">Ant Design设计规范</a>的企业级基础开发平台
+          </div>
         </div>
 
         <div className={styles.main}>

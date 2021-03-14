@@ -1,40 +1,36 @@
 ﻿export default [
   {
-    path: '/user',
+    path: '/login',
     layout: false,
-    routes: [
-      {
-        name: 'login',
-        path: '/user/login',
-        component: './user/login',
-      },
-    ],
+    name: 'login',
+    component: './user/login',
   },
   {
     path: '/welcome',
     name: 'welcome',
-    icon: 'smile',
     component: './Welcome',
   },
+  // 账号中心
   {
-    path: '/admin',
-    name: 'admin',
-    icon: 'crown',
-    access: 'canAdmin',
-    component: './Admin',
-    routes: [
-      {
-        path: '/admin/sub-page',
-        name: 'sub-page',
-        icon: 'smile',
-        component: './Welcome',
-      },
-    ],
+    name: 'account.center-manage',
+    headerRender: false,
+    menuRender: false,
+    footerRender: false,
+    path: '/account/center',
+    component: './account/center',
+  },
+  // 账号中心
+  {
+    name: 'account.settings-manage',
+    headerRender: false,
+    menuRender: false,
+    footerRender: false,
+    path: '/account/settings',
+    component: './account/settings',
   },
   // 资源管理
   {
     name: 'sys.source-manage',
-    icon: 'table',
     headerRender: false,
     menuRender: false,
     footerRender: false,
@@ -44,38 +40,32 @@
   // 参数管理
   {
     name: 'sys.param-manage',
-    icon: 'table',
     path: '/sys/param',
     component: './sys/paramManage',
   },
   // 字典管理
   {
     name: 'sys.dict-manage',
-    icon: 'table',
     path: '/sys/dict',
     component: './sys/dictManage',
   },
   {
     name: 'auth.user-manage',
-    icon: 'table',
     path: '/auth/user',
     component: './auth/userManage',
   },
   {
     name: 'auth.role-manage',
-    icon: 'table',
     path: '/auth/role',
     component: './auth/roleManage',
   },
   {
     name: 'monitor.redis',
-    icon: 'table',
     path: '/monitor/redis',
     component: './monitor/redis',
   },
   {
     name: 'sys.log',
-    icon: 'table',
     path: '/sys/log',
     component: './sys/log',
   },

@@ -22,15 +22,14 @@ const Settings: LayoutSettings & {
       wrapperCol: {span: 16},
     }
   },
-  navTheme: 'light',
   // 拂晓蓝
   primaryColor: '#1890ff',
   // 'side' | 'top' | 'mix';
-
   // 可动态修改 -----------------
   layout: 'mix',
   // layout 的左上角 的 title
   title: 'TYuan企业级基础开发平台',
+  navTheme: 'light',
   // end -----------------
 
   fixSiderbar: true,

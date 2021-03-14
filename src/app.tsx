@@ -5,10 +5,12 @@ import {history, RequestConfig} from 'umi';
 import RightContent from '@/components/RightContent';
 import Footer from '@/components/Footer';
 import {ResponseError, ResponseInterceptor} from 'umi-request';
-import {queryCurrent} from './services/user';
+import {qureyAccount} from './services/user';
 import defaultSettings from '../config/defaultSettings';
 import {permissions, queryMenuData} from "@/services/sys";
 import {setAuthority} from "@/utils/authority";
+import * as Icon from "@ant-design/icons";
+import {API} from "@/services/API";
 
 /**
  * 获取用户信息比较慢的时候会展示一个 loading
@@ -17,61 +19,88 @@ export const initialStateConfig = {
   loading: <PageLoading/>,
 };
 
+/**
+ * 自定义了左侧菜单，所以icon需要自己创建
+ * @param menuData
+ */
+const constructMenu = (menuData: any[]) => {
+  // pro5不支持二级icon
+  menuData.forEach(item => {
+    if (item.icon) {
+      // eslint-disable-next-line no-param-reassign
+      item.icon = React.createElement(Icon[item.icon])
+    }
+  })
+}
+
+/**
+ * 加载用户信息
+ */
+const loadUserInfo = async () => {
+  try {
+    const accountInfo = await qureyAccount();
+    if (!accountInfo) {
+      return null;
+    }
+    // @ts-ignore
+    const {data} = accountInfo;
+    const {account, layout} = data;
+
+    const user = {
+      ...account,
+      layout
+    }
+    return user;
+  } catch (error) {
+    history.push('/login');
+  }
+  return null;
+};
+
+/**
+ * 加载权限信息
+ */
+const loadPermissions = () => {
+  const promise = permissions();
+  promise.then(e => {
+    const {errorCode, data} = e;
+    if (errorCode === -1) {
+      const {permission} = data;
+      setAuthority(permission)
+    }
+  })
+}
+
+/**
+ * 初始化数据
+ */
 export async function getInitialState(): Promise<{
   settings?: LayoutSettings;
   menuData: MenuDataItem[];
   currentUser?: API.CurrentUser;
-  fetchUserInfo?: () => Promise<API.CurrentUser | undefined>;
 }> {
-  const fetchUserInfo = async () => {
-    try {
-      const currentUser = await queryCurrent();
-      if (!currentUser) {
-        return null;
-      }
-      // @ts-ignore
-      const {data} = currentUser
-      const userInfo = {
-        name: data.name,
-        avatar: data.photo,
-        userid: data.id,
-        email: data.email,
-        phone: data.moblie
-      }
-      return userInfo;
-    } catch (error) {
-      history.push('/user/login');
-    }
-    return undefined;
-  };
-  if (history.location.pathname !== '/user/login') {
+
+  if (history.location.pathname !== '/login') {
     // 已登陆
-    const currentUser = await fetchUserInfo();
+    const currentUser = await loadUserInfo();
     const result = await queryMenuData();
     const menuData = result.data;
-    const promise = permissions();
-    promise.then(e => {
-      const {errorCode, data} = e;
-      if (errorCode === -1) {
-        const {permission} = data;
-        setAuthority(permission)
-      }
-    })
-
+    // 构建自定义menu
+    constructMenu(menuData);
+    loadPermissions();
     return {
       menuData,
-      fetchUserInfo,
       currentUser,
       settings: {...defaultSettings},
     };
   }
-  return {
-    menuData: [],
-    fetchUserInfo,
-    settings: {...defaultSettings},
-  };
+  return null;
 }
 
+/**
+ * 初始化布局
+ * @param initialState
+ */
 export const layout = ({initialState}: {
   initialState: { settings?: LayoutSettings; currentUser?: API.CurrentUser, menuData: MenuDataItem[]; };
 }): BasicLayoutProps => {
@@ -80,18 +109,23 @@ export const layout = ({initialState}: {
     disableContentMargin: false,
     footerRender: () => <Footer/>,
     onPageChange: () => {
+      if (!initialState) {
+        history.push('/login');
+        return;
+      }
       const {currentUser} = initialState;
       const {location} = history;
       // 如果没有登录，重定向到 login
-      if (!currentUser && location.pathname !== '/user/login') {
-        history.push('/user/login');
+      if (!currentUser && location.pathname !== '/login') {
+        history.push('/login');
       }
     },
     menuHeaderRender: undefined,
-    menuDataRender: (menuData) => {
-      return initialState.menuData || menuData
+    menuDataRender: () => {
+      return initialState ? initialState.menuData : []
     },
     ...initialState?.settings,
+    ...initialState?.currentUser?.layout,
   };
 };
 
@@ -139,13 +173,15 @@ const errorHandler = (error: ResponseError) => {
   throw error;
 };
 
-
+/**
+ * 自定义拦截器
+ */
 const responseInterceptors: ResponseInterceptor[] = [
   async (response: Response) => {
     const result = await response.clone().json()
     const {errorCode, errorMessage} = result;
     if (errorCode === 2001) {
-      history.push('/user/login');
+      history.push('/login');
       if (errorMessage) {
         message.error(errorMessage)
       }

@@ -1,3 +1,5 @@
+import {PureSettings} from "@ant-design/pro-layout/es/defaultSettings";
+
 declare namespace API {
   export interface CurrentUser {
     avatar?: string;
@@ -12,6 +14,7 @@ declare namespace API {
     userid?: string;
     access?: 'user' | 'guest' | 'admin';
     unreadCount?: number;
+    layout: PureSettings
   }
 
   export interface LoginStateType {

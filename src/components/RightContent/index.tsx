@@ -1,7 +1,7 @@
-import { Tooltip, Tag, Space } from 'antd';
-import { QuestionCircleOutlined } from '@ant-design/icons';
+import {Tooltip, Tag, Space} from 'antd';
+import {QuestionCircleOutlined} from '@ant-design/icons';
 import React from 'react';
-import { useModel, SelectLang } from 'umi';
+import {useModel, SelectLang} from 'umi';
 import Avatar from './AvatarDropdown';
 import HeaderSearch from '../HeaderSearch';
 import styles from './index.less';
@@ -15,13 +15,13 @@ const ENVTagColor = {
 };
 
 const GlobalHeaderRight: React.FC<{}> = () => {
-  const { initialState } = useModel('@@initialState');
+  const {initialState} = useModel('@@initialState');
 
   if (!initialState || !initialState.settings) {
     return null;
   }
 
-  const { navTheme, layout } = initialState.settings;
+  const {navTheme, layout} = initialState.settings;
   let className = styles.right;
 
   if ((navTheme === 'dark' && layout === 'top') || layout === 'mix') {
@@ -34,7 +34,7 @@ const GlobalHeaderRight: React.FC<{}> = () => {
         placeholder="站内搜索"
         defaultValue="umi ui"
         options={[
-          { label: <a href="https://umijs.org/zh/guide/umi-ui.html">umi ui</a>, value: 'umi ui' },
+          {label: <a href="https://umijs.org/zh/guide/umi-ui.html">umi ui</a>, value: 'umi ui'},
           {
             label: <a href="next.ant.design">Ant Design</a>,
             value: 'Ant Design',
@@ -59,16 +59,16 @@ const GlobalHeaderRight: React.FC<{}> = () => {
             window.location.href = 'https://pro.ant.design/docs/getting-started';
           }}
         >
-          <QuestionCircleOutlined />
+          <QuestionCircleOutlined/>
         </span>
       </Tooltip>
-      <Avatar />
+      <Avatar menu/>
       {REACT_APP_ENV && (
         <span>
           <Tag color={ENVTagColor[REACT_APP_ENV]}>{REACT_APP_ENV}</Tag>
         </span>
       )}
-      <SelectLang className={styles.action} />
+      <SelectLang className={styles.action}/>
     </Space>
   );
 };
