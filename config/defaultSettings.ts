@@ -38,7 +38,7 @@ const Settings: LayoutSettings & {
   colorWeak: false,
   pwa: false,
   // layout 的左上角 logo 的 url
-  logo: 'https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg',
+  logo: '/icons/icon-128x128.png',
   iconfontUrl: '',
 };
 

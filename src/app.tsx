@@ -24,13 +24,16 @@ export const initialStateConfig = {
  * @param menuData
  */
 const constructMenu = (menuData: any[]) => {
+  const newMenuData: any[] = [];
   // pro5不支持二级icon
   menuData.forEach(item => {
+    let icon;
     if (item.icon) {
-      // eslint-disable-next-line no-param-reassign
-      item.icon = React.createElement(Icon[item.icon])
+      icon = React.createElement(Icon[item.icon])
     }
+    newMenuData.push({...item, icon})
   })
+  return newMenuData;
 }
 
 /**
@@ -84,9 +87,9 @@ export async function getInitialState(): Promise<{
     // 已登陆
     const currentUser = await loadUserInfo();
     const result = await queryMenuData();
-    const menuData = result.data;
+    let menuData = result.data;
     // 构建自定义menu
-    constructMenu(menuData);
+    menuData = constructMenu(menuData);
     loadPermissions();
     return {
       menuData,
@@ -110,7 +113,6 @@ export const layout = ({initialState}: {
     footerRender: () => <Footer/>,
     onPageChange: () => {
       if (!initialState) {
-        history.push('/login');
         return;
       }
       const {currentUser} = initialState;

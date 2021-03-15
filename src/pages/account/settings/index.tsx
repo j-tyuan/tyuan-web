@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Button, Card, Col, Form, Input, message, Modal, Row, Tabs, Tooltip} from "antd";
+import {Button, Card, Col, Form, Image, Input, message, Modal, Row, Spin, Tabs, Tooltip} from "antd";
 import TextArea from "antd/es/input/TextArea";
 import {Space, Upload} from "antd/es";
 import {CheckOutlined, LoadingOutlined, PlusOutlined} from '@ant-design/icons';
@@ -79,7 +79,7 @@ const Settings: React.FC<{}> = () => {
   const [currentLayout, setCurrentLayout] = useState<PureSettings>();
 
   const [submitAccountLoading, setSubmitAccountLoading] = useState<boolean>();
-  const [uploadLoading, setUploadLoading] = useState<boolean>();
+  const [uploadLoading, setUploadLoading] = useState<boolean>(false);
   const [imageUrl, setImageUrl] = useState();
 
   const handleChange = (info) => {
@@ -89,7 +89,7 @@ const Settings: React.FC<{}> = () => {
     }
     if (info.file.status === 'done') {
       // Get this url from response in real world.
-      getBase64(info.file.originFileObj, imageUrl => {
+      getBase64(info.file.originFileObj, (imageUrl) => {
         setUploadLoading(false);
         setImageUrl(imageUrl)
       });
@@ -108,11 +108,10 @@ const Settings: React.FC<{}> = () => {
       onChange={handleChange}
     >
       {imageUrl
-        ? <Button type="dashed" style={{height: '100%', width: '100%'}}>
+        ? <Spin spinning={uploadLoading}><Button type="dashed" style={{height: '100%', width: '100%'}}>
           <img src={imageUrl} alt="avatar"
-               style={{width: '100%', height: '100px'}}/></Button>
-        : <Button type="dashed" style={{height: '100%', width: '100%'}}
-                  icon={uploadLoading ? <LoadingOutlined/> : <PlusOutlined/>}>
+               style={{width: '100%', height: '100px'}}/></Button></Spin>
+        : <Button type="dashed" style={{height: '100%', width: '100%'}} loading={uploadLoading}>
           Upload
         </Button>}
     </Upload>

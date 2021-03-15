@@ -34,11 +34,15 @@ const LoginMessage: React.FC<{
  * 此方法会跳转到 redirect 参数所在的位置
  */
 const goto = () => {
-  const {query} = history.location;
-  const {redirect} = query as { redirect: string };
-  if (redirect) {
-    window.location.href = redirect;
-    return;
+  try {
+    const {query} = history.location;
+    const {redirect} = query as { redirect: string };
+    if (redirect) {
+      window.location.href = redirect;
+      return;
+    }
+  } catch (e) {
+    console.log(e)
   }
   window.location.href = '/';
 };
