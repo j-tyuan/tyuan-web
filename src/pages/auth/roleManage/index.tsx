@@ -176,7 +176,7 @@ const TableList: React.FC<{}> = () => {
               setUpdateFormValue(record);
               handleConfigUserModalVisible(true);
             }}>
-              用户管理
+              管理员列表
             </a>
           </Authorized>
         </>
@@ -195,8 +195,8 @@ const TableList: React.FC<{}> = () => {
           labelWidth: 120,
         }}
         toolBarRender={() => [
-          <Authorized authority="sys:role:add" noMatch={null}>
-            <Button key="1" type="primary" onClick={() => handleModalVisible(true)}>
+          <Authorized key="1" authority="sys:role:add" noMatch={null}>
+            <Button  type="primary" onClick={() => handleModalVisible(true)}>
               <PlusOutlined/> 新建
             </Button>
           </Authorized>

@@ -11,6 +11,7 @@ import {permissions, queryMenuData} from "@/services/sys";
 import {setAuthority} from "@/utils/authority";
 import * as Icon from "@ant-design/icons";
 import {API} from "@/services/API";
+import {setWatermark} from "@/utils/utils";
 
 /**
  * 获取用户信息比较慢的时候会展示一个 loading
@@ -30,6 +31,7 @@ const constructMenu = (menuData: any[]) => {
     let icon;
     if (item.icon) {
       icon = React.createElement(Icon[item.icon])
+
     }
     newMenuData.push({...item, icon})
   })
@@ -84,6 +86,9 @@ export async function getInitialState(): Promise<{
 }> {
 
   if (history.location.pathname !== '/login') {
+    // TODO 演示版本水印
+    setWatermark("河南软达-企业级快速开发平台-演示版本")
+
     // 已登陆
     const currentUser = await loadUserInfo();
     const result = await queryMenuData();
@@ -108,7 +113,10 @@ export const layout = ({initialState}: {
   initialState: { settings?: LayoutSettings; currentUser?: API.CurrentUser, menuData: MenuDataItem[]; };
 }): BasicLayoutProps => {
   return {
-    rightContentRender: () => <RightContent/>,
+    rightContentRender: () => (<>
+      <RightContent/>
+      <div className="waterBox" style={{backgroundImage: `url(${window.bgWater})`}}/>
+    </>),
     disableContentMargin: false,
     footerRender: () => <Footer/>,
     onPageChange: () => {

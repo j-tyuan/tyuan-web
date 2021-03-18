@@ -49,4 +49,15 @@ export default {
   'menu.editor.flow': '流程编辑器',
   'menu.editor.mind': '脑图编辑器',
   'menu.editor.koni': '拓扑编辑器',
+  'menu.monitor.redis': 'Redis',
+  'menu.auth.role-manage': "角色管理",
+  'menu.auth.user-manage': "用户管理",
+  'menu.organization.institution': '机构管理',
+  'menu.sys.log': '系统日志',
+  'menu.sys.dict-manage': '字典管理',
+  'menu.sys.param-manage': '系统参数管理',
+  'menu.sys.source-manage': '系统资源管理',
+  'menu.account.settings-manage': '系统设置',
+  'menu.account.center-manage': "账号中心"
+
 };

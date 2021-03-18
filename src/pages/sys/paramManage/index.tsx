@@ -182,8 +182,8 @@ const TableList: React.FC<{}> = () => {
           labelWidth: 120,
         }}
         toolBarRender={() => [
-          <Authorized authority="sys:param:add" noMatch={null}>
-            <Button key="1" type="primary" onClick={() => handleModalVisible(true)}>
+          <Authorized  key="1" authority="sys:param:add" noMatch={null}>
+            <Button type="primary" onClick={() => handleModalVisible(true)}>
               <PlusOutlined/> 新建
             </Button>
           </Authorized>

@@ -1,18 +1,17 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Button, Cascader, Drawer, Form, Input, message, Space} from 'antd';
 import Settings from "../../../../../config/defaultSettings";
 import {FormInstance} from "antd/es/form";
-import KBPassword from "@/pages/auth/userManage/components/KBPassword";
 import TextArea from "antd/es/input/TextArea";
 import {useIntl} from "umi";
-import {TableListItem} from "@/pages/auth/userManage/data";
-import {add} from "@/pages/auth/userManage/service";
+import {TableListItem} from "@/pages/organization/employeeManage/data";
+import {add} from "@/pages/organization/employeeManage/service";
 
 interface CreateFormProps {
   modalVisible: boolean;
   onClose: () => void;
-  onFinish: (success: boolean) => void;
   institutions: any[]
+  onFinish: (result: any) => void;
 }
 
 /**
@@ -39,16 +38,19 @@ const handleAdd = async (fields: TableListItem) => {
   }
 };
 
-
 const CreateForm: React.FC<CreateFormProps> = (props) => {
   const {modalVisible, onClose, onFinish, institutions} = props;
   const [loading, setLoading] = useState<boolean>(false);
   const formRef = React.createRef<FormInstance>();
 
+  useEffect(() => {
+
+  }, [])
+
   return (
     <Drawer
       destroyOnClose
-      title="编辑管理员"
+      title="编辑员工信息"
       width={Settings.form.drawer.width}
       visible={modalVisible}
       onClose={() => onClose()}
@@ -65,39 +67,28 @@ const CreateForm: React.FC<CreateFormProps> = (props) => {
                 if (result) {
                   onClose();
                 }
-                onFinish(true)
+                onFinish(result)
                 setLoading(false)
               })
             }}
             layout="horizontal"
       >
-        <Form.Item name="instId" rules={[{required: true}]} hidden><Input/></Form.Item>
-        <Form.Item name="account" label="登陆账号" rules={[{required: true}]}><Input/></Form.Item>
-        <Form.Item name="password" label="密码">
-          <KBPassword onChange={(e) => {
-            // @ts-ignore
-            formRef.current.setFieldsValue({password: e})
-          }}/>
+        <Form.Item
+          hidden
+          name="id">
+          <Input/>
         </Form.Item>
+        <Form.Item name="instId" rules={[{required: true}]} hidden><Input/></Form.Item>
+        <Form.Item name="empNameEn" label="员工名称" rules={[{required: true}]}><Input/></Form.Item>
+        <Form.Item name="empName" label="英文名称"><Input/></Form.Item>
         <Form.Item name="temporaryInstId" label="所属机构" rules={[{required: true}]}>
-          <Cascader changeOnSelect options={institutions} onChange={(value) => {
+          <Cascader changeOnSelect options={institutions} onChange={(value,a) => {
             if (formRef.current) {
               formRef.current.setFieldsValue({instId: value[value.length - 1]})
             }
           }} fieldNames={{label: "instName", value: "id"}}/>
         </Form.Item>
-        <Form.Item
-          name="name" label="用户名称" rules={[{required: true}]}>
-          <Input/>
-        </Form.Item>
-        <Form.Item
-          name="phone" label="手机号" rules={[{required: true}]}>
-          <Input/>
-        </Form.Item>
-        <Form.Item
-          name="email" label="电子邮箱">
-          <Input/>
-        </Form.Item>
+
         <Form.Item
           name="remarks" label="备注">
           <TextArea/>

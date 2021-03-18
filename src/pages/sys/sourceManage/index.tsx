@@ -7,6 +7,7 @@ import CreateForm from './components/CreateForm';
 import UpdateForm from './components/UpdateForm';
 import {TableListItem} from './data';
 import {getByParentId, getByPermission, query, remove} from './service';
+import Authorized from "@/utils/Authorized";
 
 
 /**
@@ -127,33 +128,37 @@ const TableList: React.FC<{}> = () => {
       valueType: 'option',
       render: (_, record) => (
         <>
-          <a
-            onClick={() => {
-              Modal.confirm({
-                title: "您确定删除？",
-                okText: "确定",
-                cancelText: "取消",
-                onOk() {
-                  const state = handleRemove([record]);
-                  state.then(() => {
-                    if (actionRef.current){
-                      actionRef.current.reload();
-                    }
-                  })
-                }
-              })
-            }
-            }
-          >
-            删除
-          </a>
-          <Divider type="vertical"/>
-          <a onClick={() => {
-            setUpdateFormValues(record);
-            handleUpdateModalVisible(true);
-          }}>
-            编辑
-          </a>
+
+          <Authorized authority="sys:source:del" noMatch={null}>
+            <a onClick={() => {
+                Modal.confirm({
+                  title: "您确定删除？",
+                  okText: "确定",
+                  cancelText: "取消",
+                  onOk() {
+                    const state = handleRemove([record]);
+                    state.then(() => {
+                      if (actionRef.current) {
+                        actionRef.current.reload();
+                      }
+                    })
+                  }
+                })
+              }
+              }
+            >
+              删除
+            </a>
+            <Divider type="vertical"/>
+          </Authorized>
+          <Authorized authority="sys:source:edit" noMatch={null}>
+            <a onClick={() => {
+              setUpdateFormValues(record);
+              handleUpdateModalVisible(true);
+            }}>
+              编辑
+            </a>
+          </Authorized>
         </>
       ),
     },
@@ -169,9 +174,11 @@ const TableList: React.FC<{}> = () => {
           labelWidth: 120,
         }}
         toolBarRender={() => [
-          <Button key="1" type="primary" onClick={() => handleModalVisible(true)}>
-            <PlusOutlined/> 新建
-          </Button>,
+          <Authorized key="1" authority="sys:source:add" noMatch={null}>
+            <Button type="primary" onClick={() => handleModalVisible(true)}>
+              <PlusOutlined/> 新建
+            </Button>
+          </Authorized>
         ]}
         request={(params, sorter, filter) => query({...params, sorter, filter})}
         columns={columns}

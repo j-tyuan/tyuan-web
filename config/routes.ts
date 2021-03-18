@@ -50,6 +50,21 @@
     component: './sys/dictManage',
   },
   {
+    name: 'sys.log',
+    path: '/sys/log',
+    component: './sys/log',
+  },
+  {
+    name: 'organization.institution',
+    path: '/organization/institution',
+    component: './organization/institutionManage',
+  },
+  {
+    name: 'organization.employee',
+    path: '/organization/employee',
+    component: './organization/employeeManage',
+  },
+  {
     name: 'auth.user-manage',
     path: '/auth/user',
     component: './auth/userManage',
@@ -63,11 +78,6 @@
     name: 'monitor.redis',
     path: '/monitor/redis',
     component: './monitor/redis',
-  },
-  {
-    name: 'sys.log',
-    path: '/sys/log',
-    component: './sys/log',
   },
   {
     path: '/',

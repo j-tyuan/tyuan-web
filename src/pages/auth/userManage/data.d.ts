@@ -16,6 +16,7 @@ export interface TableListItem {
   isShow: boolean;
   permissionId?: any;
   children: Array;
+  instId: any;
 
   createBy: string;
   updateBy: string;

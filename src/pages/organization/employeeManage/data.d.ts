@@ -1,19 +1,16 @@
 export interface TableListItem {
+  userType: any | 0 | 1;
   disabled: any;
   id: number;
   updateDate: Date;
   createDate: Date;
 
-  name: string;
-  href: string;
-  target: string;
-  sort?: any;
-  parentId?: any;
-  icon: string;
-  isLeaf: boolean;
-  isShow: boolean;
-  permissionId?: any;
-  children: Array;
+  empNo: string,
+  empName: string;
+  empNameEn: string;
+  instId: number;
+  instName: string;
+
   createBy: string;
   updateBy: string;
   remarks: string;

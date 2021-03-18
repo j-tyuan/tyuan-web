@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import {Button, Drawer, Form, Input, message, Space} from 'antd';
+import React, {useEffect, useState} from 'react';
+import {Button, Cascader, Drawer, Form, Input, message, Space} from 'antd';
 import Settings from "../../../../../config/defaultSettings";
 import {FormInstance} from "antd/es/form";
 import TextArea from "antd/es/input/TextArea";
@@ -7,12 +7,14 @@ import KBPassword from "@/pages/auth/userManage/components/KBPassword";
 import {useIntl} from "umi";
 import {TableListItem} from "../data";
 import {update} from "@/pages/auth/userManage/service";
+import {findParentPathIds} from "@/utils/utils";
 
 interface UpdateFormProps {
   modalVisible: boolean;
   onClose: () => void;
   values: TableListItem;
   onFinish: (success: boolean) => void;
+  institutions: any[];
 }
 
 /**
@@ -37,14 +39,22 @@ const handleUpdate = async (fields: TableListItem) => {
 };
 
 const UpdateForm: React.FC<UpdateFormProps> = (props) => {
-  const {modalVisible, onClose,onFinish} = props;
+  const {modalVisible, onClose, onFinish, institutions, values} = props;
   const [loading, setLoading] = useState<boolean>(false);
   const formRef = React.createRef<FormInstance>();
+  useEffect(() => {
+    const paths = findParentPathIds(values.instId, [...institutions]);
+    // 反显
+    if (formRef.current) {
+      // temporaryParentId 临时变量，为了反显，不保存
+      formRef.current.setFieldsValue({temporaryInstId: [...paths]})
+    }
+  }, [])
 
   return (
     <Drawer
       destroyOnClose
-      title="编辑"
+      title="编辑管理员"
       width={Settings.form.drawer.width}
       visible={modalVisible}
       onClose={() => onClose()}
@@ -70,22 +80,21 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
             }}
             layout="horizontal"
       >
-        <Form.Item
-          hidden
-          name="id">
-          <Input/>
-        </Form.Item>
-        <Form.Item name="no" label="员工编号">
-          {props.values.no}
-        </Form.Item>
-        <Form.Item name="account" label="登陆账号" rules={[{required: true}]}>
-          <Input/>
-        </Form.Item>
+        <Form.Item hidden name="id"><Input/></Form.Item>
+        <Form.Item name="instId" hidden><Input/></Form.Item>
+        <Form.Item name="account" label="登陆账号" rules={[{required: true}]}><Input/></Form.Item>
         <Form.Item name="password" label="密码">
           <KBPassword onChange={(e) => {
             // @ts-ignore
             formRef.current.setFieldsValue({password: e})
           }}/>
+        </Form.Item>
+        <Form.Item name="temporaryInstId" label="所属机构" rules={[{required: true}]}>
+          <Cascader changeOnSelect options={institutions} onChange={(value) => {
+            if (formRef.current) {
+              formRef.current.setFieldsValue({instId: value[value.length - 1]})
+            }
+          }} fieldNames={{label: "instName", value: "id"}}/>
         </Form.Item>
         <Form.Item
           name="name" label="用户名称" rules={[{required: true}]}>

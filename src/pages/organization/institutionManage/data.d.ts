@@ -1,22 +1,14 @@
 export interface TableListItem {
-  disabled: any;
   id: number;
+  parentId: number;
+  instName: string;
+  instCode: string;
+  instType: number;
+  instStatus: number;
+  instDesc: string;
+  ownerUserId:number;
   updateDate: Date;
   createDate: Date;
-
-  name: string;
-  href: string;
-  target: string;
-  sort?: any;
-  parentId?: any;
-  icon: string;
-  isLeaf: boolean;
-  isShow: boolean;
-  permissionId?: any;
-  children: Array;
-  createBy: string;
-  updateBy: string;
-  remarks: string;
 }
 
 export interface TableListPagination {

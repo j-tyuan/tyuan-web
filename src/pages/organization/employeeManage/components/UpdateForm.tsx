@@ -1,54 +1,61 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Button, Cascader, Drawer, Form, Input, message, Space} from 'antd';
 import Settings from "../../../../../config/defaultSettings";
 import {FormInstance} from "antd/es/form";
-import KBPassword from "@/pages/auth/userManage/components/KBPassword";
 import TextArea from "antd/es/input/TextArea";
 import {useIntl} from "umi";
-import {TableListItem} from "@/pages/auth/userManage/data";
-import {add} from "@/pages/auth/userManage/service";
+import {TableListItem} from "../data";
+import {update} from "@/pages/auth/userManage/service";
+import {findParentPath, findParentPathIds} from "@/utils/utils";
 
-interface CreateFormProps {
+interface UpdateFormProps {
   modalVisible: boolean;
   onClose: () => void;
+  values: TableListItem;
   onFinish: (success: boolean) => void;
-  institutions: any[]
+  institutions: any[];
 }
 
 /**
- * 添加节点
+ * 更新节点
  * @param fields
  */
-const handleAdd = async (fields: TableListItem) => {
-  const hide = message.loading('正在添加');
+const handleUpdate = async (fields: TableListItem) => {
+  const hide = message.loading('正在配置');
   try {
-    const v = await add({...fields});
+    const v = await update({...fields});
     hide();
     if (v.errorCode === -1) {
-      message.success('添加成功');
-
+      message.success('修改成功');
       return true;
     }
-
-    return null;
+    return false;
   } catch (error) {
     hide();
-    message.error('添加失败请重试！');
-
+    message.error('配置失败请重试！');
     return false;
   }
 };
 
-
-const CreateForm: React.FC<CreateFormProps> = (props) => {
-  const {modalVisible, onClose, onFinish, institutions} = props;
+const UpdateForm: React.FC<UpdateFormProps> = (props) => {
+  const {modalVisible, onClose, onFinish, values, institutions} = props;
   const [loading, setLoading] = useState<boolean>(false);
   const formRef = React.createRef<FormInstance>();
+
+  useEffect(() => {
+    const paths = findParentPathIds(values.instId, [...institutions]);
+    // 反显
+    if (formRef.current) {
+      // temporaryParentId 临时变量，为了反显，不保存
+      formRef.current.setFieldsValue({temporaryInstId: [...paths]})
+      formRef.current.setFieldsValue({instId: paths[paths.length - 1]})
+    }
+  }, [])
 
   return (
     <Drawer
       destroyOnClose
-      title="编辑管理员"
+      title="编辑员工信息"
       width={Settings.form.drawer.width}
       visible={modalVisible}
       onClose={() => onClose()}
@@ -58,45 +65,40 @@ const CreateForm: React.FC<CreateFormProps> = (props) => {
             {...Settings.form.formItemLayout}
             name="control-ref"
             labelAlign="right"
+            initialValues={
+              props.values
+            }
             onFinish={(e) => {
               setLoading(true)
-              const promise = handleAdd(e);
+              const promise = handleUpdate(e);
               promise.then(result => {
                 if (result) {
                   onClose();
                 }
-                onFinish(true)
+                onFinish(result)
                 setLoading(false)
               })
             }}
             layout="horizontal"
       >
-        <Form.Item name="instId" rules={[{required: true}]} hidden><Input/></Form.Item>
-        <Form.Item name="account" label="登陆账号" rules={[{required: true}]}><Input/></Form.Item>
-        <Form.Item name="password" label="密码">
-          <KBPassword onChange={(e) => {
-            // @ts-ignore
-            formRef.current.setFieldsValue({password: e})
-          }}/>
+        <Form.Item
+          hidden
+          name="id">
+          <Input/>
         </Form.Item>
-        <Form.Item name="temporaryInstId" label="所属机构" rules={[{required: true}]}>
+        <Form.Item name="instId" rules={[{required: true}]} hidden>
+          <Input/>
+        </Form.Item>
+
+        <Form.Item name="empNo" label="员工编号">{values.empNo}</Form.Item>
+        <Form.Item name="empName" label="员工名称"><Input/></Form.Item>
+        <Form.Item name="temporaryInstId" label="所属机构">
           <Cascader changeOnSelect options={institutions} onChange={(value) => {
             if (formRef.current) {
-              formRef.current.setFieldsValue({instId: value[value.length - 1]})
+              formRef.current.setFieldsValue({parentId: value[value.length - 1]})
             }
           }} fieldNames={{label: "instName", value: "id"}}/>
-        </Form.Item>
-        <Form.Item
-          name="name" label="用户名称" rules={[{required: true}]}>
-          <Input/>
-        </Form.Item>
-        <Form.Item
-          name="phone" label="手机号" rules={[{required: true}]}>
-          <Input/>
-        </Form.Item>
-        <Form.Item
-          name="email" label="电子邮箱">
-          <Input/>
+
         </Form.Item>
         <Form.Item
           name="remarks" label="备注">
@@ -117,4 +119,4 @@ const CreateForm: React.FC<CreateFormProps> = (props) => {
   );
 };
 
-export default CreateForm;
+export default UpdateForm;

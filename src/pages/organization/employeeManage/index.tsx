@@ -6,34 +6,12 @@ import ProTable, {ActionType, ProColumns} from '@ant-design/pro-table';
 import CreateForm from './components/CreateForm';
 import UpdateForm from './components/UpdateForm';
 import {TableListItem} from './data';
-import {add, disable, query, remove} from './service';
-import Settings from "../../../../config/defaultSettings";
-import KBPassword from "./components/KBPassword";
+import {query, remove} from './service';
 import Authorized from "@/utils/Authorized";
 import {getAll} from "@/pages/organization/institutionManage/service";
 import {FormInstance} from "antd/es/form";
 import {findParentPath} from "@/utils/utils";
 
-
-const handleDisable = async (row: TableListItem) => {
-  const hide = message.loading('正在操作')
-  try {
-    const v = await disable(row.id, row.disabled ? 0 : 1);
-    hide();
-    if (v.errorCode === -1) {
-      message.success('操作成功');
-
-      return true;
-    }
-
-    return null;
-  } catch (error) {
-    hide()
-    message.error("操作失败，请重试")
-
-    return false;
-  }
-}
 
 /**
  *  删除节点
@@ -84,6 +62,7 @@ const TableList: React.FC<{}> = () => {
   const [updateFormValues, setUpdateFormValues] = useState<any>({});
   const actionRef = useRef<ActionType>();
   const formRef = useRef<FormInstance>();
+
   const [instId, setInstId] = useState<any>();
   const [institutions, setInstitutions] = useState<any[]>([]);
   const [institutionTreeData, setInstitutionTreeData] = useState<any[]>();
@@ -98,118 +77,21 @@ const TableList: React.FC<{}> = () => {
       }
     })
   }
-  const institutionTree = () => {
-    if (!institutionTreeData || institutionTreeData.length === 0) {
-      return null;
-    }
-    return (
-      <Card>
-        <Tree blockNode
-              onClick={(_, dataNode) => {
-                if (actionRef.current && formRef.current) {
-                  formRef.current.resetFields()
-                  setInstId(dataNode.instId)
-                }
-              }}
-              height={500}
-              defaultExpandAll
-              treeData={institutionTreeData}/>
-      </Card>)
-  }
   const columns: ProColumns<TableListItem>[] = [
     {
-      title: "员工编号",
-      dataIndex: "userNo",
-      formItemProps: {
-        rules: [
-          {
-            required: true,
-            message: '必填项',
-          },
-        ],
-      },
+      title: "员工工号",
+      dataIndex: "empNo",
     },
     {
-      title: "登陆账号",
-      dataIndex: "account",
-      formItemProps: {
-        rules: [
-          {
-            required: true,
-            message: '必填项',
-          },
-        ],
-      },
+      title: "员工名称",
+      dataIndex: "empNameEn",
     },
     {
-      title: "密码",
-      dataIndex: "password",
-      search: false,
-      hideInTable: true,
-      valueType: "password",
-      renderFormItem(item, config, form) {
-        return (
-          <KBPassword onChange={
-            (e) => {
-              form.setFieldsValue({
-                password: e
-              })
-            }
-          }/>
-        )
-      },
-      formItemProps: {
-        rules: [
-          {
-            required: true,
-            message: '必填项',
-          },
-        ],
-      }
+      title: "员工英文名称",
+      dataIndex: "empName",
     },
     {
-      title: '用户名称',
-      dataIndex: 'name',
-      formItemProps: {
-        rules: [
-          {
-            required: true,
-            message: '必填项',
-          },
-        ],
-      }
-    },
-    {
-      title: "手机号",
-      dataIndex: "phone",
-      formItemProps: {
-        rules: [
-          {
-            required: true,
-            message: '必填项',
-          },
-          {
-            pattern: new RegExp("^1(3|4|5|7|8)\\d{9}$"),
-            message: "格式不正确"
-          }
-        ],
-      }
-    },
-    {
-      title: "电子邮箱",
-      search: false,
-      dataIndex: "email",
-      formItemProps: {
-        rules: [
-          {
-            pattern: new RegExp("^[a-zA-Z0-9_.-]+@[a-zA-Z0-9-]+(\\.[a-zA-Z0-9-]+)*\\.[a-zA-Z0-9]{2,6}$"),
-            message: "格式不正确"
-          }
-        ],
-      }
-    },
-    {
-      title: "所属机构",
+      title: "员工所属机构",
       dataIndex: "instName",
       render(_, item) {
         const insts = findParentPath(item.instId, [...institutions]);
@@ -218,31 +100,11 @@ const TableList: React.FC<{}> = () => {
           names.push(e.instName)
         })
         return (
-          <Tooltip placement="left" title={`${names.join("/")}`}>
-            <a type='link'>{_}</a>
+          <Tooltip placement="left" title={`${names.join("/")}${item.instName}`}>
+            <Button type='link'>{_}</Button>
           </Tooltip>
         )
       }
-    },
-    {
-      title: "状态",
-      dataIndex: "disabled",
-      valueType: 'switch',
-      hideInForm: true,
-      search: false,
-      render: (_, record) => (
-        <>
-          {
-            record.disabled ? '禁用' : '启用'
-          }
-        </>
-      )
-    },
-    {
-      title: "最后登陆时间",
-      dataIndex: "loginDate",
-      valueType: 'dateTime',
-      hideInForm: true
     },
     {
       title: "描述",
@@ -258,17 +120,12 @@ const TableList: React.FC<{}> = () => {
       valueType: 'dateTime',
     },
     {
-      dataIndex: "userType",
-      hideInForm: true,
-      hideInTable: true
-    },
-    {
       title: '操作',
       dataIndex: 'option',
       valueType: 'option',
       render: (_, record) => (
         <>
-          <Authorized authority="sys:user:del" noMatch={null}>
+          <Authorized authority="sys:organization:employee:del" noMatch={null}>
             <a disabled={record.userType === 1}
                onClick={() => {
                  Modal.confirm({
@@ -291,31 +148,38 @@ const TableList: React.FC<{}> = () => {
             </a>
             <Divider type="vertical"/>
           </Authorized>
-          <Authorized authority="sys:user:edit" noMatch={null}>
-            <a
-              disabled={record.userType === 1}
-              onClick={() => {
-                setUpdateFormValues(record);
-                handleUpdateModalVisible(true);
-              }}>
+          <Authorized authority="sys:organization:employee:edit" noMatch={null}>
+            <a disabled={record.userType === 1}
+               onClick={() => {
+                 setUpdateFormValues(record);
+                 handleUpdateModalVisible(true);
+               }}>
               编辑
             </a>
             <Divider type="vertical"/>
-          </Authorized>
-          <Authorized authority="sys:user:disable" noMatch={null}>
-            <a type="link" disabled={record.userType === 1} onClick={async () => {
-              const success = await handleDisable(record)
-              if (success && actionRef.current) {
-                actionRef.current.reload();
-              }
-            }}>
-              {record.disabled ? '启用' : '停用'}
-            </a>
           </Authorized>
         </>
       ),
     },
   ];
+  const institutionTree = () => {
+    if (!institutionTreeData || institutionTreeData.length === 0) {
+      return null;
+    }
+    return (
+      <Card>
+        <Tree blockNode
+              onClick={(_, dataNode) => {
+                if (actionRef.current && formRef.current) {
+                  formRef.current.resetFields()
+                  setInstId(dataNode.instId)
+                }
+              }}
+              height={500}
+              defaultExpandAll
+              treeData={institutionTreeData}/>
+      </Card>)
+  }
 
   useEffect(() => {
     loadInstitutions();
@@ -324,9 +188,9 @@ const TableList: React.FC<{}> = () => {
   return (
     <PageContainer>
       <ProTable<TableListItem>
-        formRef={formRef}
-        headerTitle="查询表格"
+        headerTitle="用户列表"
         actionRef={actionRef}
+        formRef={formRef}
         rowKey="id"
         params={{
           instId
@@ -335,8 +199,8 @@ const TableList: React.FC<{}> = () => {
           labelWidth: 120,
         }}
         toolBarRender={() => [
-          <Authorized authority="sys:user:add" noMatch={null}>
-            <Button key="1" type="primary" onClick={() => handleModalVisible(true)}>
+          <Authorized key="1" authority="sys:organization:employee:add" noMatch={null}>
+            <Button type="primary" onClick={() => handleModalVisible(true)}>
               <PlusOutlined/> 新建
             </Button>
           </Authorized>
@@ -358,18 +222,16 @@ const TableList: React.FC<{}> = () => {
           </Row>
         )}
       />
-      <CreateForm
-        institutions={institutions}
-        onFinish={(success) => {
-          if (success && actionRef.current) {
-            actionRef.current.reload();
-          }
-        }}
-        onClose={() => handleModalVisible(false)} modalVisible={createModalVisible}/>
+      <CreateForm onClose={() => handleModalVisible(false)}
+                  modalVisible={createModalVisible} institutions={institutions}
+                  onFinish={(success) => {
+                    if (success && actionRef.current) {
+                      actionRef.current.reload();
+                    }
+                  }}/>
 
       {updateFormValues && Object.keys(updateFormValues).length ? (
         <UpdateForm
-          institutions={institutions}
           modalVisible={updateModalVisible}
           onFinish={(success) => {
             if (success && actionRef.current) {
@@ -383,7 +245,7 @@ const TableList: React.FC<{}> = () => {
             }, 300)
           }}
           values={updateFormValues}
-        />
+          institutions={institutions}/>
       ) : null}
     </PageContainer>
   );

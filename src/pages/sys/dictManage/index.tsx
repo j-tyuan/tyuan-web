@@ -77,8 +77,8 @@ const TableList: React.FC<{}> = () => {
   const actionRef = useRef<ActionType>();
   const [row, setRow] = useState<TableListItem>();
   useEffect(() => {
-    getTypes().then(value => {
-      setTypes(value)
+    getTypes().then((value: any) => {
+      setTypes({...value})
     })
   }, [])
 
@@ -198,8 +198,8 @@ const TableList: React.FC<{}> = () => {
         }}
         toolBarRender={() => [
 
-          <Authorized authority="sys:dict:add" noMatch={null}>
-            <Button key="1" type="primary" onClick={() => handleModalVisible(true)}>
+          <Authorized key="1" authority="sys:dict:add" noMatch={null}>
+            <Button type="primary" onClick={() => handleModalVisible(true)}>
               <PlusOutlined/> 新建
             </Button>
           </Authorized>
