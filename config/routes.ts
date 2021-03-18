@@ -60,11 +60,6 @@
     component: './organization/institutionManage',
   },
   {
-    name: 'organization.employee',
-    path: '/organization/employee',
-    component: './organization/employeeManage',
-  },
-  {
     name: 'auth.user-manage',
     path: '/auth/user',
     component: './auth/userManage',
