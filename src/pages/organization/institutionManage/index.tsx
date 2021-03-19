@@ -1,12 +1,12 @@
 import {PlusOutlined} from '@ant-design/icons';
-import {Button, Card, Col, Divider, message, Modal, Skeleton, Spin} from 'antd';
+import {Button, Card, Col, Divider, message, Modal, Skeleton} from 'antd';
 import React, {useEffect, useRef, useState} from 'react';
 import {PageContainer} from '@ant-design/pro-layout';
 import ProTable, {ActionType, ProColumns} from '@ant-design/pro-table';
 import CreateForm from './components/CreateForm';
 import UpdateForm from './components/UpdateForm';
 import {TableListItem} from './data';
-import {getAll, remove} from './service';
+import {getInstAll, remove} from './service';
 import Authorized from "@/utils/Authorized";
 import Row from 'antd/es/row';
 import styles from './index.less';
@@ -48,18 +48,6 @@ const TableList: React.FC<{}> = () => {
   const actionRef = useRef<ActionType>();
   const columns: ProColumns<TableListItem>[] = [
     {
-      title: '机构编码',
-      dataIndex: 'instCode',
-      formItemProps: {
-        rules: [
-          {
-            required: true,
-            message: '名称为必填项',
-          },
-        ],
-      }
-    },
-    {
       title: "机构名称",
       dataIndex: "instName",
       formItemProps: {
@@ -70,6 +58,18 @@ const TableList: React.FC<{}> = () => {
           },
         ],
       },
+    },
+    {
+      title: '机构编码',
+      dataIndex: 'instCode',
+      formItemProps: {
+        rules: [
+          {
+            required: true,
+            message: '名称为必填项',
+          },
+        ],
+      }
     },
     {
       title: "机构类型",
@@ -165,7 +165,7 @@ const TableList: React.FC<{}> = () => {
   ];
   const loadData = async () => {
     setLoading(true)
-    getAll().then(e => {
+    getInstAll().then(e => {
       const {errorCode, data} = e;
       if (errorCode === -1) {
         setDataSource([...data])

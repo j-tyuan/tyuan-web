@@ -37,7 +37,7 @@ export async function update(params: TableListItem) {
   });
 }
 
-export async function getAll() {
+export async function getInstAll() {
   return request('/api/org/inst', {
     method: 'GET'
   });

@@ -6,8 +6,9 @@ import TextArea from "antd/es/input/TextArea";
 import KBPassword from "@/pages/auth/userManage/components/KBPassword";
 import {useIntl} from "umi";
 import {TableListItem} from "../data";
-import {update} from "@/pages/auth/userManage/service";
+import {update, uploadUserAvatarAction} from "@/pages/auth/userManage/service";
 import {findParentPathIds} from "@/utils/utils";
+import UploadAvatar from "@/pages/auth/userManage/components/UploadAvatar";
 
 interface UpdateFormProps {
   modalVisible: boolean;
@@ -107,6 +108,15 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
         <Form.Item
           name="email" label="电子邮箱">
           <Input/>
+        </Form.Item>
+        <Form.Item name="avatarId" label="头像">
+          <UploadAvatar avatarUrl={values.avatar} action={uploadUserAvatarAction} onUploadBack={(request) => {
+            if (formRef.current && request.errorCode === -1) {
+              formRef.current.setFieldsValue({
+                avatarId: request.data
+              })
+            }
+          }}/>
         </Form.Item>
         <Form.Item
           name="remarks" label="备注">

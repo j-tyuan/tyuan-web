@@ -1,14 +1,13 @@
-import React, {useEffect, useState} from 'react';
-import {Button, Cascader, Drawer, Form, Input, message, Radio, Select, Space} from 'antd';
+import React, {useState} from 'react';
+import {Button, Cascader, Drawer, Form, Input, message, Radio, Space} from 'antd';
 import {useIntl} from "umi";
 import {FormInstance} from "antd/es/form";
 import Settings from "../../../../../config/defaultSettings";
 import {TableListItem} from "../data";
-import {add, getAll} from "../service";
+import {add, getInstAll} from "../service";
 import {InputNumber} from 'antd/es';
+import {findParentPathIds} from "@/utils/utils";
 import UserSelect from "@/components/UserSelect";
-import {findParentPath, findParentPathIds} from "@/utils/utils";
-import EmployeeSelect from "@/components/EmployeeSelect";
 
 interface CreateFormProps {
   modalVisible: boolean;
@@ -45,7 +44,7 @@ const CreateForm: React.FC<CreateFormProps> = (props) => {
   const [institutions, setInstitutions] = useState<any[]>();
 
   const loadInstitutions = () => {
-    const promise = getAll();
+    const promise = getInstAll();
     promise.then(e => {
       const {errorCode, data} = e;
       if (errorCode === -1 && data) {
@@ -117,7 +116,7 @@ const CreateForm: React.FC<CreateFormProps> = (props) => {
           }} fieldNames={{label: "instName", value: "id"}}/>
         </Form.Item>
         <Form.Item name="ownerUserId" label="负责人" rules={[{required: true}]}>
-          <EmployeeSelect onChange={(data) => {
+          <UserSelect onChange={(data) => {
             if (formRef.current) {
               formRef.current.setFieldsValue({ownerUserId: data})
             }

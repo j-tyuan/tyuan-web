@@ -1,12 +1,13 @@
 import React, {useEffect, useState} from 'react';
-import {Button, Card, Col, Form, Image, Input, message, Modal, Row, Spin, Tabs, Tooltip} from "antd";
+import {Button, Card, Col, Form, Input, message, Modal, Row, Tabs, Tooltip} from "antd";
 import TextArea from "antd/es/input/TextArea";
-import {Space, Upload} from "antd/es";
-import {CheckOutlined, LoadingOutlined, PlusOutlined} from '@ant-design/icons';
+import {Space} from "antd/es";
+import {CheckOutlined} from '@ant-design/icons';
 import './style.less'
 import {useModel} from "@@/plugin-model/useModel";
 import {PureSettings} from "@ant-design/pro-layout/es/defaultSettings";
-import {setCustomLayout, update} from "./service";
+import {setCustomLayout, update, uploadAccountAvatarAction} from "./service";
+import UploadAvatar from "@/pages/auth/userManage/components/UploadAvatar";
 
 /**
  * 更新节点
@@ -28,26 +29,6 @@ const handleUpdate = async (fields: any) => {
     return false;
   }
 };
-
-const beforeUpload = (file) => {
-  const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
-  if (!isJpgOrPng) {
-    message.error('You can only upload JPG/PNG file!');
-  }
-  const isLt2M = file.size / 1024 / 1024 < 2;
-  if (!isLt2M) {
-    message.error('Image must smaller than 2MB!');
-  }
-  return isJpgOrPng && isLt2M;
-  return true;
-}
-
-const getBase64 = (img, callback) => {
-  const reader = new FileReader();
-  reader.addEventListener('load', () => callback(reader.result));
-  reader.readAsDataURL(img);
-}
-
 
 export interface CustomLayoutProps {
   type: string,
@@ -77,45 +58,7 @@ const Settings: React.FC<{}> = () => {
   const {initialState} = useModel('@@initialState');
   const {currentUser} = initialState;
   const [currentLayout, setCurrentLayout] = useState<PureSettings>();
-
   const [submitAccountLoading, setSubmitAccountLoading] = useState<boolean>();
-  const [uploadLoading, setUploadLoading] = useState<boolean>(false);
-  const [imageUrl, setImageUrl] = useState();
-
-  const handleChange = (info) => {
-    if (info.file.status === 'uploading') {
-      setUploadLoading(true);
-      return;
-    }
-    if (info.file.status === 'done') {
-      // Get this url from response in real world.
-      getBase64(info.file.originFileObj, (imageUrl) => {
-        setUploadLoading(false);
-        setImageUrl(imageUrl)
-      });
-    }
-  }
-
-
-  const uploadAvatar = (
-    <Upload
-      name="avatar"
-      listType="picture-card"
-      className="avatar-uploader"
-      showUploadList={false}
-      action="/api/account/photo"
-      beforeUpload={beforeUpload}
-      onChange={handleChange}
-    >
-      {imageUrl
-        ? <Spin spinning={uploadLoading}><Button type="dashed" style={{height: '100%', width: '100%'}}>
-          <img src={imageUrl} alt="avatar"
-               style={{width: '100%', height: '100px'}}/></Button></Spin>
-        : <Button type="dashed" style={{height: '100%', width: '100%'}} loading={uploadLoading}>
-          Upload
-        </Button>}
-    </Upload>
-  )
 
   const customLayoutHandel = (layout: any) => {
     const hide = message.loading({content: "正在加载.."});
@@ -137,7 +80,6 @@ const Settings: React.FC<{}> = () => {
 
   useEffect(() => {
     setCurrentLayout({...currentUser.layout})
-    setImageUrl(currentUser.photo)
   }, [])
 
   const baseInfoSettings = (
@@ -183,7 +125,13 @@ const Settings: React.FC<{}> = () => {
               {baseInfoSettings}
             </Col>
             <Col span={8}>
-              {uploadAvatar}
+              <UploadAvatar avatarUrl={currentUser.avatar} onUploadBack={(e) => {
+                if (e.errorCode === -1) {
+                  message.success({content: "更新成功"})
+                } else {
+                  message.success({content: "更新失败"})
+                }
+              }} action={uploadAccountAvatarAction}/>
             </Col>
             <Col span={11}>
               <Card title="整体风格" bordered={false}>

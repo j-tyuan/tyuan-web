@@ -6,7 +6,8 @@ import KBPassword from "@/pages/auth/userManage/components/KBPassword";
 import TextArea from "antd/es/input/TextArea";
 import {useIntl} from "umi";
 import {TableListItem} from "@/pages/auth/userManage/data";
-import {add} from "@/pages/auth/userManage/service";
+import {add, uploadUserAvatarAction} from "@/pages/auth/userManage/service";
+import UploadAvatar from './UploadAvatar';
 
 interface CreateFormProps {
   modalVisible: boolean;
@@ -97,6 +98,15 @@ const CreateForm: React.FC<CreateFormProps> = (props) => {
         <Form.Item
           name="email" label="电子邮箱">
           <Input/>
+        </Form.Item>
+        <Form.Item name="avatarId" label="头像">
+          <UploadAvatar action={uploadUserAvatarAction} onUploadBack={(request) => {
+            if (formRef.current && request.errorCode === -1) {
+              formRef.current.setFieldsValue({
+                avatarId: request.data
+              })
+            }
+          }}/>
         </Form.Item>
         <Form.Item
           name="remarks" label="备注">

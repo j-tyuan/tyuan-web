@@ -52,6 +52,7 @@
     "@ant-design/pro-table": "^2.9.5",
     "@umijs/route-utils": "^1.0.33",
     "antd": "^4.7.0",
+    "antd-img-crop": "^3.14.1",
     "classnames": "^2.2.6",
     "codemirror": "^5.59.3",
     "copy-to-clipboard": "^3.3.1",

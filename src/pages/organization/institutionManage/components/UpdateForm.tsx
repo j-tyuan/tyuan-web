@@ -4,11 +4,10 @@ import {TableListItem} from '../data';
 import {FormInstance} from "antd/es/form";
 import Settings from "../../../../../config/defaultSettings";
 import {useIntl} from "umi";
-import {getAll, update} from "../service";
-import UserSelect from "@/components/UserSelect";
+import {getInstAll, update} from "../service";
 import {InputNumber} from "antd/es";
-import {findParentPath, findParentPathIds} from "@/utils/utils";
-import EmployeeSelect from "@/components/EmployeeSelect";
+import {findParentPathIds} from "@/utils/utils";
+import UserSelect from "@/components/UserSelect";
 
 
 export interface UpdateFormProps {
@@ -48,7 +47,7 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
   const [institutions, setInstitutions] = useState<any[]>();
 
   const loadInstitutions = () => {
-    const promise = getAll();
+    const promise = getInstAll();
     promise.then(e => {
       const {errorCode, data} = e;
       if (errorCode === -1 && data) {
@@ -120,7 +119,7 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
           }} fieldNames={{label: "instName", value: "id"}}/>
         </Form.Item>
         <Form.Item name="ownerUserId" label="负责人" rules={[{required: true}]}>
-          <EmployeeSelect uid={values.ownerUserId} onChange={(data) => {
+          <UserSelect uid={values.ownerUserId} onChange={(data) => {
             if (formRef.current) {
               formRef.current.setFieldsValue({ownerUserId: data})
             }

@@ -50,7 +50,6 @@ const loadUserInfo = async () => {
     // @ts-ignore
     const {data} = accountInfo;
     const {account, layout} = data;
-
     const user = {
       ...account,
       layout

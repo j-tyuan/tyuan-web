@@ -1,16 +1,15 @@
-import {PlusOutlined} from '@ant-design/icons';
-import {Button, Card, Col, Divider, message, Modal, Row, Tooltip, Tree} from 'antd';
+import {PlusOutlined, UserOutlined} from '@ant-design/icons';
+import {Avatar, Button, Card, Col, Divider, message, Modal, Row, Skeleton, Tooltip, Tree} from 'antd';
 import React, {useEffect, useRef, useState} from 'react';
 import {PageContainer} from '@ant-design/pro-layout';
 import ProTable, {ActionType, ProColumns} from '@ant-design/pro-table';
 import CreateForm from './components/CreateForm';
 import UpdateForm from './components/UpdateForm';
 import {TableListItem} from './data';
-import {add, disable, query, remove} from './service';
-import Settings from "../../../../config/defaultSettings";
+import {disable, query, remove} from './service';
 import KBPassword from "./components/KBPassword";
 import Authorized from "@/utils/Authorized";
-import {getAll} from "@/pages/organization/institutionManage/service";
+import {getInstAll} from "@/pages/organization/institutionManage/service";
 import {FormInstance} from "antd/es/form";
 import {findParentPath} from "@/utils/utils";
 
@@ -88,7 +87,7 @@ const TableList: React.FC<{}> = () => {
   const [institutions, setInstitutions] = useState<any[]>([]);
   const [institutionTreeData, setInstitutionTreeData] = useState<any[]>();
   const loadInstitutions = () => {
-    const promise = getAll();
+    const promise = getInstAll();
     promise.then(e => {
       const {errorCode, data} = e;
       if (errorCode === -1 && data) {
@@ -100,7 +99,12 @@ const TableList: React.FC<{}> = () => {
   }
   const institutionTree = () => {
     if (!institutionTreeData || institutionTreeData.length === 0) {
-      return null;
+      return <>
+        <Card style={{height: "400px"}}>
+          <Skeleton active/>
+          <Skeleton active/>
+        </Card>
+      </>;
     }
     return (
       <Card>
@@ -165,6 +169,15 @@ const TableList: React.FC<{}> = () => {
             message: '必填项',
           },
         ],
+      }
+    },
+    {
+      title: "头像",
+      dataIndex: "avatar",
+      search: false,
+      hideInForm: true,
+      render(_) {
+        return (<Avatar shape="circle" size={32} icon={<UserOutlined/>} src={_}/>)
       }
     },
     {

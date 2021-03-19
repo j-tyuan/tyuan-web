@@ -1,6 +1,8 @@
 import {request} from 'umi';
 import {TableListParams, TableListItem} from './data';
 
+export const uploadUserAvatarAction ="/api/sys/user/avatar"
+
 export async function query(params?: TableListParams) {
   const result = await request('/api/sys/user', {
     method: 'POST',

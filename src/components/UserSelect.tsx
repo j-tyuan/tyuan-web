@@ -75,10 +75,8 @@ interface UserValue {
 
 function Item(data: any) {
   const {item} = data;
-  const {on, name, phone} = item
+  const {name, phone} = item
   return (<>
-    {on}
-    <Divider type="vertical"/>
     {name}
     <Divider type="vertical"/>
     {phone}
