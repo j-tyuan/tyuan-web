@@ -66,11 +66,24 @@ export async function queryUser(name?: string, phone?: any) {
 }
 
 
-export async function getAuthByUid(uid: any) {
-  return request(`/api/sys/role/auth/${uid}`);
+export async function getAuthByRoleId(roleId: any) {
+  return request(`/api/sys/role/auth/${roleId}`);
 }
 
+export async function getByRoles() {
+  return request(`/api/sys/role`);
+}
 
 export async function getByPermission() {
   return request(`/api/sys/permission`);
+}
+
+
+export const loadRoles = async () => {
+  const result = await getByRoles();
+  const {errorCode, data} = result;
+  if (errorCode === -1) {
+    return data;
+  }
+  return [];
 }

@@ -12,6 +12,7 @@ import Authorized from "@/utils/Authorized";
 import {getInstAll} from "@/pages/organization/institutionManage/service";
 import {FormInstance} from "antd/es/form";
 import {findParentPath} from "@/utils/utils";
+import {loadRoles} from '../roleManage/service';
 
 
 const handleDisable = async (row: TableListItem) => {
@@ -86,6 +87,7 @@ const TableList: React.FC<{}> = () => {
   const [instId, setInstId] = useState<any>();
   const [institutions, setInstitutions] = useState<any[]>([]);
   const [institutionTreeData, setInstitutionTreeData] = useState<any[]>();
+  const [roles, setRoles] = useState<any[]>();
   const loadInstitutions = () => {
     const promise = getInstAll();
     promise.then(e => {
@@ -120,6 +122,7 @@ const TableList: React.FC<{}> = () => {
               treeData={institutionTreeData}/>
       </Card>)
   }
+
   const columns: ProColumns<TableListItem>[] = [
     {
       title: "员工编号",
@@ -281,7 +284,7 @@ const TableList: React.FC<{}> = () => {
       valueType: 'option',
       render: (_, record) => (
         <>
-          <Authorized authority="sys:user:del" noMatch={null}>
+          <Authorized key="1" authority="sys:user:del" noMatch={null}>
             <a disabled={record.userType === 1}
                onClick={() => {
                  Modal.confirm({
@@ -304,7 +307,7 @@ const TableList: React.FC<{}> = () => {
             </a>
             <Divider type="vertical"/>
           </Authorized>
-          <Authorized authority="sys:user:edit" noMatch={null}>
+          <Authorized key="2" authority="sys:user:edit" noMatch={null}>
             <a
               disabled={record.userType === 1}
               onClick={() => {
@@ -315,7 +318,7 @@ const TableList: React.FC<{}> = () => {
             </a>
             <Divider type="vertical"/>
           </Authorized>
-          <Authorized authority="sys:user:disable" noMatch={null}>
+          <Authorized key="3" authority="sys:user:disable" noMatch={null}>
             <a type="link" disabled={record.userType === 1} onClick={async () => {
               const success = await handleDisable(record)
               if (success && actionRef.current) {
@@ -331,6 +334,10 @@ const TableList: React.FC<{}> = () => {
   ];
 
   useEffect(() => {
+    const promise = loadRoles();
+    promise.then(arr => {
+      setRoles([...arr])
+    })
     loadInstitutions();
   }, [])
 
@@ -348,8 +355,8 @@ const TableList: React.FC<{}> = () => {
           labelWidth: 120,
         }}
         toolBarRender={() => [
-          <Authorized authority="sys:user:add" noMatch={null}>
-            <Button key="1" type="primary" onClick={() => handleModalVisible(true)}>
+          <Authorized key="1" authority="sys:user:add" noMatch={null}>
+            <Button type="primary" onClick={() => handleModalVisible(true)}>
               <PlusOutlined/> 新建
             </Button>
           </Authorized>
@@ -373,6 +380,7 @@ const TableList: React.FC<{}> = () => {
       />
       <CreateForm
         institutions={institutions}
+        roles={roles}
         onFinish={(success) => {
           if (success && actionRef.current) {
             actionRef.current.reload();
@@ -382,6 +390,7 @@ const TableList: React.FC<{}> = () => {
 
       {updateFormValues && Object.keys(updateFormValues).length ? (
         <UpdateForm
+          roles={roles}
           institutions={institutions}
           modalVisible={updateModalVisible}
           onFinish={(success) => {

@@ -6,7 +6,7 @@ import ProTable, {ActionType, ProColumns} from '@ant-design/pro-table';
 import CreateForm from './components/CreateForm';
 import UpdateForm from './components/UpdateForm';
 import {TableListItem} from './data';
-import {getAuthByUid, getByPermission, query, remove} from './service';
+import {getAuthByRoleId, getByPermission, query, remove} from './service';
 import ConfigUser from "./components/ConfigUser";
 import Authorized from "@/utils/Authorized";
 
@@ -161,7 +161,7 @@ const TableList: React.FC<{}> = () => {
           <Authorized authority="sys:role:del" noMatch={null}>
             <a onClick={() => {
               setUpdateFormValue(record);
-              const promise = getAuthByUid(record.id)
+              const promise = getAuthByRoleId(record.id)
               promise.then(e => {
                 setInitSelectAuth(e.data)
                 handleUpdateModalVisible(true);

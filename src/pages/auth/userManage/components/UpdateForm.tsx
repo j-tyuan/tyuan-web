@@ -9,6 +9,7 @@ import {TableListItem} from "../data";
 import {update, uploadUserAvatarAction} from "@/pages/auth/userManage/service";
 import {findParentPathIds} from "@/utils/utils";
 import UploadAvatar from "@/pages/auth/userManage/components/UploadAvatar";
+import RoleSelect from "@/pages/auth/userManage/components/RoleSelect";
 
 interface UpdateFormProps {
   modalVisible: boolean;
@@ -16,6 +17,7 @@ interface UpdateFormProps {
   values: TableListItem;
   onFinish: (success: boolean) => void;
   institutions: any[];
+  roles?: any[];
 }
 
 /**
@@ -40,7 +42,7 @@ const handleUpdate = async (fields: TableListItem) => {
 };
 
 const UpdateForm: React.FC<UpdateFormProps> = (props) => {
-  const {modalVisible, onClose, onFinish, institutions, values} = props;
+  const {modalVisible, onClose, onFinish, institutions, values, roles} = props;
   const [loading, setLoading] = useState<boolean>(false);
   const formRef = React.createRef<FormInstance>();
   useEffect(() => {
@@ -56,7 +58,7 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
     <Drawer
       destroyOnClose
       title="编辑管理员"
-      width={Settings.form.drawer.width}
+      width={800}
       visible={modalVisible}
       onClose={() => onClose()}
       footer={null}
@@ -114,6 +116,15 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
             if (formRef.current && request.errorCode === -1) {
               formRef.current.setFieldsValue({
                 avatarId: request.data
+              })
+            }
+          }}/>
+        </Form.Item>
+        <Form.Item name="roleIds" label="选择角色">
+          <RoleSelect roles={roles} uid={values.id} onChange={(ids) => {
+            if (formRef.current) {
+              formRef.current.setFieldsValue({
+                roleIds: ids
               })
             }
           }}/>

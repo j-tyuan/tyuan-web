@@ -80,7 +80,7 @@ const loadPermissions = () => {
  */
 export async function getInitialState(): Promise<{
   settings?: LayoutSettings;
-  menuData: MenuDataItem[];
+  menuData?: MenuDataItem[];
   currentUser?: API.CurrentUser;
 }> {
 
@@ -101,7 +101,7 @@ export async function getInitialState(): Promise<{
       settings: {...defaultSettings},
     };
   }
-  return null;
+  return {};
 }
 
 /**

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {Divider, Select} from 'antd';
 import {SelectProps} from 'antd/es/select';
 import {Spin} from 'antd/es';

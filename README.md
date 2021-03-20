@@ -3,7 +3,7 @@
 
 # 部署方式：
 
-###Nginx:
+###Nginx （推荐使用：Tengine）:
 
     server {
             listen 8848;
@@ -62,3 +62,15 @@
     Cache-Control: max-age=315360000
     Cache-Control: public
     Content-Encoding: gzip   <------ 返回则代表配置成功
+
+##### 在客户端缓存时间 - 本人没有测试
+    
+    #意思是当用户访问ur结尾的文件扩展名为上述指定类型的图片时,设置缓存3650天,即1年.
+    location ~.*\.(git|jpg|jpeg|png|bmp|swf)$ { 
+            expires 2650d;  
+    }
+    
+    #意思是当前用户访问网站url结尾的文件扩展名为js,css类型元素进,设置存存30天.
+    location ~ .*\.(js|css)?$ {
+              expires 30d;   
+    }

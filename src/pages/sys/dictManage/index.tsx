@@ -1,9 +1,8 @@
 import {PlusOutlined} from '@ant-design/icons';
-import {Button, Divider, Drawer, message, Modal} from 'antd';
+import {Button, Divider, message, Modal} from 'antd';
 import React, {useEffect, useRef, useState} from 'react';
 import {PageContainer} from '@ant-design/pro-layout';
 import ProTable, {ActionType, ProColumns} from '@ant-design/pro-table';
-import ProDescriptions from '@ant-design/pro-descriptions';
 import CreateForm from './components/CreateForm';
 import UpdateForm from './components/UpdateForm';
 import {TableListItem} from './data';
@@ -69,17 +68,24 @@ const getTypes = async () => {
   return type;
 };
 
+let TYPES = {};
+
 const TableList: React.FC<{}> = () => {
   const [types, setTypes] = useState<any>()
   const [createModalVisible, handleModalVisible] = useState<boolean>(false);
   const [updateModalVisible, handleUpdateModalVisible] = useState<boolean>(false);
   const [updateFormValues, setUpdateFormValues] = useState({});
   const actionRef = useRef<ActionType>();
-  const [row, setRow] = useState<TableListItem>();
+
   useEffect(() => {
-    getTypes().then((value: any) => {
-      setTypes({...value})
-    })
+    if (Object.keys(TYPES).length >= 1) {
+      setTypes({...TYPES})
+    } else {
+      getTypes().then((value: any) => {
+        setTypes({...value})
+        TYPES = {...value}
+      })
+    }
   }, [])
 
   const columns: ProColumns<TableListItem>[] = [
@@ -93,10 +99,7 @@ const TableList: React.FC<{}> = () => {
             message: '标签为必填项',
           },
         ],
-      },
-      render: (dom, entity) => {
-        return <a onClick={() => setRow(entity)}>{dom}</a>;
-      },
+      }
     },
     {
       title: "字典类型",
@@ -197,7 +200,6 @@ const TableList: React.FC<{}> = () => {
           labelWidth: 120,
         }}
         toolBarRender={() => [
-
           <Authorized key="1" authority="sys:dict:add" noMatch={null}>
             <Button type="primary" onClick={() => handleModalVisible(true)}>
               <PlusOutlined/> 新建
@@ -244,29 +246,6 @@ const TableList: React.FC<{}> = () => {
           values={updateFormValues}
         />
       ) : null}
-
-      <Drawer
-        width={600}
-        visible={!!row}
-        onClose={() => {
-          setRow(undefined);
-        }}
-        closable={false}
-      >
-        {row?.label && (
-          <ProDescriptions<TableListItem>
-            column={2}
-            title={row?.label}
-            request={async () => ({
-              data: row || {},
-            })}
-            params={{
-              id: row?.label,
-            }}
-            columns={columns}
-          />
-        )}
-      </Drawer>
     </PageContainer>
   );
 };

@@ -56,6 +56,7 @@ export const CostomLayout: React.FC<CustomLayoutProps> = (props) => {
 
 const Settings: React.FC<{}> = () => {
   const {initialState} = useModel('@@initialState');
+  // @ts-ignore
   const {currentUser} = initialState;
   const [currentLayout, setCurrentLayout] = useState<PureSettings>();
   const [submitAccountLoading, setSubmitAccountLoading] = useState<boolean>();
@@ -70,6 +71,7 @@ const Settings: React.FC<{}> = () => {
       if (errorCode === -1) {
         Modal.confirm({
           content: "主题修改成功，是否刷新页面？", onOk() {
+            // eslint-disable-next-line no-self-assign
             window.location.href = window.location.href;
           }
         })

@@ -8,12 +8,14 @@ import {useIntl} from "umi";
 import {TableListItem} from "@/pages/auth/userManage/data";
 import {add, uploadUserAvatarAction} from "@/pages/auth/userManage/service";
 import UploadAvatar from './UploadAvatar';
+import RoleSelect from "@/pages/auth/userManage/components/RoleSelect";
 
 interface CreateFormProps {
   modalVisible: boolean;
   onClose: () => void;
   onFinish: (success: boolean) => void;
-  institutions: any[]
+  institutions: any[];
+  roles?: any[];
 }
 
 /**
@@ -42,7 +44,7 @@ const handleAdd = async (fields: TableListItem) => {
 
 
 const CreateForm: React.FC<CreateFormProps> = (props) => {
-  const {modalVisible, onClose, onFinish, institutions} = props;
+  const {modalVisible, onClose, onFinish, institutions, roles} = props;
   const [loading, setLoading] = useState<boolean>(false);
   const formRef = React.createRef<FormInstance>();
 
@@ -50,7 +52,7 @@ const CreateForm: React.FC<CreateFormProps> = (props) => {
     <Drawer
       destroyOnClose
       title="编辑管理员"
-      width={Settings.form.drawer.width}
+      width={800}
       visible={modalVisible}
       onClose={() => onClose()}
       footer={null}
@@ -104,6 +106,15 @@ const CreateForm: React.FC<CreateFormProps> = (props) => {
             if (formRef.current && request.errorCode === -1) {
               formRef.current.setFieldsValue({
                 avatarId: request.data
+              })
+            }
+          }}/>
+        </Form.Item>
+        <Form.Item name="roleIds" label="选择角色">
+          <RoleSelect roles={roles} onChange={(roleIds) => {
+            if (formRef.current) {
+              formRef.current.setFieldsValue({
+                roleIds
               })
             }
           }}/>

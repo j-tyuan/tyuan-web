@@ -5,7 +5,7 @@ export interface TableListItem {
   updateDate: Date;
   createDate: Date;
 
-  no: string,
+  userNo: string,
   name: string;
   href: string;
   target: string;
@@ -17,6 +17,7 @@ export interface TableListItem {
   permissionId?: any;
   children: Array;
   instId: any;
+  avatar: any;
 
   createBy: string;
   updateBy: string;
