@@ -181,7 +181,7 @@ const TableList: React.FC<{}> = () => {
   return (
     <PageContainer>
       {
-        dataSource && dataSource.length >= 0 ? (
+        dataSource ? (
           <ProTable<TableListItem>
             defaultExpandAllRows
             footer={() => {
@@ -222,15 +222,23 @@ const TableList: React.FC<{}> = () => {
             <Skeleton active loading/>
           </Card>)
       }
-      <CreateForm parentId={parentId} onFinish={() => {
-        if (actionRef.current) {
-          actionRef.current.reload();
-        }
-      }} onClose={() => handleModalVisible(false)} modalVisible={createModalVisible}/>
+      {
+        dataSource ? (
+          <CreateForm
+            institutions={dataSource}
+            parentId={parentId}
+            onFinish={() => {
+              if (actionRef.current) {
+                actionRef.current.reload();
+              }
+            }} onClose={() => handleModalVisible(false)} modalVisible={createModalVisible}/>
+        ) : null
+      }
 
       {updateFormValues && Object.keys(updateFormValues).length ? (
         <Authorized authority="sys:organize:institution:edit" noMatch={null}>
           <UpdateForm
+            institutions={dataSource}
             modalVisible={updateModalVisible}
             onFinish={(success) => {
               if (success && actionRef.current) {

@@ -7,8 +7,8 @@ import CreateForm from './components/CreateForm';
 import UpdateForm from './components/UpdateForm';
 import {TableListItem} from './data';
 import {getAuthByRoleId, getByPermission, query, remove} from './service';
-import ConfigUser from "./components/ConfigUser";
 import Authorized from "@/utils/Authorized";
+import {Link} from 'umi';
 
 
 /**
@@ -38,7 +38,11 @@ const handleRemove = async (selectedRows: TableListItem[]) => {
 
 const handlePermission = async () => {
   const permission = await getByPermission();
-  return permission.data;
+  const {errorCode, data} = permission;
+  if (errorCode === -1) {
+    return data;
+  }
+  return [];
 }
 
 const loop = (treeData, pid: any) => {
@@ -71,7 +75,6 @@ const getOneLevelId = (treeData: any[]) => {
 
 
 const TableList: React.FC<{}> = () => {
-  const [configUserModalVisible, handleConfigUserModalVisible] = useState<boolean>(false);
   const [createModalVisible, handleModalVisible] = useState<boolean>(false);
   const [updateModalVisible, handleUpdateModalVisible] = useState<boolean>(false);
   const [updateFormValue, setUpdateFormValue] = useState({});
@@ -172,11 +175,17 @@ const TableList: React.FC<{}> = () => {
             <Divider type="vertical"/>
           </Authorized>
           <Authorized authority="sys:role:binduser" noMatch={null}>
+            <Link to={{
+              pathname: "/auth/role/user",
+              state: {roleId: record.id}
+            }}>用户列表</Link>
+            <Divider type="vertical"/>
+          </Authorized>
+          <Authorized authority="sys:role:binduser" noMatch={null}>
             <a onClick={() => {
               setUpdateFormValue(record);
-              handleConfigUserModalVisible(true);
             }}>
-              管理员列表
+              绑定用户
             </a>
           </Authorized>
         </>
@@ -196,7 +205,7 @@ const TableList: React.FC<{}> = () => {
         }}
         toolBarRender={() => [
           <Authorized key="1" authority="sys:role:add" noMatch={null}>
-            <Button  type="primary" onClick={() => handleModalVisible(true)}>
+            <Button type="primary" onClick={() => handleModalVisible(true)}>
               <PlusOutlined/> 新建
             </Button>
           </Authorized>
@@ -204,12 +213,6 @@ const TableList: React.FC<{}> = () => {
         request={(params, sorter, filter) => query({...params, sorter, filter})}
         columns={columns}
       />
-
-      {updateFormValue && Object.keys(updateFormValue).length ? (
-        <ConfigUser
-          onClose={() => handleConfigUserModalVisible(false)}
-          roleId={updateFormValue.id}
-          modalVisible={configUserModalVisible}/>) : null}
 
       {updateFormValue && Object.keys(updateFormValue).length ? (
         <UpdateForm

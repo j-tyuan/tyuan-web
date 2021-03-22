@@ -47,6 +47,37 @@ export async function queryBindUser(params: any) {
   });
 }
 
+export async function bindUser(roleId: any, userIds: any[]) {
+  return request(`/api/sys/role/user/bind`, {
+    method: 'POST',
+    data: {
+      roleId,
+      userIds
+    }
+  });
+}
+
+export async function unbindUser(roleId: any, userIds: any) {
+  return request(`/api/sys/role/user/unbind`, {
+    method: 'POST',
+    data: {
+      roleId,
+      userIds
+    }
+  });
+}
+
+
+export async function queryUser(name?: string, phone?: any) {
+  return request(`/api/sys/users`, {
+    method: 'GET',
+    data: {
+      name,
+      phone
+    }
+  });
+}
+
 
 export async function getAuthByRoleId(roleId: any) {
   return request(`/api/sys/role/auth/${roleId}`);

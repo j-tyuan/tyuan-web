@@ -1,18 +1,18 @@
-import {UserOutlined} from '@ant-design/icons';
-import {Avatar, Divider, message, Modal, Tooltip} from 'antd';
+import {PlusOutlined, UserOutlined} from '@ant-design/icons';
+import {Avatar, Button, Card, Col, Divider, message, Modal, Row, Skeleton, Tooltip, Tree} from 'antd';
 import React, {useEffect, useRef, useState} from 'react';
 import {PageContainer} from '@ant-design/pro-layout';
-import {ActionType, ProColumns} from '@ant-design/pro-table';
+import ProTable, {ActionType, ProColumns} from '@ant-design/pro-table';
 import CreateForm from './components/CreateForm';
 import UpdateForm from './components/UpdateForm';
 import {TableListItem} from './data';
-import {disable, remove} from './service';
+import {disable, query, remove} from './service';
 import KBPassword from "./components/KBPassword";
 import Authorized from "@/utils/Authorized";
 import {getInstAll} from "@/pages/organization/institutionManage/service";
+import {FormInstance} from "antd/es/form";
 import {findParentPath} from "@/utils/utils";
 import {loadRoles} from '../roleManage/service';
-import ProUserTable from "@/components/ProUserTable";
 
 
 const handleDisable = async (row: TableListItem) => {
@@ -60,13 +60,33 @@ const handleRemove = async (selectedRows: TableListItem[]) => {
   }
 };
 
+const instTreeToTree = (data: any []) => {
+  const tree = data.map((e: any) => {
+    const isLeaf = e.children && e.children.length > 0
+    let children: any[] = [];
+    if (isLeaf) {
+      children = instTreeToTree(e.children)
+    }
+    return {
+      title: e.instName,
+      instId: e.id,
+      key: e.id,
+      isLeaf: !isLeaf,
+      children
+    }
+  })
+  return tree;
+}
 
 const TableList: React.FC<{}> = () => {
   const [createModalVisible, handleModalVisible] = useState<boolean>(false);
   const [updateModalVisible, handleUpdateModalVisible] = useState<boolean>(false);
   const [updateFormValues, setUpdateFormValues] = useState<any>({});
   const actionRef = useRef<ActionType>();
+  const formRef = useRef<FormInstance>();
+  const [instId, setInstId] = useState<any>();
   const [institutions, setInstitutions] = useState<any[]>([]);
+  const [institutionTreeData, setInstitutionTreeData] = useState<any[]>();
   const [roles, setRoles] = useState<any[]>();
   const loadInstitutions = () => {
     const promise = getInstAll();
@@ -74,8 +94,33 @@ const TableList: React.FC<{}> = () => {
       const {errorCode, data} = e;
       if (errorCode === -1 && data) {
         setInstitutions([...data])
+        const newData = instTreeToTree([...data])
+        setInstitutionTreeData([...newData]);
       }
     })
+  }
+  const institutionTree = () => {
+    if (!institutionTreeData || institutionTreeData.length === 0) {
+      return <>
+        <Card style={{height: "400px"}}>
+          <Skeleton active/>
+          <Skeleton active/>
+        </Card>
+      </>;
+    }
+    return (
+      <Card>
+        <Tree blockNode
+              onClick={(_, dataNode) => {
+                if (actionRef.current && formRef.current) {
+                  formRef.current.resetFields()
+                  setInstId(dataNode.instId)
+                }
+              }}
+              height={500}
+              defaultExpandAll
+              treeData={institutionTreeData}/>
+      </Card>)
   }
 
   const columns: ProColumns<TableListItem>[] = [
@@ -298,7 +343,41 @@ const TableList: React.FC<{}> = () => {
 
   return (
     <PageContainer>
-      <ProUserTable ProUserTableProps={{institutions}} ProUserTableOptions={{columns, headerTitle: "用户列表"}}/>
+      <ProTable<TableListItem>
+        formRef={formRef}
+        headerTitle="查询表格"
+        actionRef={actionRef}
+        rowKey="id"
+        params={{
+          instId
+        }}
+        search={{
+          labelWidth: 120,
+        }}
+        toolBarRender={() => [
+          <Authorized key="1" authority="sys:user:add" noMatch={null}>
+            <Button type="primary" onClick={() => handleModalVisible(true)}>
+              <PlusOutlined/> 新建
+            </Button>
+          </Authorized>
+        ]}
+        request={(params, sorter, filter) => query({...params, sorter, filter})}
+        columns={columns}
+        tableRender={(_, dom) => (
+          <Row gutter={[10, 10]}>
+            <Col span={4}>
+              {
+                institutionTree()
+              }
+            </Col>
+            <Col span={20}>
+              {
+                dom
+              }
+            </Col>
+          </Row>
+        )}
+      />
       <CreateForm
         institutions={institutions}
         roles={roles}

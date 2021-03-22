@@ -1,13 +1,15 @@
 import {PlusOutlined} from '@ant-design/icons';
-import {Button, Divider, message, Modal} from 'antd';
+import {Button, Card, Col, Divider, message, Modal, Skeleton} from 'antd';
 import React, {useEffect, useRef, useState} from 'react';
 import {PageContainer} from '@ant-design/pro-layout';
 import ProTable, {ActionType, ProColumns} from '@ant-design/pro-table';
 import CreateForm from './components/CreateForm';
 import UpdateForm from './components/UpdateForm';
 import {TableListItem} from './data';
-import {getByParentId, getByPermission, query, remove} from './service';
+import {getByPermission, getSourceAll, remove} from './service';
 import Authorized from "@/utils/Authorized";
+import styles from "./index.less";
+import Row from "antd/es/row";
 
 
 /**
@@ -40,27 +42,56 @@ const handlePermission = async () => {
   return permission.data;
 }
 
+/**
+ * 预处理
+ * 禁用子节点
+ * @param data
+ */
+export const preprocessDataSource = (data?: any[]) => {
+  const newData: any[] = []
+  data?.forEach(e => {
+    if (e.isLeaf) {
+      e.disabled = true;
+    } else {
+      const val = preprocessDataSource(e.children);
+      e.children = [...val];
+    }
+    newData.push({...e})
+  })
+  return newData;
+}
+
+
 const TableList: React.FC<{}> = () => {
   const [createModalVisible, handleModalVisible] = useState<boolean>(false);
   const [updateModalVisible, handleUpdateModalVisible] = useState<boolean>(false);
   const [updateFormValues, setUpdateFormValues] = useState({});
   const actionRef = useRef<ActionType>();
-  const [, setRowLoading] = useState<boolean>();
   const [permission, setPermission] = useState([]);
+  const [loading, setLoading] = useState<boolean>();
+  const [dataSource, setDataSource] = useState<any[]>();
+  const [parentId, setParentId] = useState<any>();
+
+  const loadData = async () => {
+    setLoading(true)
+    getSourceAll().then(e => {
+      const {errorCode, data} = e;
+      if (errorCode === -1) {
+        setDataSource(preprocessDataSource([...data]))
+      }
+      setLoading(false)
+    })
+  }
 
   useEffect(() => {
     const p = handlePermission();
     p.then(e => {
       setPermission(e)
     })
+    loadData();
   }, [])
 
   const columns: ProColumns<TableListItem>[] = [
-    {
-      dataIndex: 'id',
-      search: false,
-      hideInTable: true
-    },
     {
       title: '资源名称',
       dataIndex: 'name',
@@ -128,24 +159,23 @@ const TableList: React.FC<{}> = () => {
       valueType: 'option',
       render: (_, record) => (
         <>
-
           <Authorized authority="sys:source:del" noMatch={null}>
             <a onClick={() => {
-                Modal.confirm({
-                  title: "您确定删除？",
-                  okText: "确定",
-                  cancelText: "取消",
-                  onOk() {
-                    const state = handleRemove([record]);
-                    state.then(() => {
-                      if (actionRef.current) {
-                        actionRef.current.reload();
-                      }
-                    })
-                  }
-                })
-              }
-              }
+              Modal.confirm({
+                title: "您确定删除？",
+                okText: "确定",
+                cancelText: "取消",
+                onOk() {
+                  const state = handleRemove([record]);
+                  state.then(() => {
+                    if (actionRef.current) {
+                      actionRef.current.reload();
+                    }
+                  })
+                }
+              })
+            }
+            }
             >
               删除
             </a>
@@ -158,6 +188,15 @@ const TableList: React.FC<{}> = () => {
             }}>
               编辑
             </a>
+            <Divider type="vertical"/>
+          </Authorized>
+          <Authorized authority="sys:source:edit" noMatch={null}>
+            <a disabled={record.isLeaf} onClick={() => {
+              setParentId(record.id)
+              handleModalVisible(true);
+            }}>
+              创建下级节点
+            </a>
           </Authorized>
         </>
       ),
@@ -166,38 +205,53 @@ const TableList: React.FC<{}> = () => {
 
   return (
     <PageContainer>
-      <ProTable<TableListItem>
-        headerTitle="查询表格"
-        actionRef={actionRef}
-        rowKey="id"
-        search={{
-          labelWidth: 120,
-        }}
-        toolBarRender={() => [
-          <Authorized key="1" authority="sys:source:add" noMatch={null}>
-            <Button type="primary" onClick={() => handleModalVisible(true)}>
-              <PlusOutlined/> 新建
-            </Button>
-          </Authorized>
-        ]}
-        request={(params, sorter, filter) => query({...params, sorter, filter})}
-        columns={columns}
-        onExpand={async (expanded: boolean, record: TableListItem) => {
-          if (!expanded) {
-            return;
-          }
-          setRowLoading(true)
-          const {data} = await getByParentId({parentId: record.id});
-          // eslint-disable-next-line no-param-reassign
-          record.children.length = 0;
-          record.children.push(...data)
-          setRowLoading(false)
-        }}
-      />
+      {
+        dataSource ? <ProTable<TableListItem>
+            defaultExpandAllRows
+            headerTitle="菜单列表"
+            pagination={false}
+            actionRef={actionRef}
+            footer={() => {
+              return <>
+                <Row justify="end">
+                  <Col>
+                    <span className={styles.textColorSecondary}>菜单列表</span>
+                  </Col>
+                </Row>
+              </>
+            }}
+            rowKey="id"
+            loading={loading}
+            onLoad={async () => {
+              loadData();
+            }}
+            search={false}
+            dataSource={dataSource}
+            toolBarRender={() => [
+              <Authorized key="1" authority="sys:source:add" noMatch={null}>
+                <Button type="primary" onClick={() => {
+                  setParentId(0);
+                  handleModalVisible(true);
+                }}>
+                  <PlusOutlined/> 新建
+                </Button>
+              </Authorized>
+            ]}
+            columns={columns}
+          />
+          : (
+            <Card className={styles.bodyBackground}>
+              <Skeleton active loading/>
+              <Skeleton active loading/>
+              <Skeleton active loading/>
+            </Card>)
+      }
 
-      {permission && permission.length ? (
+      {dataSource && permission ? (
         <CreateForm
           permission={permission}
+          dataSource={dataSource}
+          parentId={parentId}
           onFinish={(success) => {
             if (success && actionRef.current) {
               actionRef.current.reload();
@@ -207,6 +261,7 @@ const TableList: React.FC<{}> = () => {
 
       {updateFormValues && Object.keys(updateFormValues).length ? (
         <UpdateForm
+          dataSources={dataSource}
           permission={permission}
           modalVisible={updateModalVisible}
           onFinish={(success) => {

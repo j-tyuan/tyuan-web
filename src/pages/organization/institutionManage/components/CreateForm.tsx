@@ -14,6 +14,7 @@ interface CreateFormProps {
   onClose: () => void;
   parentId: any;
   onFinish: (data: any) => void;
+  institutions: any[]
 }
 
 /**
@@ -38,29 +39,9 @@ const handleAdd = async (fields: TableListItem) => {
 };
 
 const CreateForm: React.FC<CreateFormProps> = (props) => {
-  const {modalVisible, onClose, onFinish, parentId} = props;
+  const {modalVisible, onClose, onFinish, parentId, institutions} = props;
   const [loading, setLoading] = useState<boolean>(false);
   const formRef = React.createRef<FormInstance>();
-  const [institutions, setInstitutions] = useState<any[]>();
-
-  const loadInstitutions = () => {
-    const promise = getInstAll();
-    promise.then(e => {
-      const {errorCode, data} = e;
-      if (errorCode === -1 && data) {
-        if (parentId) {
-          const paths = findParentPathIds(parentId, [...data]);
-          // 反显
-          if (formRef.current) {
-            // temporaryParentId 临时变量，为了反显，不保存
-            formRef.current.setFieldsValue({temporaryParentId: [...paths]})
-            formRef.current.setFieldsValue({parentId: paths[paths.length - 1]})
-          }
-        }
-        setInstitutions([...data]);
-      }
-    })
-  }
 
   return (
     <Drawer
@@ -70,7 +51,13 @@ const CreateForm: React.FC<CreateFormProps> = (props) => {
       visible={modalVisible}
       onClose={() => onClose()}
       afterVisibleChange={() => {
-        loadInstitutions()
+        const paths = findParentPathIds(parentId, [...institutions]);
+        // 反显
+        if (formRef.current) {
+          // temporaryParentId 临时变量，为了反显，不保存
+          formRef.current.setFieldsValue({temporaryParentId: [...paths]})
+          formRef.current.setFieldsValue({parentId: paths[paths.length - 1]})
+        }
       }}
       footer={null}
     >

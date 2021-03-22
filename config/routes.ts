@@ -70,6 +70,11 @@
     component: './auth/roleManage',
   },
   {
+    name: 'auth.role-user-manage',
+    path: '/auth/role/user',
+    component: './auth/roleUserManage',
+  },
+  {
     name: 'monitor.redis',
     path: '/monitor/redis',
     component: './monitor/redis',

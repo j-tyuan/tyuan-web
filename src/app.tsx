@@ -28,12 +28,16 @@ const constructMenu = (menuData: any[]) => {
   const newMenuData: any[] = [];
   // pro5不支持二级icon
   menuData.forEach(item => {
-    let icon;
-    if (item.icon) {
-      icon = React.createElement(Icon[item.icon])
-
+    const {children, isLeaf, icon} = item;
+    if (!isLeaf && (!children || children?.lenght === 0)) {
+      return;
     }
-    newMenuData.push({...item, icon})
+    let iconDom;
+    if (icon) {
+      iconDom = React.createElement(Icon[icon])
+    }
+
+    newMenuData.push({...item, icon: iconDom})
   })
   return newMenuData;
 }

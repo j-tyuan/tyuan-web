@@ -1,21 +1,8 @@
 import {request} from 'umi';
-import {TableListParams, TableListItem} from './data';
+import {TableListItem} from './data';
 
-export async function query(params?: TableListParams) {
-  const result = await request('/api/sys/source', {
-    method: 'POST',
-    data: {
-      ...params
-    }
-  });
-  const {data} = result;
-  // eslint-disable-next-line array-callback-return
-  data.map((e: { isLeaf: any; children: never[]; }) => {
-    if (!e.isLeaf) {
-      e.children = []
-    }
-  })
-  return result;
+export async function getSourceAll() {
+  return  await request('/api/sys/source');
 }
 
 export async function remove(params: { id: (number | undefined)[] }) {

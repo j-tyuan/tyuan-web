@@ -1,13 +1,13 @@
 import React, {useState} from 'react';
-import {Button, Drawer, Form, Input, InputNumber, message, Radio, Space} from 'antd';
+import {Button, Cascader, Drawer, Form, Input, InputNumber, message, Radio, Space} from 'antd';
 import Settings from "../../../../../config/defaultSettings";
 import {FormInstance} from "antd/es/form";
-import SourceTreeSelect from "@/pages/sys/sourceManage/components/SourceTreeSelect";
 import PermissionTreeSelect from "@/components/PermissionTreeSelect";
 import TextArea from "antd/es/input/TextArea";
 import {TableListItem} from "../data";
 import {useIntl} from "umi";
 import {update} from "@/pages/sys/sourceManage/service";
+import {findParentPathIds} from "@/utils/utils";
 
 interface CreateFormProps {
   permission: Object;
@@ -15,6 +15,7 @@ interface CreateFormProps {
   onFinish: (success: boolean) => void;
   onClose: () => void;
   values: Partial<TableListItem>;
+  dataSources?: any[];
 }
 
 /**
@@ -39,11 +40,12 @@ const handleUpdate = async (fields: TableListItem) => {
 };
 
 const CreateForm: React.FC<CreateFormProps> = (props) => {
-  const {modalVisible, onClose,onFinish} = props;
+  const {modalVisible, onClose, onFinish, dataSources, values} = props;
   const formRef = React.createRef<FormInstance>();
   const [permissionId, setPermissionId] = useState()
-  const [pid, setPid] = useState()
   const [loading, setLoading] = useState<boolean>(false);
+  const [newSources, setNewSources] = useState<any[]>()
+
   return (
     <Drawer
       destroyOnClose
@@ -52,9 +54,26 @@ const CreateForm: React.FC<CreateFormProps> = (props) => {
       visible={modalVisible}
       onClose={() => onClose()}
       footer={null}
+      afterVisibleChange={() => {
+        if (dataSources) {
+          const var1 = [{
+            name: "跟节点",
+            id: 0,
+            children: [...dataSources]
+          }]
+          setNewSources([...var1]);
+          const paths = findParentPathIds(values.parentId, [...var1]);
+          // 反显
+          if (formRef.current) {
+            // temporaryParentId 临时变量，为了反显，不保存
+            formRef.current.setFieldsValue({temporaryParentId: [...paths]})
+            formRef.current.setFieldsValue({parentId: paths[paths.length - 1]})
+          }
+        }
+      }}
     >
       <Form ref={formRef}
-            initialValues={props.values}
+            initialValues={values}
             {...Settings.form.formItemLayout}
             name="control-ref"
             labelAlign="right"
@@ -62,7 +81,6 @@ const CreateForm: React.FC<CreateFormProps> = (props) => {
             onFinish={(e) => {
               setLoading(true)
               e["permissionId "] = permissionId;
-              e["parentId "] = pid;
               const promise = handleUpdate(e);
               promise.then(result => {
                 if (result) {
@@ -73,6 +91,9 @@ const CreateForm: React.FC<CreateFormProps> = (props) => {
               })
             }}
       >
+        <Form.Item name="parentId" hidden rules={[{required: true}]}>
+          <Input/>
+        </Form.Item>
         <Form.Item name="id" hidden/>
         <Form.Item name="name" label="资源名称" rules={[{required: true}]}>
           <Input/>
@@ -98,11 +119,13 @@ const CreateForm: React.FC<CreateFormProps> = (props) => {
         <Form.Item name="sort" label="排序" rules={[{required: true}]}>
           <InputNumber/>
         </Form.Item>
-        <Form.Item name="parentId" label="上级节点" rules={[{required: true}]}>
-          {/* eslint-disable-next-line @typescript-eslint/no-shadow */}
-          <SourceTreeSelect initialId={props.values.parentId} onChange={(pid: any) => {
-            setPid(pid);
-          }}/>
+        <Form.Item name="temporaryParentId" label="上级节点" rules={[{required: true}]}>
+          <Cascader changeOnSelect options={newSources} onChange={(value) => {
+            if (formRef.current) {
+              formRef.current.setFieldsValue({temporaryParentId: value})
+              formRef.current.setFieldsValue({parentId: value[value.length - 1]})
+            }
+          }} fieldNames={{label: "name", value: "id"}}/>
         </Form.Item>
         <Form.Item name="permissionId" label="权限配置" rules={[{required: true}]}>
           {/* eslint-disable-next-line @typescript-eslint/no-shadow */}

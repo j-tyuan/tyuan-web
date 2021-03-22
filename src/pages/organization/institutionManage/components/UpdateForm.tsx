@@ -1,10 +1,10 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {Button, Cascader, Drawer, Form, Input, message, Radio, Space} from 'antd';
 import {TableListItem} from '../data';
 import {FormInstance} from "antd/es/form";
 import Settings from "../../../../../config/defaultSettings";
 import {useIntl} from "umi";
-import {getInstAll, update} from "../service";
+import {update} from "../service";
 import {InputNumber} from "antd/es";
 import {findParentPathIds} from "@/utils/utils";
 import UserSelect from "@/components/UserSelect";
@@ -15,6 +15,7 @@ export interface UpdateFormProps {
   onFinish: (success: boolean) => void;
   modalVisible: boolean;
   values: Partial<TableListItem>;
+  institutions?: any[]
 }
 
 /**
@@ -39,34 +40,11 @@ const handleUpdate = async (fields: TableListItem) => {
 };
 
 const UpdateForm: React.FC<UpdateFormProps> = (props) => {
-  const {modalVisible, onClose, onFinish, values} = props;
+  const {modalVisible, onClose, onFinish, values, institutions} = props;
   const {parentId} = values;
 
   const [loading, setLoading] = useState<boolean>(false);
   const formRef = React.createRef<FormInstance>();
-  const [institutions, setInstitutions] = useState<any[]>();
-
-  const loadInstitutions = () => {
-    const promise = getInstAll();
-    promise.then(e => {
-      const {errorCode, data} = e;
-      if (errorCode === -1 && data) {
-        const paths = findParentPathIds(parentId, [...data]);
-        // 反显
-        if (formRef.current){
-          // temporaryParentId 临时变量，为了反显，不保存
-          formRef.current.setFieldsValue({temporaryParentId: [...paths]})
-          formRef.current.setFieldsValue({parentId: paths[paths.length - 1]})
-        }
-        setInstitutions([...data]);
-      }
-    })
-  }
-
-  useEffect(() => {
-    loadInstitutions()
-
-  }, [])
 
   return (
     <Drawer
@@ -74,6 +52,17 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
       title="修改机构"
       width={Settings.form.drawer.width}
       visible={modalVisible}
+      afterVisibleChange={() => {
+        if (institutions) {
+          const paths = findParentPathIds(parentId, [...institutions]);
+          // 反显
+          if (formRef.current) {
+            // temporaryParentId 临时变量，为了反显，不保存
+            formRef.current.setFieldsValue({temporaryParentId: [...paths]})
+            formRef.current.setFieldsValue({parentId: paths[paths.length - 1]})
+          }
+        }
+      }}
       onClose={() => onClose()}
       footer={null}
     >
@@ -90,7 +79,6 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
                   onClose();
                 }
                 onFinish(result)
-                loadInstitutions();
                 setLoading(false)
               })
             }}
