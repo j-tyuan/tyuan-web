@@ -145,7 +145,7 @@ const TableList: React.FC<{ location: any, history: any }> = (props) => {
         toolBarRender={() => [
           <Authorized key="1" authority="sys:role:add" noMatch={null}>
             <Button type="primary" onClick={() => {
-              setSelectUserIds(null)
+              setSelectUserIds(undefined)
               setSelectUserModalVisible(true)
             }}>
               <PlusOutlined/> 绑定用户
