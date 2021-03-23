@@ -1,4 +1,4 @@
-import {PlusOutlined, UserOutlined} from '@ant-design/icons';
+import {EnterOutlined, PlusOutlined, UserOutlined} from '@ant-design/icons';
 import {Avatar, Button, message, Modal, Tooltip} from 'antd';
 import React, {useEffect, useRef, useState} from 'react';
 import {PageContainer} from '@ant-design/pro-layout';
@@ -9,6 +9,7 @@ import {findParentPath} from "@/utils/utils";
 import {TableListItem} from "@/pages/auth/userManage/data";
 import RoleUserTable from "./components/RoleUserTable";
 import {bindUser, queryBindUser, unbindUser} from "./service";
+import {history} from "@@/core/history";
 
 const TableList: React.FC<{ location: any, history: any }> = (props) => {
   const [institutions, setInstitutions] = useState<any[]>([]);
@@ -151,6 +152,11 @@ const TableList: React.FC<{ location: any, history: any }> = (props) => {
               <PlusOutlined/> 绑定用户
             </Button>
           </Authorized>
+          , <Button type="link" onClick={() => {
+            history.go(-1)
+          }}>
+            <EnterOutlined />返回
+          </Button>
         ]}
         request={(params: any, sorter: any, filter: any) => {
           return queryBindUser({...params, roleId, searchType: 1, sorter, filter})

@@ -55,6 +55,11 @@
     component: './sys/log',
   },
   {
+    name: 'sys.login-log',
+    path: '/sys/login/log',
+    component: './sys/loginLog',
+  },
+  {
     name: 'organization.institution',
     path: '/organization/institution',
     component: './organization/institutionManage',
@@ -79,6 +84,7 @@
     path: '/monitor/redis',
     component: './monitor/redis',
   },
+
   {
     path: '/',
     redirect: '/welcome',

@@ -178,15 +178,7 @@ const TableList: React.FC<{}> = () => {
             <Link to={{
               pathname: "/auth/role/user",
               state: {roleId: record.id}
-            }}>用户列表</Link>
-            <Divider type="vertical"/>
-          </Authorized>
-          <Authorized authority="sys:role:binduser" noMatch={null}>
-            <a onClick={() => {
-              setUpdateFormValue(record);
-            }}>
-              绑定用户
-            </a>
+            }}>分配用户</Link>
           </Authorized>
         </>
       ),

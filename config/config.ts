@@ -36,6 +36,7 @@ export default defineConfig({
   routes,
   // Theme for antd: https://ant.design/docs/react/customize-theme-cn
   theme: {
+    // 定义主题颜色
     'primary-color': defaultSettings.primaryColor,
   },
   esbuild: {},
