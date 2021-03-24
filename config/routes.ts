@@ -1,5 +1,9 @@
 ﻿export default [
   {
+    path: '/',
+    redirect: '/dashboard/workplace'
+  },
+  {
     name: 'login',
     path: '/login',
     component: './user/login',

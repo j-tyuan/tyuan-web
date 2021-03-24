@@ -1,5 +1,5 @@
-import request from 'umi-request';
+import {workplaceFakeChartData} from '../workplace/service';
 
 export async function fakeChartData() {
-  return request('/api/fake_chart_data');
+  return workplaceFakeChartData();
 }
