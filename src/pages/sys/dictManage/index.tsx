@@ -164,9 +164,7 @@ const TableList: React.FC<{}> = () => {
                   onOk() {
                     const state = handleRemove([record]);
                     state.then(() => {
-                      if (actionRef.current) {
-                        actionRef.current.reload();
-                      }
+                      actionRef.current?.reload();
                     })
                   }
                 })
@@ -216,9 +214,7 @@ const TableList: React.FC<{}> = () => {
             const success = await handleAdd(value);
             if (success) {
               handleModalVisible(false);
-              if (actionRef.current) {
-                actionRef.current.reload();
-              }
+              actionRef.current?.reload();
             }
           }}
           rowKey="id"
@@ -228,13 +224,13 @@ const TableList: React.FC<{}> = () => {
         />
       </CreateForm>
 
-      {updateFormValues && Object.keys(updateFormValues).length ? (
-        <UpdateForm
+      {
+        types ? (<UpdateForm
           modalVisible={updateModalVisible}
           types={types}
           onFinish={(success) => {
-            if (success && actionRef.current) {
-              actionRef.current.reload();
+            if (success) {
+              actionRef.current?.reload();
             }
           }}
           onClose={() => {
@@ -244,8 +240,9 @@ const TableList: React.FC<{}> = () => {
             }, 300)
           }}
           values={updateFormValues}
-        />
-      ) : null}
+        />) : null
+      }
+
     </PageContainer>
   );
 };

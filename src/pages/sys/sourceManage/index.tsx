@@ -168,9 +168,7 @@ const TableList: React.FC<{}> = () => {
                 onOk() {
                   const state = handleRemove([record]);
                   state.then(() => {
-                    if (actionRef.current) {
-                      actionRef.current.reload();
-                    }
+                    actionRef.current?.reload();
                   })
                 }
               })
@@ -247,37 +245,34 @@ const TableList: React.FC<{}> = () => {
             </Card>)
       }
 
-      {dataSource && permission ? (
-        <CreateForm
-          permission={permission}
-          dataSource={dataSource}
-          parentId={parentId}
-          onFinish={(success) => {
-            if (success && actionRef.current) {
-              actionRef.current.reload();
-            }
-          }}
-          onClose={() => handleModalVisible(false)} modalVisible={createModalVisible}/>) : null}
+      <CreateForm
+        permission={permission}
+        dataSource={dataSource}
+        parentId={parentId}
+        onFinish={(success) => {
+          if (success) {
+            actionRef.current?.reload();
+          }
+        }}
+        onClose={() => handleModalVisible(false)} modalVisible={createModalVisible}/>
 
-      {updateFormValues && Object.keys(updateFormValues).length ? (
-        <UpdateForm
-          dataSources={dataSource}
-          permission={permission}
-          modalVisible={updateModalVisible}
-          onFinish={(success) => {
-            if (success && actionRef.current) {
-              actionRef.current.reload();
-            }
-          }}
-          onClose={() => {
-            handleUpdateModalVisible(false);
-            setTimeout(() => {
-              setUpdateFormValues({});
-            }, 300)
-          }}
-          values={updateFormValues}
-        />
-      ) : null}
+      <UpdateForm
+        dataSources={dataSource}
+        permission={permission}
+        modalVisible={updateModalVisible}
+        onFinish={(success) => {
+          if (success) {
+            actionRef.current?.reload();
+          }
+        }}
+        onClose={() => {
+          handleUpdateModalVisible(false);
+          setTimeout(() => {
+            setUpdateFormValues({});
+          }, 300)
+        }}
+        values={updateFormValues}
+      />
     </PageContainer>
   );
 };
