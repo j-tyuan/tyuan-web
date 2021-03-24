@@ -6,9 +6,19 @@
     layout: false
   },
   {
-    path: '/welcome',
-    name: 'welcome',
-    component: './Welcome',
+    path: '/dashboard/workplace',
+    name: 'workplace',
+    component: './dashboard/workplace',
+  },
+  {
+    path: '/dashboard/analysis',
+    name: 'analysis',
+    component: './dashboard/analysis',
+  },
+  {
+    path: '/dashboard/monitor',
+    name: 'monitor',
+    component: './dashboard/monitor',
   },
   // 账号中心
   {
