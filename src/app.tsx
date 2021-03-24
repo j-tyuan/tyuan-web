@@ -89,8 +89,7 @@ export async function getInitialState(): Promise<{
 }> {
 
   if (history.location.pathname !== '/login') {
-    // TODO 演示版本水印
-    setWatermark("河南软达-企业级快速开发平台-演示版本")
+    setWatermark("企业级快速开发平台-演示版本")
 
     // 已登陆
     const currentUser = await loadUserInfo();
