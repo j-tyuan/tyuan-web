@@ -4,7 +4,7 @@ import {DefaultFooter} from '@ant-design/pro-layout';
 
 export default () => (
   <DefaultFooter
-    copyright="2020 河南软达出品"
+    copyright="2021  Jiangguiqi (author@tyuan.design)"
     links={[
       {
         key: 'TY Design',

@@ -19,18 +19,13 @@ export default (): React.ReactNode => {
 
   return (
     <PageContainer>
-      <Card title={<>本项目由<Button type='link'>河南软达</Button>开源并提供技术支持</>}>
+      <Card title={<>本项目由<a href="mailto:author@tyuan.design">author@tyuan.design</a>开源并提供技术支持</>}>
         <Row align="middle">
           <Col span={12} style={{textAlign: 'center'}}>
-          <span>
-           您是第：<span style={{fontSize: 24, margin: '0 10px'}}>{visit}</span>位访问者
-          </span>
-            <div>
-              <span>支持定制开发，如果您有需求请扫右边二维码，期待与您的合作</span>
-            </div>
+            <Image height='400px' width='350px' src="/wx.jpg"/>
           </Col>
           <Col span={12} style={{textAlign: 'center'}}>
-            <Image height='400px' width='350px' src="/wx.jpg"/>
+            <Image height='400px' width='350px' src="/qq.png"/>
           </Col>
         </Row>
 
