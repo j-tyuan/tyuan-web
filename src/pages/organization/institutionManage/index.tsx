@@ -1,13 +1,13 @@
-import {PlusOutlined} from '@ant-design/icons';
-import {Button, Card, Col, Divider, message, Modal, Skeleton} from 'antd';
-import React, {useEffect, useRef, useState} from 'react';
-import {PageContainer} from '@ant-design/pro-layout';
-import ProTable, {ActionType, ProColumns} from '@ant-design/pro-table';
+import { PlusOutlined } from '@ant-design/icons';
+import { Button, Card, Col, Divider, message, Modal, Skeleton } from 'antd';
+import React, { useEffect, useRef, useState } from 'react';
+import { PageContainer } from '@ant-design/pro-layout';
+import ProTable, { ActionType, ProColumns } from '@ant-design/pro-table';
 import CreateForm from './components/CreateForm';
 import UpdateForm from './components/UpdateForm';
-import {TableListItem} from './data';
-import {getInstAll, remove} from './service';
-import Authorized from "@/utils/Authorized";
+import { TableListItem } from './data';
+import { getInstAll, remove } from './service';
+import Authorized from '@/utils/Authorized';
 import Row from 'antd/es/row';
 import styles from './index.less';
 
@@ -48,8 +48,8 @@ const TableList: React.FC<{}> = () => {
   const actionRef = useRef<ActionType>();
   const columns: ProColumns<TableListItem>[] = [
     {
-      title: "机构名称",
-      dataIndex: "instName",
+      title: '机构名称',
+      dataIndex: 'instName',
       formItemProps: {
         rules: [
           {
@@ -69,16 +69,16 @@ const TableList: React.FC<{}> = () => {
             message: '名称为必填项',
           },
         ],
-      }
+      },
     },
     {
-      title: "机构类型",
-      dataIndex: "instType",
+      title: '机构类型',
+      dataIndex: 'instType',
       valueType: 'radio',
       search: false,
       valueEnum: {
-        0: {text: '公司', status: 0},
-        1: {text: '部门', status: 1},
+        0: { text: '公司', status: 0 },
+        1: { text: '部门', status: 1 },
       },
       formItemProps: {
         rules: [
@@ -90,24 +90,24 @@ const TableList: React.FC<{}> = () => {
       },
     },
     {
-      title: "机构状态",
-      dataIndex: "instStatus",
+      title: '机构状态',
+      dataIndex: 'instStatus',
       search: false,
       valueType: 'radio',
       valueEnum: {
-        0: {text: '启用', status: 0},
-        1: {text: '停用', status: 1},
+        0: { text: '启用', status: 0 },
+        1: { text: '停用', status: 1 },
       },
     },
     {
-      title: "备注",
+      title: '备注',
       search: false,
-      dataIndex: "instDesc",
-      valueType: "textarea"
+      dataIndex: 'instDesc',
+      valueType: 'textarea',
     },
     {
-      title: "编辑时间",
-      dataIndex: "updateDate",
+      title: '编辑时间',
+      dataIndex: 'updateDate',
       hideInForm: true,
       search: false,
       valueType: 'dateTime',
@@ -123,37 +123,40 @@ const TableList: React.FC<{}> = () => {
             <a
               onClick={() => {
                 Modal.confirm({
-                  title: "您确定删除？",
-                  okText: "确定",
-                  cancelText: "取消",
+                  title: '您确定删除？',
+                  okText: '确定',
+                  cancelText: '取消',
                   onOk() {
                     const state = handleRemove([record]);
                     state.then(() => {
                       actionRef.current?.reload();
-                    })
-                  }
-                })
-              }
-              }
+                    });
+                  },
+                });
+              }}
             >
               删除
             </a>
-            <Divider type="vertical"/>
+            <Divider type="vertical" />
           </Authorized>
           <Authorized authority="sys:organize:institution:edit" noMatch={null}>
-            <a onClick={() => {
-              setUpdateFormValues(record);
-              handleUpdateModalVisible(true);
-            }}>
+            <a
+              onClick={() => {
+                setUpdateFormValues(record);
+                handleUpdateModalVisible(true);
+              }}
+            >
               编辑
             </a>
-            <Divider type="vertical"/>
+            <Divider type="vertical" />
           </Authorized>
           <Authorized authority="sys:organize:institution:add" noMatch={null}>
-            <a onClick={() => {
-              setParentId(record.id)
-              handleModalVisible(true)
-            }}>
+            <a
+              onClick={() => {
+                setParentId(record.id);
+                handleModalVisible(true);
+              }}
+            >
               添加下级机构
             </a>
           </Authorized>
@@ -162,74 +165,79 @@ const TableList: React.FC<{}> = () => {
     },
   ];
   const loadData = async () => {
-    setLoading(true)
-    getInstAll().then(e => {
-      const {errorCode, data} = e;
+    setLoading(true);
+    getInstAll().then((e) => {
+      const { errorCode, data } = e;
       if (errorCode === -1) {
-        setDataSource([...data])
+        setDataSource([...data]);
       }
-      setLoading(false)
-    })
-  }
+      setLoading(false);
+    });
+  };
 
   useEffect(() => {
     loadData();
-  }, [])
+  }, []);
 
   return (
     <PageContainer>
-      {
-        dataSource ? (
-          <ProTable<TableListItem>
-            defaultExpandAllRows
-            footer={() => {
-              return <>
+      {dataSource ? (
+        <ProTable<TableListItem>
+          defaultExpandAllRows
+          footer={() => {
+            return (
+              <>
                 <Row justify="end">
                   <Col>
                     <span className={styles.textColorSecondary}>机构管理</span>
                   </Col>
                 </Row>
               </>
-            }}
-            pagination={false}
-            loading={loading}
-            onLoad={async () => {
-              loadData();
-            }}
-            search={false}
-            headerTitle="机构列表"
-            actionRef={actionRef}
-            rowKey="id"
-            toolBarRender={() => [
-              <Authorized key="1" authority="sys:organize:institution:add" noMatch={null}>
-                <Button type="primary" onClick={() => {
+            );
+          }}
+          pagination={false}
+          loading={loading}
+          onLoad={async () => {
+            loadData();
+          }}
+          search={false}
+          headerTitle="机构列表"
+          actionRef={actionRef}
+          rowKey="id"
+          toolBarRender={() => [
+            <Authorized key="1" authority="sys:organize:institution:add" noMatch={null}>
+              <Button
+                type="primary"
+                onClick={() => {
                   handleModalVisible(true);
-                  setParentId(0)
-                }}>
-                  <PlusOutlined/> 新建
-                </Button>
-              </Authorized>
-            ]}
-            dataSource={dataSource}
-            columns={columns}
-          />
-        ) : (
-          <Card className={styles.bodyBackground}>
-            <Skeleton active loading/>
-            <Skeleton active loading/>
-            <Skeleton active loading/>
-          </Card>)
-      }
-      {
-        dataSource ? (
-          <CreateForm
-            institutions={dataSource}
-            parentId={parentId}
-            onFinish={() => {
-              actionRef.current?.reload();
-            }} onClose={() => handleModalVisible(false)} modalVisible={createModalVisible}/>
-        ) : null
-      }
+                  setParentId(0);
+                }}
+              >
+                <PlusOutlined /> 新建
+              </Button>
+            </Authorized>,
+          ]}
+          dataSource={dataSource}
+          columns={columns}
+        />
+      ) : (
+        <Card className={styles.bodyBackground}>
+          <Skeleton active loading />
+          <Skeleton active loading />
+          <Skeleton active loading />
+        </Card>
+      )}
+      {dataSource ? (
+        <CreateForm
+          institutions={dataSource}
+          parentId={parentId}
+          onFinish={() => {
+            actionRef.current?.reload();
+          }}
+          onClose={() => handleModalVisible(false)}
+          modalVisible={createModalVisible}
+        />
+      ) : null}
 
       <Authorized authority="sys:organize:institution:edit" noMatch={null}>
         <UpdateForm
@@ -244,7 +252,7 @@ const TableList: React.FC<{}> = () => {
             handleUpdateModalVisible(false);
             setTimeout(() => {
               setUpdateFormValues({});
-            }, 300)
+            }, 300);
           }}
           values={updateFormValues}
         />

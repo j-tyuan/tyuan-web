@@ -1,5 +1,4 @@
-import {request} from 'umi';
-
+import { request } from 'umi';
 
 /**
  * 加载从缓存中水印
@@ -8,13 +7,13 @@ import {request} from 'umi';
  */
 export async function loadWaterMark() {
   const result = await request('/api/watermark');
-  const {errorCode, data} = result;
+  const { errorCode, data } = result;
   if (errorCode === -1 && data) {
     try {
       return JSON.parse(data);
     } catch (e) {
-      console.error(data)
-      return {}
+      console.error(data);
+      return {};
     }
   }
   return {};

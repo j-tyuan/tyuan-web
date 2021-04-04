@@ -1,6 +1,6 @@
 import React from 'react';
-import {GithubOutlined} from '@ant-design/icons';
-import {DefaultFooter} from '@ant-design/pro-layout';
+import { GithubOutlined } from '@ant-design/icons';
+import { DefaultFooter } from '@ant-design/pro-layout';
 
 export default () => (
   <DefaultFooter
@@ -14,7 +14,7 @@ export default () => (
       },
       {
         key: 'github',
-        title: <GithubOutlined/>,
+        title: <GithubOutlined />,
         href: 'https://github.com/j-tyuan/tyuan-web',
         blankTarget: true,
       },
@@ -23,6 +23,7 @@ export default () => (
         title: 'Ant Design Pro',
         href: 'https://pro.ant.design',
         blankTarget: true,
-      },]}
+      },
+    ]}
   />
 );

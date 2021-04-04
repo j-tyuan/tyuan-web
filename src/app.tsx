@@ -1,24 +1,29 @@
 import React from 'react';
-import {BasicLayoutProps, MenuDataItem, PageLoading, Settings as LayoutSettings} from '@ant-design/pro-layout';
-import {message, notification} from 'antd';
-import {history, RequestConfig} from 'umi';
+import {
+  BasicLayoutProps,
+  MenuDataItem,
+  PageLoading,
+  Settings as LayoutSettings,
+} from '@ant-design/pro-layout';
+import { message, notification } from 'antd';
+import { history, RequestConfig } from 'umi';
 import RightContent from '@/components/RightContent';
 import Footer from '@/components/Footer';
-import {ResponseError, ResponseInterceptor} from 'umi-request';
-import {qureyAccount} from './services/user';
+import { ResponseError, ResponseInterceptor } from 'umi-request';
+import { qureyAccount } from './services/user';
 import defaultSettings from '../config/defaultSettings';
-import {permissions, queryMenuData} from "@/services/sys";
-import {setAuthority} from "@/utils/authority";
-import * as Icon from "@ant-design/icons";
-import {API} from "@/services/API";
-import {WaterMarkProps} from "@ant-design/pro-layout/lib/components/WaterMark";
-import {loadWaterMark} from "@/pages/sys/waterMarkManage/service";
+import { permissions, queryMenuData } from '@/services/sys';
+import { setAuthority } from '@/utils/authority';
+import * as Icon from '@ant-design/icons';
+import { API } from '@/services/API';
+import { WaterMarkProps } from '@ant-design/pro-layout/lib/components/WaterMark';
+import { loadWaterMark } from '@/pages/sys/waterMarkManage/service';
 
 /**
  * 获取用户信息比较慢的时候会展示一个 loading
  */
 export const initialStateConfig = {
-  loading: <PageLoading/>,
+  loading: <PageLoading />,
 };
 
 /**
@@ -28,20 +33,20 @@ export const initialStateConfig = {
 const constructMenu = (menuData: any[]) => {
   const newMenuData: any[] = [];
   // pro5不支持二级icon
-  menuData.forEach(item => {
-    const {children, isLeaf, icon} = item;
+  menuData.forEach((item) => {
+    const { children, isLeaf, icon } = item;
     if (!isLeaf && (!children || children?.lenght === 0)) {
       return;
     }
     let iconDom;
     if (icon) {
-      iconDom = React.createElement(Icon[icon])
+      iconDom = React.createElement(Icon[icon]);
     }
 
-    newMenuData.push({...item, icon: iconDom})
-  })
+    newMenuData.push({ ...item, icon: iconDom });
+  });
   return newMenuData;
-}
+};
 
 /**
  * 加载用户信息
@@ -53,12 +58,12 @@ const loadUserInfo = async () => {
       return null;
     }
     // @ts-ignore
-    const {data} = accountInfo;
-    const {account, layout} = data;
+    const { data } = accountInfo;
+    const { account, layout } = data;
     const user = {
       ...account,
-      layout
-    }
+      layout,
+    };
     return user;
   } catch (error) {
     history.push('/login');
@@ -71,14 +76,14 @@ const loadUserInfo = async () => {
  */
 const loadPermissions = () => {
   const promise = permissions();
-  promise.then(e => {
-    const {errorCode, data} = e;
+  promise.then((e) => {
+    const { errorCode, data } = e;
     if (errorCode === -1) {
-      const {permission} = data;
-      setAuthority(permission)
+      const { permission } = data;
+      setAuthority(permission);
     }
-  })
-}
+  });
+};
 
 /**
  * 初始化数据
@@ -89,7 +94,6 @@ export async function getInitialState(): Promise<{
   currentUser?: API.CurrentUser;
   waterMarkData?: WaterMarkProps;
 }> {
-
   if (history.location.pathname !== '/login') {
     // 已登陆
     const currentUser = await loadUserInfo();
@@ -103,7 +107,7 @@ export async function getInitialState(): Promise<{
       menuData,
       currentUser,
       waterMarkData: waterMark.enable ? waterMark : {},
-      settings: {...defaultSettings},
+      settings: { ...defaultSettings },
     };
   }
   return {};
@@ -113,20 +117,27 @@ export async function getInitialState(): Promise<{
  * 初始化布局
  * @param initialState
  */
-export const layout = ({initialState}: {
-  initialState: { settings?: LayoutSettings; currentUser?: API.CurrentUser, menuData: MenuDataItem[]; waterMarkData: WaterMarkProps };
+export const layout = ({
+  initialState,
+}: {
+  initialState: {
+    settings?: LayoutSettings;
+    currentUser?: API.CurrentUser;
+    menuData: MenuDataItem[];
+    waterMarkData: WaterMarkProps;
+  };
 }): BasicLayoutProps => {
   return {
     // 自定义右侧dom
-    rightContentRender: () => (<RightContent/>),
+    rightContentRender: () => <RightContent />,
     disableContentMargin: false,
-    footerRender: () => <Footer/>,
+    footerRender: () => <Footer />,
     onPageChange: () => {
       if (!initialState) {
         return;
       }
-      const {currentUser} = initialState;
-      const {location} = history;
+      const { currentUser } = initialState;
+      const { location } = history;
       // 如果没有登录，重定向到 login
       if (!currentUser && location.pathname !== '/login') {
         history.push('/login');
@@ -135,7 +146,7 @@ export const layout = ({initialState}: {
     menuHeaderRender: undefined,
     waterMarkProps: initialState?.waterMarkData,
     menuDataRender: () => {
-      return initialState ? initialState.menuData : []
+      return initialState ? initialState.menuData : [];
     },
     ...initialState?.settings,
     ...initialState?.currentUser?.layout,
@@ -159,17 +170,17 @@ const codeMessage = {
   502: '网关错误。',
   503: '服务不可用，服务器暂时过载或维护。',
   504: '网关超时。',
-  2001: '重新登陆'
+  2001: '重新登陆',
 };
 
 /**
  * 异常处理程序
  */
 const errorHandler = (error: ResponseError) => {
-  const {response} = error;
+  const { response } = error;
   if (response && response.status) {
     const errorText = codeMessage[response.status] || response.statusText;
-    const {status, url} = response;
+    const { status, url } = response;
 
     notification.error({
       message: `请求错误 ${status}: ${url}`,
@@ -191,21 +202,21 @@ const errorHandler = (error: ResponseError) => {
  */
 const responseInterceptors: ResponseInterceptor[] = [
   async (response: Response) => {
-    const result = await response.clone().json()
-    const {errorCode, errorMessage} = result;
+    const result = await response.clone().json();
+    const { errorCode, errorMessage } = result;
     if (errorCode === 2001) {
       history.push('/login');
       if (errorMessage) {
-        message.error(errorMessage)
+        message.error(errorMessage);
       }
       return response;
     }
     if (errorCode && errorCode !== -1) {
-      message.error(errorMessage)
+      message.error(errorMessage);
     }
     return response;
-  }
-]
+  },
+];
 
 export const request: RequestConfig = {
   responseInterceptors,

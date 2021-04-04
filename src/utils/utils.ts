@@ -12,13 +12,12 @@ export const isAntDesignPro = (): boolean => {
 
 // 给官方演示站点用，用于关闭真实开发环境不需要使用的特性
 export const isAntDesignProOrDev = (): boolean => {
-  const {NODE_ENV} = process.env;
+  const { NODE_ENV } = process.env;
   if (NODE_ENV === 'development') {
     return true;
   }
   return isAntDesignPro();
 };
-
 
 export const hashCode = (val: string) => {
   let hash = 0;
@@ -29,7 +28,7 @@ export const hashCode = (val: string) => {
   for (i = 0; i < val.length; i++) {
     chr = val.charCodeAt(i);
     // eslint-disable-next-line no-bitwise
-    hash = ((hash << 5) - hash) + chr;
+    hash = (hash << 5) - hash + chr;
     // eslint-disable-next-line no-bitwise
     hash |= 0; // Convert to 32bit integer
   }
@@ -59,7 +58,7 @@ export const setWatermark = (str: String, option = {}) => {
 
   const cans = can.getContext('2d');
   // 旋转角度
-  cans.rotate(-15 * Math.PI / 180);
+  cans.rotate((-15 * Math.PI) / 180);
   cans.font = '16px Vedana';
   // 设置填充绘画的颜色、渐变或者模式
   cans.fillStyle = 'rgba(200, 200, 200, 0.3)';
@@ -70,7 +69,7 @@ export const setWatermark = (str: String, option = {}) => {
   // 在画布上绘制填色的文本（输出的文本，开始绘制文本的X坐标位置，开始绘制文本的Y坐标位置）
   cans.fillText(str, can.width / 8, can.height / 2);
   window.bgWater = can.toDataURL('image/png');
-}
+};
 
 /**
  * 查找父亲节点 链
@@ -85,19 +84,19 @@ export const findParentPath = (id: any, data: any[]) => {
   for (let i = 0; i < data.length; i++) {
     const item = data[i];
     if (item.id === id) {
-      items.push({...item})
+      items.push({ ...item });
       return items;
     }
     if (item.children) {
       const p = findParentPath(id, item.children);
       if (p.length > 0) {
-        items.push({...item})
-        items.push(...p)
+        items.push({ ...item });
+        items.push(...p);
       }
     }
   }
   return items;
-}
+};
 
 /**
  * 查找父亲节点 链
@@ -109,8 +108,8 @@ export const findParentPath = (id: any, data: any[]) => {
 export const findParentPathIds = (id: any, data: any[]) => {
   const paths = findParentPath(id, data);
   const ids: any[] = [];
-  paths.forEach(e => {
-    ids.push(e.id)
-  })
+  paths.forEach((e) => {
+    ids.push(e.id);
+  });
   return ids;
-}
+};

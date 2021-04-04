@@ -1,13 +1,13 @@
 ﻿export default [
   {
     path: '/',
-    redirect: '/dashboard/workplace'
+    redirect: '/dashboard/workplace',
   },
   {
     name: 'login',
     path: '/login',
     component: './user/login',
-    layout: false
+    layout: false,
   },
   {
     path: '/dashboard/workplace',

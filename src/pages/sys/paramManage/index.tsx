@@ -1,14 +1,14 @@
-import {PlusOutlined} from '@ant-design/icons';
-import {Button, Divider, message, Modal} from 'antd';
-import React, {useRef, useState} from 'react';
-import {PageContainer} from '@ant-design/pro-layout';
-import ProTable, {ActionType, ProColumns} from '@ant-design/pro-table';
+import { PlusOutlined } from '@ant-design/icons';
+import { Button, Divider, message, Modal } from 'antd';
+import React, { useRef, useState } from 'react';
+import { PageContainer } from '@ant-design/pro-layout';
+import ProTable, { ActionType, ProColumns } from '@ant-design/pro-table';
 import CreateForm from './components/CreateForm';
 import UpdateForm from './components/UpdateForm';
-import {TableListItem} from './data';
-import {add, queryParams, remove} from './service';
-import Settings from "../../../../config/defaultSettings";
-import Authorized from "@/utils/Authorized";
+import { TableListItem } from './data';
+import { add, queryParams, remove } from './service';
+import Settings from '../../../../config/defaultSettings';
+import Authorized from '@/utils/Authorized';
 
 /**
  * 添加节点
@@ -17,7 +17,7 @@ import Authorized from "@/utils/Authorized";
 const handleAdd = async (fields: TableListItem) => {
   const hide = message.loading('正在添加');
   try {
-    const v = await add({...fields});
+    const v = await add({ ...fields });
     hide();
     if (v.errorCode === -1) {
       message.success('添加成功');
@@ -30,7 +30,6 @@ const handleAdd = async (fields: TableListItem) => {
     return false;
   }
 };
-
 
 /**
  *  删除节点
@@ -75,12 +74,12 @@ const TableList: React.FC<{}> = () => {
             message: '名称为必填项',
           },
         ],
-      }
+      },
     },
     {
-      title: "参数健",
-      dataIndex: "paramKey",
-      tooltip: "参数Key",
+      title: '参数健',
+      dataIndex: 'paramKey',
+      tooltip: '参数Key',
       formItemProps: {
         rules: [
           {
@@ -91,9 +90,9 @@ const TableList: React.FC<{}> = () => {
       },
     },
     {
-      title: "参数值",
-      dataIndex: "paramVal",
-      tooltip: "参数内容",
+      title: '参数值',
+      dataIndex: 'paramVal',
+      tooltip: '参数内容',
       ellipsis: true,
       width: 200,
       copyable: true,
@@ -107,21 +106,22 @@ const TableList: React.FC<{}> = () => {
       },
     },
     {
-      title: "是否系统参数",
-      dataIndex: "isSys",
+      title: '是否系统参数',
+      dataIndex: 'isSys',
       valueType: 'radio',
       valueEnum: {
-        true: {text: '是', status: true},
-        false: {text: '否', status: false},
+        true: { text: '是', status: true },
+        false: { text: '否', status: false },
       },
-    }, {
-      title: "备注",
-      dataIndex: "remarks",
-      valueType: "textarea"
     },
     {
-      title: "编辑时间",
-      dataIndex: "updateDate",
+      title: '备注',
+      dataIndex: 'remarks',
+      valueType: 'textarea',
+    },
+    {
+      title: '编辑时间',
+      dataIndex: 'updateDate',
       hideInForm: true,
       search: false,
       valueType: 'dateTime',
@@ -136,28 +136,29 @@ const TableList: React.FC<{}> = () => {
             <a
               onClick={() => {
                 Modal.confirm({
-                  title: "您确定删除？",
-                  okText: "确定",
-                  cancelText: "取消",
+                  title: '您确定删除？',
+                  okText: '确定',
+                  cancelText: '取消',
                   onOk() {
                     const state = handleRemove([record]);
                     state.then(() => {
                       actionRef.current?.reload();
-                    })
-                  }
-                })
-              }
-              }
+                    });
+                  },
+                });
+              }}
             >
               删除
             </a>
-            <Divider type="vertical"/>
+            <Divider type="vertical" />
           </Authorized>
           <Authorized authority="sys:param:edit" noMatch={null}>
-            <a onClick={() => {
-              setUpdateFormValues(record);
-              handleUpdateModalVisible(true);
-            }}>
+            <a
+              onClick={() => {
+                setUpdateFormValues(record);
+                handleUpdateModalVisible(true);
+              }}
+            >
               编辑
             </a>
           </Authorized>
@@ -178,11 +179,11 @@ const TableList: React.FC<{}> = () => {
         toolBarRender={() => [
           <Authorized key="1" authority="sys:param:add" noMatch={null}>
             <Button type="primary" onClick={() => handleModalVisible(true)}>
-              <PlusOutlined/> 新建
+              <PlusOutlined /> 新建
             </Button>
-          </Authorized>
+          </Authorized>,
         ]}
-        request={(params, sorter, filter) => queryParams({...params, sorter, filter})}
+        request={(params, sorter, filter) => queryParams({ ...params, sorter, filter })}
         columns={columns}
       />
 
@@ -197,7 +198,7 @@ const TableList: React.FC<{}> = () => {
           }}
           rowKey="id"
           type="form"
-          form={{...Settings.form.formItemLayout, layout: 'horizontal'}}
+          form={{ ...Settings.form.formItemLayout, layout: 'horizontal' }}
           columns={columns}
         />
       </CreateForm>
@@ -213,7 +214,7 @@ const TableList: React.FC<{}> = () => {
           handleUpdateModalVisible(false);
           setTimeout(() => {
             setUpdateFormValues({});
-          }, 300)
+          }, 300);
         }}
         values={updateFormValues}
       />
