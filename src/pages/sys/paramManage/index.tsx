@@ -94,6 +94,9 @@ const TableList: React.FC<{}> = () => {
       title: "参数值",
       dataIndex: "paramVal",
       tooltip: "参数内容",
+      ellipsis: true,
+      width: 200,
+      copyable: true,
       formItemProps: {
         rules: [
           {
@@ -150,7 +153,6 @@ const TableList: React.FC<{}> = () => {
             </a>
             <Divider type="vertical"/>
           </Authorized>
-
           <Authorized authority="sys:param:edit" noMatch={null}>
             <a onClick={() => {
               setUpdateFormValues(record);
