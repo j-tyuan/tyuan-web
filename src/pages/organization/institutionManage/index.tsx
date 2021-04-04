@@ -129,9 +129,7 @@ const TableList: React.FC<{}> = () => {
                   onOk() {
                     const state = handleRemove([record]);
                     state.then(() => {
-                      if (actionRef.current) {
-                        actionRef.current.reload();
-                      }
+                      actionRef.current?.reload();
                     })
                   }
                 })
@@ -228,33 +226,29 @@ const TableList: React.FC<{}> = () => {
             institutions={dataSource}
             parentId={parentId}
             onFinish={() => {
-              if (actionRef.current) {
-                actionRef.current.reload();
-              }
+              actionRef.current?.reload();
             }} onClose={() => handleModalVisible(false)} modalVisible={createModalVisible}/>
         ) : null
       }
 
-      {updateFormValues && Object.keys(updateFormValues).length ? (
-        <Authorized authority="sys:organize:institution:edit" noMatch={null}>
-          <UpdateForm
-            institutions={dataSource}
-            modalVisible={updateModalVisible}
-            onFinish={(success) => {
-              if (success && actionRef.current) {
-                actionRef.current.reload();
-              }
-            }}
-            onClose={() => {
-              handleUpdateModalVisible(false);
-              setTimeout(() => {
-                setUpdateFormValues({});
-              }, 300)
-            }}
-            values={updateFormValues}
-          />
-        </Authorized>
-      ) : null}
+      <Authorized authority="sys:organize:institution:edit" noMatch={null}>
+        <UpdateForm
+          institutions={dataSource}
+          modalVisible={updateModalVisible}
+          onFinish={(success) => {
+            if (success) {
+              actionRef.current?.reload();
+            }
+          }}
+          onClose={() => {
+            handleUpdateModalVisible(false);
+            setTimeout(() => {
+              setUpdateFormValues({});
+            }, 300)
+          }}
+          values={updateFormValues}
+        />
+      </Authorized>
     </PageContainer>
   );
 };

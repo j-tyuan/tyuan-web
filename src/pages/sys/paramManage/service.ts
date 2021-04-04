@@ -1,7 +1,7 @@
 import {request} from 'umi';
 import {TableListParams, TableListItem} from './data';
 
-export async function queryRule(params?: TableListParams) {
+export async function queryParams(params?: TableListParams) {
   return request('/api/sys/param', {
     method: 'POST',
     data: {
@@ -28,11 +28,17 @@ export async function add(params: TableListItem) {
   });
 }
 
-export async function update(params: TableListItem) {
+export async function updateParams(params: TableListItem) {
   return request('/api/sys/param/edit', {
     method: 'POST',
     data: {
       ...params
     },
+  });
+}
+
+export async function getParamsByKey(key: any) {
+  return request(`/api/sys/param/${key}`, {
+    method: 'GET'
   });
 }

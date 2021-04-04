@@ -3,13 +3,13 @@ import {TreeSelect} from 'antd';
 
 interface Props {
   permission: Object;
-  onChange: (permissions:[]) => void;
-  initialIds?: [];
+  onChange: (permissions: any[]) => void;
+  initialIds?: any[];
   multiple?: any;
 }
 
 const PermissionTreeSelect: React.FC<Props> = (props) => {
-  const [treeData, setTreeData] = useState();
+  const [treeData, setTreeData] = useState<any[]>();
   const [value, setValue] = useState();
   const onChange = (v: any) => {
     setValue(v);
@@ -18,7 +18,7 @@ const PermissionTreeSelect: React.FC<Props> = (props) => {
 
   useEffect(() => {
     const {permission} = props;
-    const newData = [];
+    const newData: any[] = [];
     // eslint-disable-next-line guard-for-in,no-restricted-syntax
     for (const i in permission) {
       const {id, parentId, name} = permission[i]
@@ -26,10 +26,10 @@ const PermissionTreeSelect: React.FC<Props> = (props) => {
         id,
         pId: parentId,
         title: name,
+        value: id
       }
       newData.push(item);
     }
-    // @ts-ignore
     setTreeData(newData);
   }, [])
 
@@ -41,7 +41,7 @@ const PermissionTreeSelect: React.FC<Props> = (props) => {
       style={{width: '100%'}}
       value={value}
       dropdownStyle={{maxHeight: 400, overflow: 'auto'}}
-      placeholder="Please select"
+      placeholder="请选择"
       onChange={onChange}
       treeData={treeData}
     />

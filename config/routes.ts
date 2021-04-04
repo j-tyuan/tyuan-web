@@ -24,6 +24,12 @@
     name: 'monitor',
     component: './dashboard/monitor',
   },
+  // 水印管理
+  {
+    path: '/sys/watermark',
+    name: 'watermark',
+    component: './sys/waterMarkManage',
+  },
   // 账号中心
   {
     name: 'account.center-manage',

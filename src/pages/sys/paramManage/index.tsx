@@ -1,13 +1,12 @@
 import {PlusOutlined} from '@ant-design/icons';
-import {Button, Divider, Drawer, message, Modal} from 'antd';
+import {Button, Divider, message, Modal} from 'antd';
 import React, {useRef, useState} from 'react';
 import {PageContainer} from '@ant-design/pro-layout';
 import ProTable, {ActionType, ProColumns} from '@ant-design/pro-table';
-import ProDescriptions from '@ant-design/pro-descriptions';
 import CreateForm from './components/CreateForm';
 import UpdateForm from './components/UpdateForm';
 import {TableListItem} from './data';
-import {add, queryRule, remove} from './service';
+import {add, queryParams, remove} from './service';
 import Settings from "../../../../config/defaultSettings";
 import Authorized from "@/utils/Authorized";
 
@@ -31,7 +30,6 @@ const handleAdd = async (fields: TableListItem) => {
     return false;
   }
 };
-
 
 
 /**
@@ -65,7 +63,6 @@ const TableList: React.FC<{}> = () => {
   const [updateModalVisible, handleUpdateModalVisible] = useState<boolean>(false);
   const [updateFormValues, setUpdateFormValues] = useState({});
   const actionRef = useRef<ActionType>();
-  const [row, setRow] = useState<TableListItem>();
   const columns: ProColumns<TableListItem>[] = [
     {
       title: '参数名称',
@@ -78,10 +75,7 @@ const TableList: React.FC<{}> = () => {
             message: '名称为必填项',
           },
         ],
-      },
-      render: (dom, entity) => {
-        return <a onClick={() => setRow(entity)}>{dom}</a>;
-      },
+      }
     },
     {
       title: "参数健",
@@ -100,6 +94,9 @@ const TableList: React.FC<{}> = () => {
       title: "参数值",
       dataIndex: "paramVal",
       tooltip: "参数内容",
+      ellipsis: true,
+      width: 200,
+      copyable: true,
       formItemProps: {
         rules: [
           {
@@ -145,9 +142,7 @@ const TableList: React.FC<{}> = () => {
                   onOk() {
                     const state = handleRemove([record]);
                     state.then(() => {
-                      if (actionRef.current) {
-                        actionRef.current.reload();
-                      }
+                      actionRef.current?.reload();
                     })
                   }
                 })
@@ -158,7 +153,6 @@ const TableList: React.FC<{}> = () => {
             </a>
             <Divider type="vertical"/>
           </Authorized>
-
           <Authorized authority="sys:param:edit" noMatch={null}>
             <a onClick={() => {
               setUpdateFormValues(record);
@@ -182,13 +176,13 @@ const TableList: React.FC<{}> = () => {
           labelWidth: 120,
         }}
         toolBarRender={() => [
-          <Authorized  key="1" authority="sys:param:add" noMatch={null}>
+          <Authorized key="1" authority="sys:param:add" noMatch={null}>
             <Button type="primary" onClick={() => handleModalVisible(true)}>
               <PlusOutlined/> 新建
             </Button>
           </Authorized>
         ]}
-        request={(params, sorter, filter) => queryRule({...params, sorter, filter})}
+        request={(params, sorter, filter) => queryParams({...params, sorter, filter})}
         columns={columns}
       />
 
@@ -198,9 +192,7 @@ const TableList: React.FC<{}> = () => {
             const success = await handleAdd(value);
             if (success) {
               handleModalVisible(false);
-              if (actionRef.current) {
-                actionRef.current.reload();
-              }
+              actionRef.current?.reload();
             }
           }}
           rowKey="id"
@@ -210,46 +202,21 @@ const TableList: React.FC<{}> = () => {
         />
       </CreateForm>
 
-      {updateFormValues && Object.keys(updateFormValues).length ? (
-        <UpdateForm
-          modalVisible={updateModalVisible}
-          onFinish={(success) => {
-            if (success && actionRef.current) {
-              actionRef.current.reload();
-            }
-          }}
-          onClose={() => {
-            handleUpdateModalVisible(false);
-            setTimeout(() => {
-              setUpdateFormValues({});
-            }, 300)
-          }}
-          values={updateFormValues}
-        />
-      ) : null}
-
-      <Drawer
-        width={600}
-        visible={!!row}
-        onClose={() => {
-          setRow(undefined);
+      <UpdateForm
+        modalVisible={updateModalVisible}
+        onFinish={(success) => {
+          if (success) {
+            actionRef.current?.reload();
+          }
         }}
-        closable={false}
-      >
-        {row?.paramName && (
-          <ProDescriptions<TableListItem>
-            column={2}
-            title={row?.paramName}
-            request={async () => ({
-              data: row || {},
-            })}
-            params={{
-              id: row?.paramName,
-            }}
-            columns={columns}
-          />
-        )}
-      </Drawer>
+        onClose={() => {
+          handleUpdateModalVisible(false);
+          setTimeout(() => {
+            setUpdateFormValues({});
+          }, 300)
+        }}
+        values={updateFormValues}
+      />
     </PageContainer>
   );
 };

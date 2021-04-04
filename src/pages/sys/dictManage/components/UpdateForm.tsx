@@ -87,7 +87,7 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
           <Select>
             {
               Object.keys(props.types).map(item => (
-                <Option value={item}>{props.types[item]}</Option>
+                <Select.Option key={item} value={item}>{props.types[item]}</Select.Option>
               ))
             }
           </Select>

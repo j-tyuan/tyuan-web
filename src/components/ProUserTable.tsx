@@ -33,7 +33,7 @@ export interface ProUserTableOptions {
 
 }
 
-const ProUserTable: React.FC<{ ProUserTableProps: any, ProUserTableOptions: any, actionRef: any }> = (props) => {
+const ProUserTable: React.FC<{ ProUserTableProps: any, ProUserTableOptions: any, actionRef?: any }> = (props) => {
   const {institutions} = props.ProUserTableProps;
   const actionRef = useRef<ActionType>();
   const formRef = useRef<FormInstance>();

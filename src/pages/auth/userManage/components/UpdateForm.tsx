@@ -52,7 +52,7 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
       // temporaryParentId 临时变量，为了反显，不保存
       formRef.current.setFieldsValue({temporaryInstId: [...paths]})
     }
-  }, [])
+  }, [values.updateDate])
 
   return (
     <Drawer

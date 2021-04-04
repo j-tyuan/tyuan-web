@@ -116,9 +116,7 @@ const TableList: React.FC<{ location: any, history: any }> = (props) => {
                   message.success({content: "完成"})
                 }
                 hide();
-                if (actionRef.current) {
-                  actionRef.current.reload();
-                }
+                actionRef.current?.reload();
               })
             }}>
               解除绑定
@@ -176,17 +174,13 @@ const TableList: React.FC<{ location: any, history: any }> = (props) => {
                 message.success({content: "绑定成功"})
               }
               hide();
-              if (roleUserTableActionRef.current) {
-                roleUserTableActionRef.current.reload();
-              }
+              roleUserTableActionRef.current?.reload();
             })
           }
         }}
         onCancel={() => {
           setSelectUserModalVisible(false);
-          if (actionRef.current) {
-            actionRef.current.reload();
-          }
+          actionRef.current?.reload();
         }}
         width={window.innerWidth - 300}
         visible={selectUserModalVisible}>

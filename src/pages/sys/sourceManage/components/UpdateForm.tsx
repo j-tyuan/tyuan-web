@@ -98,14 +98,14 @@ const CreateForm: React.FC<CreateFormProps> = (props) => {
         <Form.Item name="name" label="资源名称" rules={[{required: true}]}>
           <Input/>
         </Form.Item>
-        <Form.Item name="isLeaf" label="子节点" initialValue={1}>
+        <Form.Item name="isLeaf" label="子节点">
           <Radio.Group>
             <Radio value>是</Radio>
             <Radio value={false}>否</Radio>
           </Radio.Group>
         </Form.Item>
-        <Form.Item name="isShow" label="显示" initialValue={1}>
-          <Radio.Group value={props.values.isShow}>
+        <Form.Item name="isShow" label="显示">
+          <Radio.Group>
             <Radio value>是</Radio>
             <Radio value={false}>否</Radio>
           </Radio.Group>
@@ -128,11 +128,12 @@ const CreateForm: React.FC<CreateFormProps> = (props) => {
           }} fieldNames={{label: "name", value: "id"}}/>
         </Form.Item>
         <Form.Item name="permissionId" label="权限配置" rules={[{required: true}]}>
-          {/* eslint-disable-next-line @typescript-eslint/no-shadow */}
-          <PermissionTreeSelect initialIds={props.values.permissionId} permission={props.permission}
-                                onChange={(permissions: any) => {
-                                  setPermissionId(permissions[0])
-                                }}/>
+          <PermissionTreeSelect
+            initialIds={props.values.permissionId}
+            permission={props.permission}
+            onChange={(permissions: any) => {
+              setPermissionId(permissions[0])
+            }}/>
         </Form.Item>
         <Form.Item name="icon" label="图标">
           <Input/>

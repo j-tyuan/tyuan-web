@@ -11,7 +11,8 @@ import {permissions, queryMenuData} from "@/services/sys";
 import {setAuthority} from "@/utils/authority";
 import * as Icon from "@ant-design/icons";
 import {API} from "@/services/API";
-import {setWatermark} from "@/utils/utils";
+import {WaterMarkProps} from "@ant-design/pro-layout/lib/components/WaterMark";
+import {loadWaterMark} from "@/pages/sys/waterMarkManage/service";
 
 /**
  * 获取用户信息比较慢的时候会展示一个 loading
@@ -86,14 +87,14 @@ export async function getInitialState(): Promise<{
   settings?: LayoutSettings;
   menuData?: MenuDataItem[];
   currentUser?: API.CurrentUser;
+  waterMarkData?: WaterMarkProps;
 }> {
 
   if (history.location.pathname !== '/login') {
-    setWatermark("企业级快速开发平台-演示版本")
-
     // 已登陆
     const currentUser = await loadUserInfo();
     const result = await queryMenuData();
+    const waterMark = await loadWaterMark();
     let menuData = result.data;
     // 构建自定义menu
     menuData = constructMenu(menuData);
@@ -101,6 +102,7 @@ export async function getInitialState(): Promise<{
     return {
       menuData,
       currentUser,
+      waterMarkData: waterMark.enable ? waterMark : {},
       settings: {...defaultSettings},
     };
   }
@@ -112,13 +114,11 @@ export async function getInitialState(): Promise<{
  * @param initialState
  */
 export const layout = ({initialState}: {
-  initialState: { settings?: LayoutSettings; currentUser?: API.CurrentUser, menuData: MenuDataItem[]; };
+  initialState: { settings?: LayoutSettings; currentUser?: API.CurrentUser, menuData: MenuDataItem[]; waterMarkData: WaterMarkProps };
 }): BasicLayoutProps => {
   return {
-    rightContentRender: () => (<>
-      <RightContent/>
-      <div className="waterBox" style={{backgroundImage: `url(${window.bgWater})`}}/>
-    </>),
+    // 自定义右侧dom
+    rightContentRender: () => (<RightContent/>),
     disableContentMargin: false,
     footerRender: () => <Footer/>,
     onPageChange: () => {
@@ -133,6 +133,7 @@ export const layout = ({initialState}: {
       }
     },
     menuHeaderRender: undefined,
+    waterMarkProps: initialState?.waterMarkData,
     menuDataRender: () => {
       return initialState ? initialState.menuData : []
     },

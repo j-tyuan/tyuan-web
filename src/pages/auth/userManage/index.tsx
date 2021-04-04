@@ -249,9 +249,7 @@ const TableList: React.FC<{}> = () => {
                    onOk() {
                      const state = handleRemove([record]);
                      state.then(() => {
-                       if (actionRef.current) {
-                         actionRef.current.reload();
-                       }
+                       actionRef.current?.reload();
                      })
                    }
                  })
@@ -276,8 +274,8 @@ const TableList: React.FC<{}> = () => {
           <Authorized key="3" authority="sys:user:disable" noMatch={null}>
             <a type="link" disabled={record.userType === 1} onClick={async () => {
               const success = await handleDisable(record)
-              if (success && actionRef.current) {
-                actionRef.current.reload();
+              if (success) {
+                actionRef.current?.reload();
               }
             }}>
               {record.disabled ? '启用' : '停用'}
@@ -303,31 +301,29 @@ const TableList: React.FC<{}> = () => {
         institutions={institutions}
         roles={roles}
         onFinish={(success) => {
-          if (success && actionRef.current) {
-            actionRef.current.reload();
+          if (success) {
+            actionRef.current?.reload();
           }
         }}
         onClose={() => handleModalVisible(false)} modalVisible={createModalVisible}/>
 
-      {updateFormValues && Object.keys(updateFormValues).length ? (
-        <UpdateForm
-          roles={roles}
-          institutions={institutions}
-          modalVisible={updateModalVisible}
-          onFinish={(success) => {
-            if (success && actionRef.current) {
-              actionRef.current.reload();
-            }
-          }}
-          onClose={() => {
-            handleUpdateModalVisible(false);
-            setTimeout(() => {
-              setUpdateFormValues({});
-            }, 300)
-          }}
-          values={updateFormValues}
-        />
-      ) : null}
+      <UpdateForm
+        roles={roles}
+        institutions={institutions}
+        modalVisible={updateModalVisible}
+        onFinish={(success) => {
+          if (success) {
+            actionRef.current?.reload();
+          }
+        }}
+        onClose={() => {
+          handleUpdateModalVisible(false);
+          setTimeout(() => {
+            setUpdateFormValues({});
+          }, 300)
+        }}
+        values={updateFormValues}
+      />
     </PageContainer>
   );
 };

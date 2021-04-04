@@ -4,7 +4,7 @@ import {TableListItem} from '../data';
 import {FormInstance} from "antd/es/form";
 import Settings from "../../../../../config/defaultSettings";
 import {useIntl} from "umi";
-import {update} from "@/pages/sys/paramManage/service";
+import {updateParams} from "@/pages/sys/paramManage/service";
 
 
 export interface UpdateFormProps {
@@ -21,7 +21,7 @@ export interface UpdateFormProps {
 const handleUpdate = async (fields: TableListItem) => {
   const hide = message.loading('正在配置');
   try {
-    const v = await update({...fields});
+    const v = await updateParams({...fields});
     hide();
     if (v.errorCode === -1) {
       message.success('配置成功');

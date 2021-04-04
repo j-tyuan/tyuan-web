@@ -148,9 +148,7 @@ const TableList: React.FC<{}> = () => {
                   onOk() {
                     const state = handleRemove([record]);
                     state.then(() => {
-                      if (actionRef.current) {
-                        actionRef.current.reload();
-                      }
+                      actionRef.current?.reload();
                     })
                   }
                 })
@@ -206,35 +204,29 @@ const TableList: React.FC<{}> = () => {
         columns={columns}
       />
 
-      {updateFormValue && Object.keys(updateFormValue).length ? (
-        <UpdateForm
-          initSelectAuth={initSelectAuth}
-          permission={permission}
-          oneLevelIds={oneLevelIds}
-          modalVisible={updateModalVisible}
-          onFinish={(success) => {
-            if (success && actionRef.current) {
-              actionRef.current.reload();
-            }
-          }}
-          onClose={() => {
-            handleUpdateModalVisible(false);
-            setTimeout(() => {
-              setUpdateFormValue({});
-            }, 300)
-          }}
-          values={updateFormValue}
-        />
-      ) : null}
+      <UpdateForm
+        initSelectAuth={initSelectAuth}
+        permission={permission}
+        oneLevelIds={oneLevelIds}
+        modalVisible={updateModalVisible}
+        onFinish={() => {
+          actionRef.current?.reload();
+        }}
+        onClose={() => {
+          handleUpdateModalVisible(false);
+          setTimeout(() => {
+            setUpdateFormValue({});
+          }, 300)
+        }}
+        values={updateFormValue}
+      />
 
       {permission && permission.length ? (<CreateForm
         onClose={() => handleModalVisible(false)}
         permission={permission}
         oneLevelIds={oneLevelIds}
-        onFinish={(success) => {
-          if (success && actionRef.current) {
-            actionRef.current.reload();
-          }
+        onFinish={() => {
+          actionRef.current?.reload();
         }}
         modalVisible={createModalVisible}/>) : null}
     </PageContainer>
