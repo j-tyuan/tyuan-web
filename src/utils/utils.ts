@@ -36,6 +36,14 @@ export const hashCode = (val: string) => {
   return hash;
 };
 
+/**
+ * 自定义水印
+ * 推荐使用ant自带的水印
+ *  setWatermark("企业级快速开发平台-演示版本")
+ * @param str
+ * @param option
+ * @Deprecated
+ */
 export const setWatermark = (str: String, option = {}) => {
   const id = `tyuan.${Math.random()}`;
   if (document.getElementById(id) !== null) {

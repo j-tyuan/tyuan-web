@@ -1,12 +1,12 @@
 export interface TableListItem {
-  id: number;
+  id?: number;
   paramVal: string;
-  remarks: string;
+  remarks?: string;
   isSys: boolean;
   paramKey: Sring;
   paramName: Sring;
-  updateDate: Date;
-  createDate: Date;
+  updateDate?: Date;
+  createDate?: Date;
 }
 
 export interface TableListPagination {

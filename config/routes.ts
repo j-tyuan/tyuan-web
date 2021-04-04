@@ -10,6 +10,12 @@
     name: 'welcome',
     component: './Welcome',
   },
+  // 水印管理
+  {
+    path: '/sys/watermark',
+    name: 'watermark',
+    component: './sys/waterMarkManage',
+  },
   // 账号中心
   {
     name: 'account.center-manage',

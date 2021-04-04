@@ -6,7 +6,7 @@ import ProTable, {ActionType, ProColumns} from '@ant-design/pro-table';
 import CreateForm from './components/CreateForm';
 import UpdateForm from './components/UpdateForm';
 import {TableListItem} from './data';
-import {add, queryRule, remove} from './service';
+import {add, queryParams, remove} from './service';
 import Settings from "../../../../config/defaultSettings";
 import Authorized from "@/utils/Authorized";
 
@@ -180,7 +180,7 @@ const TableList: React.FC<{}> = () => {
             </Button>
           </Authorized>
         ]}
-        request={(params, sorter, filter) => queryRule({...params, sorter, filter})}
+        request={(params, sorter, filter) => queryParams({...params, sorter, filter})}
         columns={columns}
       />
 
