@@ -13,6 +13,7 @@ import * as Icon from "@ant-design/icons";
 import {API} from "@/services/API";
 import {WaterMarkProps} from "@ant-design/pro-layout/lib/components/WaterMark";
 import {loadWaterMark} from "@/pages/sys/waterMarkManage/service";
+import {setWatermark} from "@/utils/utils";
 
 /**
  * 获取用户信息比较慢的时候会展示一个 loading
@@ -94,15 +95,24 @@ export async function getInitialState(): Promise<{
     // 已登陆
     const currentUser = await loadUserInfo();
     const result = await queryMenuData();
+
+    // 初始化水印
     const waterMark = await loadWaterMark();
+    // 水印全屏模式
+    if (waterMark.isFull && waterMark.enable) {
+      setWatermark(waterMark)
+    }
+
     let menuData = result.data;
     // 构建自定义menu
     menuData = constructMenu(menuData);
     loadPermissions();
+
+    const waterMarkData = (waterMark.enable && !waterMark.isFull) ? waterMark : {};
     return {
       menuData,
       currentUser,
-      waterMarkData: waterMark.enable ? waterMark : {},
+      waterMarkData,
       settings: {...defaultSettings},
     };
   }
@@ -118,7 +128,9 @@ export const layout = ({initialState}: {
 }): BasicLayoutProps => {
   return {
     // 自定义右侧dom
-    rightContentRender: () => (<RightContent/>),
+    rightContentRender: () => (<><RightContent/>
+      <div className="waterBox" style={{backgroundImage: `url(${window.bgWater})`}}/>
+    </>),
     disableContentMargin: false,
     footerRender: () => <Footer/>,
     onPageChange: () => {

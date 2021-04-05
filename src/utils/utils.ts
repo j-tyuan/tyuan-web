@@ -44,31 +44,50 @@ export const hashCode = (val: string) => {
  * @param option
  * @Deprecated
  */
-export const setWatermark = (str: String, option = {}) => {
+export const setWatermark = (option = {}) => {
   const id = `tyuan.${Math.random()}`;
   if (document.getElementById(id) !== null) {
     // @ts-ignore
     document.body.removeChild(document.getElementById(id));
   }
 
+  const newOption = Object.assign({
+    width: 500,
+    height: 300,
+    rotate: -15,
+    fontSize: '16px Vedana',
+    fontColor: 'rgba(200, 200, 200, 0.3)',
+    content: "水印"
+  }, option)
+
+  newOption.fontSize = String(newOption.fontSize);
+  if (newOption.fontSize.indexOf("px") === -1) {
+    newOption.fontSize += "px Vedana";
+  }
   // 创建一个画布
   const can = document.createElement('canvas');
   // 设置画布的长宽
-  can.width = option.w || 500;
-  can.height = option.h || 300;
+  can.width = newOption.width;
+  can.height = newOption.height;
 
   const cans = can.getContext('2d');
+  const rotate = parseInt(newOption.rotate);
   // 旋转角度
-  cans.rotate(-15 * Math.PI / 180);
-  cans.font = '16px Vedana';
+  cans.rotate(rotate * Math.PI / 180);
+  cans.font = newOption.fontSize;
   // 设置填充绘画的颜色、渐变或者模式
-  cans.fillStyle = 'rgba(200, 200, 200, 0.3)';
+  cans.fillStyle = newOption.fontColor;
   // 设置文本内容的当前对齐方式
   cans.textAlign = 'left';
   // 设置在绘制文本时使用的当前文本基线
   cans.textBaseline = 'Middle';
   // 在画布上绘制填色的文本（输出的文本，开始绘制文本的X坐标位置，开始绘制文本的Y坐标位置）
-  cans.fillText(str, can.width / 8, can.height / 2);
+  cans.fillText(newOption.content, can.width / 8, can.height / 2);
+  if (newOption.image) {
+    const image = document.createElement("img");
+    image.src = newOption.image.src;
+    cans.drawImage(image);
+  }
   window.bgWater = can.toDataURL('image/png');
 }
 

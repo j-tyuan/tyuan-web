@@ -1,6 +1,6 @@
 /** Title: 自定义配置 */
 import React, {useEffect, useRef, useState} from 'react';
-import {Button, Card, Col, Divider, message, Row, Space, Spin} from 'antd';
+import {Button, Card, Col, Divider, message, Row, Space, Spin, Tooltip} from 'antd';
 import {WaterMark} from '@ant-design/pro-layout';
 import ProForm, {ProFormColorPicker, ProFormDependency, ProFormSlider, ProFormText,} from '@ant-design/pro-form';
 import {useIntl} from "umi";
@@ -48,10 +48,37 @@ export default () => {
     gapY: 20,
 
   })
+  const waterBoxs = document.getElementsByClassName("waterBox");
+  waterBoxs[0].style.display = "none";
+
   const switchChange = (dis: any) => {
     const newData = {...waterMarkData, enable: dis};
     setWaterMarkData(newData);
     handleWaterMark({...newData})
+  }
+
+  const full = (dis: any) => {
+    const newData = {...waterMarkData, isFull: dis};
+    setWaterMarkData(newData);
+    handleWaterMark({...newData})
+  }
+
+  const tools = () => {
+    return (
+      <Space>
+        <Switch
+          checkedChildren="开启水印"
+          unCheckedChildren="关闭"
+          checked={waterMarkData.enable} onChange={switchChange}/>
+        <Tooltip title={"局部：只有内容有水印，全局：覆盖整个页面"}>
+          <Switch
+            checkedChildren="全局"
+            unCheckedChildren="局部"
+            disabled={!waterMarkData.enable}
+            checked={waterMarkData.isFull} onChange={full}/>
+        </Tooltip>
+      </Space>
+    )
   }
 
   useEffect(() => {
@@ -66,6 +93,9 @@ export default () => {
       }
       setLoading(false)
     })
+    return () => {
+      waterBoxs[0].style.display = "block";
+    }
   }, [])
   return (
     <Spin spinning={loading}>
@@ -76,7 +106,7 @@ export default () => {
         }}
         submitter={false}
       >
-        <Card title={<Space>启用水印<Switch checked={waterMarkData.enable} onChange={switchChange}/></Space>} bordered>
+        <Card title={tools()} bordered>
           <Row gutter={[10, 10]}>
             <Col span={18}>
               <Card>
