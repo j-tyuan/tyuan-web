@@ -58,6 +58,7 @@
     "@antv/l7-maps": "^2.3.9",
     "@antv/l7-react": "^2.3.0",
     "@umijs/route-utils": "^1.0.33",
+    "antd": "^4.9.4",
     "antd-img-crop": "^3.14.1",
     "bizcharts": "^3.5.3-beta.0",
     "bizcharts-plugin-slider": "^2.1.1-beta.1",
