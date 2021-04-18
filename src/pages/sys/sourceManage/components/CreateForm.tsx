@@ -6,8 +6,8 @@ import PermissionTreeSelect from "@/components/PermissionTreeSelect";
 import TextArea from "antd/es/input/TextArea";
 import {TableListItem} from "../data";
 import {useIntl} from "umi";
-import {add} from "@/pages/sys/sourceManage/service";
 import {findParentPathIds} from "@/utils/utils";
+import {addSouce} from "../service";
 
 interface CreateFormProps {
   permission: Object;
@@ -25,7 +25,7 @@ interface CreateFormProps {
 const handleAdd = async (fields: TableListItem) => {
   const hide = message.loading('正在添加');
   try {
-    const v = await add({...fields});
+    const v = await addSouce({...fields});
     hide();
     if (v.errorCode === -1) {
       message.success('添加成功');
@@ -98,7 +98,7 @@ const CreateForm: React.FC<CreateFormProps> = (props) => {
           <Input/>
         </Form.Item>
 
-        <Form.Item name="name" label="资源名称" rules={[{required: true}]}>
+        <Form.Item name="sourceName" label="资源名称" rules={[{required: true}]}>
           <Input/>
         </Form.Item>
         <Form.Item name="isLeaf" label="子节点" initialValue={1}>
@@ -113,13 +113,13 @@ const CreateForm: React.FC<CreateFormProps> = (props) => {
             <Radio value={0}>否</Radio>
           </Radio.Group>
         </Form.Item>
-        <Form.Item name="href" label="href">
+        <Form.Item name="sourceHref" label="href">
           <Input/>
         </Form.Item>
-        <Form.Item name="target" label="target">
+        <Form.Item name="sourceTarget" label="target">
           <Input/>
         </Form.Item>
-        <Form.Item name="sort" label="排序" rules={[{required: true}]}>
+        <Form.Item name="sourceSort" label="排序" rules={[{required: true}]}>
           <InputNumber/>
         </Form.Item>
         <Form.Item name="temporaryParentId" label="上级节点" rules={[{required: true}]}>
@@ -128,14 +128,14 @@ const CreateForm: React.FC<CreateFormProps> = (props) => {
               formRef.current.setFieldsValue({temporaryParentId: value})
               formRef.current.setFieldsValue({parentId: value[value.length - 1]})
             }
-          }} fieldNames={{label: "name", value: "id"}}/>
+          }} fieldNames={{label: "sourceName", value: "id"}}/>
         </Form.Item>
         <Form.Item name="permissionId" label="权限配置" rules={[{required: true}]}>
           <PermissionTreeSelect permission={props.permission} onChange={(permissions: any) => {
             setPermissionId(permissions[0])
           }}/>
         </Form.Item>
-        <Form.Item name="icon" label="图标">
+        <Form.Item name="sourceIcon" label="图标">
           <Input/>
         </Form.Item>
         <Form.Item name="remarks" label="备注">

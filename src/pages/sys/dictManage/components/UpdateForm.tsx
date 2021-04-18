@@ -4,8 +4,7 @@ import {TableListItem} from '../data';
 import {FormInstance} from "antd/es/form";
 import Settings from "../../../../../config/defaultSettings";
 import {useIntl} from "umi";
-import {Option} from "antd/es/mentions";
-import {update} from "@/pages/sys/dictManage/service";
+import { updateDict } from '../service';
 
 /**
  * 更新节点
@@ -14,7 +13,7 @@ import {update} from "@/pages/sys/dictManage/service";
 const handleUpdate = async (fields: TableListItem) => {
   const hide = message.loading('正在配置');
   try {
-    const v = await update({...fields});
+    const v = await updateDict({...fields});
     hide();
     if (v.errorCode === -1) {
       message.success('配置成功');
@@ -77,13 +76,13 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
           <Input/>
         </Form.Item>
         <Form.Item
-          name="label" label="字典标签" rules={[{required: true}]}>
+          name="dictLabel" label="字典标签" rules={[{required: true}]}>
           <Input/>
         </Form.Item>
-        <Form.Item name="value" label="字典值" rules={[{required: true}]}>
+        <Form.Item name="dictValue" label="字典值" rules={[{required: true}]}>
           <Input.TextArea/>
         </Form.Item>
-        <Form.Item name="type" label="字典类型">
+        <Form.Item name="dictType" label="字典类型">
           <Select>
             {
               Object.keys(props.types).map(item => (
@@ -92,7 +91,7 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
             }
           </Select>
         </Form.Item>
-        <Form.Item name="description" label="描述">
+        <Form.Item name="remarks" label="描述">
           <Input.TextArea/>
         </Form.Item>
         <Form.Item>

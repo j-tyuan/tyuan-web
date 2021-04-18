@@ -6,7 +6,7 @@ import ProTable, {ActionType, ProColumns} from '@ant-design/pro-table';
 import CreateForm from './components/CreateForm';
 import UpdateForm from './components/UpdateForm';
 import {TableListItem} from './data';
-import {getByPermission, getSourceAll, remove} from './service';
+import {getByPermission, getSourceAll, removeSource} from './service';
 import Authorized from "@/utils/Authorized";
 import styles from "./index.less";
 import Row from "antd/es/row";
@@ -21,7 +21,7 @@ const handleRemove = async (selectedRows: TableListItem[]) => {
   const hide = message.loading('正在删除');
   if (!selectedRows) return true;
   try {
-    const v = await remove({
+    const v = await removeSource({
       id: selectedRows.map((row) => row.id),
     });
     hide();
@@ -94,7 +94,7 @@ const TableList: React.FC<{}> = () => {
   const columns: ProColumns<TableListItem>[] = [
     {
       title: '资源名称',
-      dataIndex: 'name',
+      dataIndex: 'sourceName',
       formItemProps: {
         rules: [
           {
@@ -106,17 +106,17 @@ const TableList: React.FC<{}> = () => {
     },
     {
       title: "href",
-      dataIndex: "href",
+      dataIndex: "sourceHref",
       search: false
     },
     {
       title: "目标",
-      dataIndex: "target",
+      dataIndex: "sourceTarget",
       search: false
     },
     {
       title: "排序",
-      dataIndex: "sort",
+      dataIndex: "sourceSort",
       initialValue: "0",
       search: false
     },
@@ -148,7 +148,7 @@ const TableList: React.FC<{}> = () => {
     },
     {
       title: "编辑时间",
-      dataIndex: "updateDate",
+      dataIndex: "updateTime",
       hideInForm: true,
       search: false,
       valueType: 'dateTime',

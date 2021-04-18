@@ -6,19 +6,19 @@ import {ActionType, ProColumns} from '@ant-design/pro-table';
 import CreateForm from './components/CreateForm';
 import UpdateForm from './components/UpdateForm';
 import {TableListItem} from './data';
-import {disable, remove} from './service';
 import KBPassword from "./components/KBPassword";
 import Authorized from "@/utils/Authorized";
 import {getInstAll} from "@/pages/organization/institutionManage/service";
 import {findParentPath} from "@/utils/utils";
 import {loadRoles} from '../roleManage/service';
 import ProUserTable from "@/components/ProUserTable";
+import {disableUser, removeUser} from "@/pages/auth/userManage/service";
 
 
 const handleDisable = async (row: TableListItem) => {
   const hide = message.loading('正在操作')
   try {
-    const v = await disable(row.id, row.disabled ? 0 : 1);
+    const v = await disableUser(row.id, row.disabled ? 0 : 1);
     hide();
     if (v.errorCode === -1) {
       message.success('操作成功');
@@ -44,7 +44,7 @@ const handleRemove = async (selectedRows: TableListItem[]) => {
   const hide = message.loading('正在删除');
   if (!selectedRows) return true;
   try {
-    const v = await remove({
+    const v = await removeUser({
       id: selectedRows.map((row) => row.id),
     });
     hide();
@@ -93,7 +93,7 @@ const TableList: React.FC<{}> = () => {
     },
     {
       title: "登陆账号",
-      dataIndex: "account",
+      dataIndex: "userAccount",
       formItemProps: {
         rules: [
           {
@@ -105,7 +105,7 @@ const TableList: React.FC<{}> = () => {
     },
     {
       title: "密码",
-      dataIndex: "password",
+      dataIndex: "userPwd",
       search: false,
       hideInTable: true,
       valueType: "password",
@@ -114,7 +114,7 @@ const TableList: React.FC<{}> = () => {
           <KBPassword onChange={
             (e) => {
               form.setFieldsValue({
-                password: e
+                userPwd: e
               })
             }
           }/>
@@ -140,7 +140,7 @@ const TableList: React.FC<{}> = () => {
     },
     {
       title: '用户名称',
-      dataIndex: 'name',
+      dataIndex: 'userName',
       formItemProps: {
         rules: [
           {
@@ -152,7 +152,7 @@ const TableList: React.FC<{}> = () => {
     },
     {
       title: "手机号",
-      dataIndex: "phone",
+      dataIndex: "userPhone",
       formItemProps: {
         rules: [
           {
@@ -169,7 +169,7 @@ const TableList: React.FC<{}> = () => {
     {
       title: "电子邮箱",
       search: false,
-      dataIndex: "email",
+      dataIndex: "userEmail",
       formItemProps: {
         rules: [
           {
@@ -223,7 +223,7 @@ const TableList: React.FC<{}> = () => {
     },
     {
       title: "编辑时间",
-      dataIndex: "updateDate",
+      dataIndex: "updateTime",
       hideInForm: true,
       search: false,
       valueType: 'dateTime',

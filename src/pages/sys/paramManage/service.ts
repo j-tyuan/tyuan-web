@@ -10,7 +10,7 @@ export async function queryParams(params?: TableListParams) {
   });
 }
 
-export async function remove(params: { id: number[] }) {
+export async function removeParams(params: { id: number[] }) {
   return request('/api/sys/param/del', {
     method: 'POST',
     data: {
@@ -19,7 +19,7 @@ export async function remove(params: { id: number[] }) {
   });
 }
 
-export async function add(params: TableListItem) {
+export async function addParams(params: TableListItem) {
   return request('/api/sys/param/add', {
     method: 'POST',
     data: {

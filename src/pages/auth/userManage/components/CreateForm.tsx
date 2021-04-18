@@ -6,7 +6,7 @@ import KBPassword from "@/pages/auth/userManage/components/KBPassword";
 import TextArea from "antd/es/input/TextArea";
 import {useIntl} from "umi";
 import {TableListItem} from "@/pages/auth/userManage/data";
-import {add, uploadUserAvatarAction} from "@/pages/auth/userManage/service";
+import {addUser, uploadUserAvatarAction} from "../service";
 import UploadAvatar from './UploadAvatar';
 import RoleSelect from "@/pages/auth/userManage/components/RoleSelect";
 
@@ -25,7 +25,7 @@ interface CreateFormProps {
 const handleAdd = async (fields: TableListItem) => {
   const hide = message.loading('正在添加');
   try {
-    const v = await add({...fields});
+    const v = await addUser({...fields});
     hide();
     if (v.errorCode === -1) {
       message.success('添加成功');
@@ -75,11 +75,11 @@ const CreateForm: React.FC<CreateFormProps> = (props) => {
             layout="horizontal"
       >
         <Form.Item name="instId" rules={[{required: true}]} hidden><Input/></Form.Item>
-        <Form.Item name="account" label="登陆账号" rules={[{required: true}]}><Input/></Form.Item>
-        <Form.Item name="password" label="密码">
+        <Form.Item name="userAccount" label="登陆账号" rules={[{required: true}]}><Input/></Form.Item>
+        <Form.Item name="userPwd" label="密码">
           <KBPassword onChange={(e) => {
             // @ts-ignore
-            formRef.current.setFieldsValue({password: e})
+            formRef.current.setFieldsValue({userPwd: e})
           }}/>
         </Form.Item>
         <Form.Item name="temporaryInstId" label="所属机构" rules={[{required: true}]}>
@@ -90,15 +90,15 @@ const CreateForm: React.FC<CreateFormProps> = (props) => {
           }} fieldNames={{label: "instName", value: "id"}}/>
         </Form.Item>
         <Form.Item
-          name="name" label="用户名称" rules={[{required: true}]}>
+          name="userName" label="用户名称" rules={[{required: true}]}>
           <Input/>
         </Form.Item>
         <Form.Item
-          name="phone" label="手机号" rules={[{required: true}]}>
+          name="userPhone" label="手机号" rules={[{required: true}]}>
           <Input/>
         </Form.Item>
         <Form.Item
-          name="email" label="电子邮箱">
+          name="userEmail" label="电子邮箱">
           <Input/>
         </Form.Item>
         <Form.Item name="avatarId" label="头像">

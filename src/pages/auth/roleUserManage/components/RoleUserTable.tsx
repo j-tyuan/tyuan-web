@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {ProColumns} from "@ant-design/pro-table";
 import {TableListItem} from "@/pages/auth/userManage/data";
-import {Avatar, Card, Tooltip} from "antd";
+import {Avatar, Tooltip} from "antd";
 import {UserOutlined} from "@ant-design/icons";
 import ProUserTable from "@/components/ProUserTable";
 import {queryBindUser} from "@/pages/auth/roleManage/service";
@@ -10,8 +10,8 @@ import {PageContainer} from "@ant-design/pro-layout";
 
 
 const RoleUserTable: React.FC<{ roleId: any, institutions: any[], onChange: (ids: any[]) => void, actionRef: any }> = (props) => {
-  const {roleId, onChange} = props;
-  const [selectedRowKeys, setSelectedRowKeys] = useState<any>();
+  const {roleId} = props;
+  const [selectedRowKeys] = useState<any>();
   const columns: ProColumns<TableListItem>[] = [
     {
 

@@ -3,7 +3,7 @@ import React, {useRef, useState} from 'react';
 import ProTable, {ActionType} from '@ant-design/pro-table';
 import {FormInstance} from "antd/es/form";
 import {TableListItem} from "@/pages/auth/userManage/data";
-import {query} from '@/pages/auth/userManage/service';
+import {queryUser} from '@/pages/auth/userManage/service';
 
 
 const instTreeToTree = (data: any []) => {
@@ -73,7 +73,7 @@ const ProUserTable: React.FC<{ ProUserTableProps: any, ProUserTableOptions: any,
       rowKey="id"
       params={{instId}}
       search={{labelWidth: 120}}
-      request={(params, sorter, filter) => query({...params, sorter, filter})}
+      request={(params, sorter, filter) => queryUser({...params, sorter, filter})}
       {...props.ProUserTableOptions}
       tableRender={(_, dom) => (
         <Row gutter={[10, 10]}>

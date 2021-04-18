@@ -3,7 +3,7 @@ import {PureSettings} from "@ant-design/pro-layout/es/defaultSettings";
 declare namespace API {
   export interface CurrentUser {
     avatar?: string;
-    name?: string;
+    userName?: string;
     title?: string;
     group?: string;
     signature?: string;

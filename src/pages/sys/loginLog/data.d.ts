@@ -1,8 +1,8 @@
 export interface TableListItem {
   id: number;
   requestId: string;
-  updateDate: Date;
-  createDate: Date;
+  updateTime: Date;
+  createTime: Date;
   type: string;
   title: string;
   userName: string;

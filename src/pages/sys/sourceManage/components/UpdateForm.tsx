@@ -6,7 +6,7 @@ import PermissionTreeSelect from "@/components/PermissionTreeSelect";
 import TextArea from "antd/es/input/TextArea";
 import {TableListItem} from "../data";
 import {useIntl} from "umi";
-import {update} from "@/pages/sys/sourceManage/service";
+import {updateSource} from "../service";
 import {findParentPathIds} from "@/utils/utils";
 
 interface CreateFormProps {
@@ -25,7 +25,7 @@ interface CreateFormProps {
 const handleUpdate = async (fields: TableListItem) => {
   const hide = message.loading('正在配置');
   try {
-    const v = await update({...fields});
+    const v = await updateSource({...fields});
     hide();
     if (v.errorCode === -1) {
       message.success('配置成功');
@@ -95,7 +95,7 @@ const CreateForm: React.FC<CreateFormProps> = (props) => {
           <Input/>
         </Form.Item>
         <Form.Item name="id" hidden/>
-        <Form.Item name="name" label="资源名称" rules={[{required: true}]}>
+        <Form.Item name="sourceName" label="资源名称" rules={[{required: true}]}>
           <Input/>
         </Form.Item>
         <Form.Item name="isLeaf" label="子节点">
@@ -110,13 +110,13 @@ const CreateForm: React.FC<CreateFormProps> = (props) => {
             <Radio value={false}>否</Radio>
           </Radio.Group>
         </Form.Item>
-        <Form.Item name="href" label="href">
+        <Form.Item name="sourceHref" label="href">
           <Input/>
         </Form.Item>
-        <Form.Item name="target" label="target">
+        <Form.Item name="sourceTarget" label="target">
           <Input/>
         </Form.Item>
-        <Form.Item name="sort" label="排序" rules={[{required: true}]}>
+        <Form.Item name="sourceSort" label="排序" rules={[{required: true}]}>
           <InputNumber/>
         </Form.Item>
         <Form.Item name="temporaryParentId" label="上级节点" rules={[{required: true}]}>
@@ -135,7 +135,7 @@ const CreateForm: React.FC<CreateFormProps> = (props) => {
               setPermissionId(permissions[0])
             }}/>
         </Form.Item>
-        <Form.Item name="icon" label="图标">
+        <Form.Item name="sourceIcon" label="图标">
           <Input/>
         </Form.Item>
         <Form.Item name="remarks" label="备注">

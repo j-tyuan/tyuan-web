@@ -6,7 +6,7 @@ import ProTable, {ActionType, ProColumns} from '@ant-design/pro-table';
 import CreateForm from './components/CreateForm';
 import UpdateForm from './components/UpdateForm';
 import {TableListItem} from './data';
-import {getAuthByRoleId, getByPermission, query, remove} from './service';
+import {getAuthByRoleId, getByPermission, queryRole, removeRole} from './service';
 import Authorized from "@/utils/Authorized";
 import {Link} from 'umi';
 
@@ -20,7 +20,7 @@ const handleRemove = async (selectedRows: TableListItem[]) => {
   const hide = message.loading('正在删除');
   if (!selectedRows) return true;
   try {
-    const v = await remove({
+    const v = await removeRole({
       id: selectedRows.map((row) => row.id),
     });
     hide();
@@ -45,7 +45,7 @@ const handlePermission = async () => {
   return [];
 }
 
-const loop = (treeData, pid: any) => {
+const loop = (treeData, pid: any, key, title) => {
   // @ts-ignore
   const arr = []
   // eslint-disable-next-line guard-for-in,no-restricted-syntax
@@ -53,10 +53,10 @@ const loop = (treeData, pid: any) => {
     const val = treeData[i];
     if (val.parentId === pid) {
       const item = {
-        title: val.name,
-        key: val.id,
+        title: val[title],
+        key: val[key],
       }
-      item.children = loop(treeData, val.id)
+      item.children = loop(treeData, val.id, key, title)
       item.isLeaf = item.children.length === 0;
       arr.push(item)
     }
@@ -86,7 +86,7 @@ const TableList: React.FC<{}> = () => {
   useEffect(() => {
     const p = handlePermission();
     p.then(e => {
-      const l = loop(e, 0)
+      const l = loop(e, 0, "id", "permissionName")
       setPermission(l)
       const ids = getOneLevelId(e);
       setOneLevelIds(ids)
@@ -96,7 +96,7 @@ const TableList: React.FC<{}> = () => {
   const columns: ProColumns<TableListItem>[] = [
     {
       title: "角色编码",
-      dataIndex: "code",
+      dataIndex: "roleCode",
       formItemProps: {
         rules: [
           {
@@ -108,7 +108,7 @@ const TableList: React.FC<{}> = () => {
     },
     {
       title: '角色名称',
-      dataIndex: 'name',
+      dataIndex: 'roleName',
       formItemProps: {
         rules: [
           {
@@ -127,7 +127,7 @@ const TableList: React.FC<{}> = () => {
     },
     {
       title: "编辑时间",
-      dataIndex: "updateDate",
+      dataIndex: "updateTime",
       hideInForm: true,
       search: false,
       valueType: 'dateTime',
@@ -200,7 +200,7 @@ const TableList: React.FC<{}> = () => {
             </Button>
           </Authorized>
         ]}
-        request={(params, sorter, filter) => query({...params, sorter, filter})}
+        request={(params, sorter, filter) => queryRole({...params, sorter, filter})}
         columns={columns}
       />
 

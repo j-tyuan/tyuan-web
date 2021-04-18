@@ -68,18 +68,12 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({menu}) => {
 
   const {currentUser} = initialState;
 
-  if (!currentUser || !currentUser.name) {
+  if (!currentUser || !currentUser.userName) {
     return loading;
   }
 
   const menuHeaderDropdown = (
     <Menu className={styles.menu} selectedKeys={[]} onClick={onMenuClick}>
-      {/*{menu && (
-        <Menu.Item key="center">
-          <UserOutlined/>
-          个人中心
-        </Menu.Item>
-      )}*/}
       {menu && (
         <Menu.Item key="settings">
           <SettingOutlined/>

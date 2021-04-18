@@ -1,7 +1,7 @@
 import {request} from 'umi';
 import {TableListParams, TableListItem} from './data';
 
-export async function query(params?: TableListParams) {
+export async function queryRole(params?: TableListParams) {
   const result = await request('/api/sys/role', {
     method: 'POST',
     data: {
@@ -11,7 +11,7 @@ export async function query(params?: TableListParams) {
   return result;
 }
 
-export async function remove(params: { id: number[] }) {
+export async function removeRole(params: { id: number[] }) {
   return request('/api/sys/role/del', {
     method: 'POST',
     data: {
@@ -20,7 +20,7 @@ export async function remove(params: { id: number[] }) {
   });
 }
 
-export async function add(params: TableListItem) {
+export async function addRole(params: TableListItem) {
   return request('/api/sys/role/add', {
     method: 'POST',
     data: {
@@ -29,7 +29,7 @@ export async function add(params: TableListItem) {
   });
 }
 
-export async function update(params: TableListItem) {
+export async function updateRole(params: TableListItem) {
   return request('/api/sys/role/edit', {
     method: 'POST',
     data: {

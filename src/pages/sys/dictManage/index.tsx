@@ -6,7 +6,7 @@ import ProTable, {ActionType, ProColumns} from '@ant-design/pro-table';
 import CreateForm from './components/CreateForm';
 import UpdateForm from './components/UpdateForm';
 import {TableListItem} from './data';
-import {add, queryRule, queryTypes, remove} from './service';
+import {addDict, queryDict, queryTypes, removeDict} from './service';
 import Settings from "../../../../config/defaultSettings";
 import Authorized from "@/utils/Authorized";
 
@@ -17,7 +17,7 @@ import Authorized from "@/utils/Authorized";
 const handleAdd = async (fields: TableListItem) => {
   const hide = message.loading('正在添加');
   try {
-    const v = await add({...fields});
+    const v = await addDict({...fields});
     hide();
     if (v.errorCode === -1) {
       message.success('添加成功');
@@ -41,7 +41,7 @@ const handleRemove = async (selectedRows: TableListItem[]) => {
   const hide = message.loading('正在删除');
   if (!selectedRows) return true;
   try {
-    const v = await remove({
+    const v = await removeDict({
       id: selectedRows.map((row) => row.id),
     });
     hide();
@@ -91,7 +91,7 @@ const TableList: React.FC<{}> = () => {
   const columns: ProColumns<TableListItem>[] = [
     {
       title: '字典标签',
-      dataIndex: 'label',
+      dataIndex: 'dictLabel',
       formItemProps: {
         rules: [
           {
@@ -103,7 +103,7 @@ const TableList: React.FC<{}> = () => {
     },
     {
       title: "字典类型",
-      dataIndex: "type",
+      dataIndex: "dictType",
       formItemProps: {
         rules: [
           {
@@ -117,7 +117,7 @@ const TableList: React.FC<{}> = () => {
     },
     {
       title: "字典值",
-      dataIndex: "value",
+      dataIndex: "dictValue",
       valueType: "textarea",
       formItemProps: {
         rules: [
@@ -130,20 +130,20 @@ const TableList: React.FC<{}> = () => {
     },
     {
       title: "排序",
-      dataIndex: "sort",
+      dataIndex: "dictSort",
       initialValue: "0",
       search: false
     },
     {
       title: "描述",
-      dataIndex: "description",
+      dataIndex: "remarks",
       valueType: "textarea",
       search: false
     },
 
     {
       title: "编辑时间",
-      dataIndex: "updateDate",
+      dataIndex: "updateTime",
       hideInForm: true,
       search: false,
       valueType: 'dateTime',
@@ -204,7 +204,7 @@ const TableList: React.FC<{}> = () => {
             </Button>
           </Authorized>
         ]}
-        request={(params, sorter, filter) => queryRule({...params, sorter, filter})}
+        request={(params, sorter, filter) => queryDict({...params, sorter, filter})}
         columns={columns}
       />
 

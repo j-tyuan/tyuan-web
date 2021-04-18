@@ -102,12 +102,12 @@ const TableList: React.FC<{}> = () => {
     {
       title: "备注",
       search: false,
-      dataIndex: "instDesc",
+      dataIndex: "remarks",
       valueType: "textarea"
     },
     {
       title: "编辑时间",
-      dataIndex: "updateDate",
+      dataIndex: "updateTime",
       hideInForm: true,
       search: false,
       valueType: 'dateTime',

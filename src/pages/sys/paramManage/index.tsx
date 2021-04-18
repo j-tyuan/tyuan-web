@@ -6,7 +6,7 @@ import ProTable, {ActionType, ProColumns} from '@ant-design/pro-table';
 import CreateForm from './components/CreateForm';
 import UpdateForm from './components/UpdateForm';
 import {TableListItem} from './data';
-import {add, queryParams, remove} from './service';
+import {addParams, queryParams, removeParams} from './service';
 import Settings from "../../../../config/defaultSettings";
 import Authorized from "@/utils/Authorized";
 
@@ -17,7 +17,7 @@ import Authorized from "@/utils/Authorized";
 const handleAdd = async (fields: TableListItem) => {
   const hide = message.loading('正在添加');
   try {
-    const v = await add({...fields});
+    const v = await addParams({...fields});
     hide();
     if (v.errorCode === -1) {
       message.success('添加成功');
@@ -41,7 +41,7 @@ const handleRemove = async (selectedRows: TableListItem[]) => {
   const hide = message.loading('正在删除');
   if (!selectedRows) return true;
   try {
-    const v = await remove({
+    const v = await removeParams({
       id: selectedRows.map((row) => row.id),
     });
     hide();
@@ -121,7 +121,7 @@ const TableList: React.FC<{}> = () => {
     },
     {
       title: "编辑时间",
-      dataIndex: "updateDate",
+      dataIndex: "updateTime",
       hideInForm: true,
       search: false,
       valueType: 'dateTime',

@@ -21,11 +21,11 @@ const PermissionTreeSelect: React.FC<Props> = (props) => {
     const newData: any[] = [];
     // eslint-disable-next-line guard-for-in,no-restricted-syntax
     for (const i in permission) {
-      const {id, parentId, name} = permission[i]
+      const {id, parentId, permissionName} = permission[i]
       const item = {
         id,
         pId: parentId,
-        title: name,
+        title: permissionName,
         value: id
       }
       newData.push(item);

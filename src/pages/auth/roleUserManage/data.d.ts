@@ -1,21 +1,8 @@
 export interface TableListItem {
   disabled: any;
   id: number;
-  updateDate: Date;
-  createDate: Date;
-
-  name: string;
-  href: string;
-  target: string;
-  sort?: any;
-  parentId?: any;
-  icon: string;
-  isLeaf: boolean;
-  isShow: boolean;
-  permissionId?: any;
-  children: Array;
-  createBy: string;
-  updateBy: string;
+  updateTime: Date;
+  createTime: Date;
   remarks: string;
 }
 

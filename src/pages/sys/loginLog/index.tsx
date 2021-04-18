@@ -2,8 +2,8 @@ import React, {useRef} from 'react';
 import {PageContainer} from '@ant-design/pro-layout';
 import ProTable, {ActionType, ProColumns} from '@ant-design/pro-table';
 import {TableListItem} from './data';
-import {query} from './service';
 import "./log.less"
+import { queryLoginLog } from './service';
 
 const TableList: React.FC<{}> = () => {
   const actionRef = useRef<ActionType>();
@@ -24,7 +24,7 @@ const TableList: React.FC<{}> = () => {
     {
       width: 200,
       title: "登陆时间",
-      dataIndex: "createDate",
+      dataIndex: "createTime",
       valueType: 'dateTime',
     }
   ];
@@ -39,7 +39,7 @@ const TableList: React.FC<{}> = () => {
           labelWidth: 120,
         }}
         toolBarRender={() => []}
-        request={(params, sorter, filter) => query({...params, sorter, filter})}
+        request={(params, sorter, filter) => queryLoginLog({...params, sorter, filter})}
         columns={columns}
       />
     </PageContainer>
