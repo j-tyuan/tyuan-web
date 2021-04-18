@@ -1,5 +1,5 @@
-import {UserOutlined} from '@ant-design/icons';
-import {Avatar, Divider, message, Modal, Tooltip} from 'antd';
+import {PlusOutlined, UserOutlined} from '@ant-design/icons';
+import {Avatar, Button, Divider, message, Modal, Tooltip} from 'antd';
 import React, {useEffect, useRef, useState} from 'react';
 import {PageContainer} from '@ant-design/pro-layout';
 import {ActionType, ProColumns} from '@ant-design/pro-table';
@@ -90,6 +90,8 @@ const TableList: React.FC<{}> = () => {
           },
         ],
       },
+      width: 150,
+      fixed: "left"
     },
     {
       title: "登陆账号",
@@ -102,6 +104,7 @@ const TableList: React.FC<{}> = () => {
           },
         ],
       },
+      width: 150
     },
     {
       title: "密码",
@@ -148,7 +151,8 @@ const TableList: React.FC<{}> = () => {
             message: '必填项',
           },
         ],
-      }
+      },
+      width: 150
     },
     {
       title: "手机号",
@@ -213,7 +217,8 @@ const TableList: React.FC<{}> = () => {
       title: "最后登陆时间",
       dataIndex: "loginDate",
       valueType: 'dateTime',
-      hideInForm: true
+      hideInForm: true,
+      width: 200
     },
     {
       title: "描述",
@@ -227,6 +232,7 @@ const TableList: React.FC<{}> = () => {
       hideInForm: true,
       search: false,
       valueType: 'dateTime',
+      width: 200
     },
     {
       dataIndex: "userType",
@@ -296,7 +302,21 @@ const TableList: React.FC<{}> = () => {
 
   return (
     <PageContainer>
-      <ProUserTable ProUserTableProps={{institutions}} ProUserTableOptions={{columns, headerTitle: "用户列表"}}/>
+      <ProUserTable
+        ProUserTableProps={{
+          institutions,
+          actionRef,
+          toolBarRender() {
+            return [
+              <Authorized key="1" authority="sys:user:add" noMatch={null}>
+                <Button type="primary" onClick={() => handleModalVisible(true)}>
+                  <PlusOutlined/> 新建
+                </Button>
+              </Authorized>
+            ]
+          }
+        }}
+        ProUserTableOptions={{columns, headerTitle: "用户列表"}}/>
       <CreateForm
         institutions={institutions}
         roles={roles}

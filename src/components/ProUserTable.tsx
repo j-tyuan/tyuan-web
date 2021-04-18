@@ -25,7 +25,9 @@ const instTreeToTree = (data: any []) => {
 }
 
 export interface ProUserTableProps {
+  toolBarRender?: () => void;
   institutions: any[];
+  actionRef: ActionType;
 }
 
 
@@ -33,9 +35,8 @@ export interface ProUserTableOptions {
 
 }
 
-const ProUserTable: React.FC<{ ProUserTableProps: any, ProUserTableOptions: any, actionRef?: any }> = (props) => {
-  const {institutions} = props.ProUserTableProps;
-  const actionRef = useRef<ActionType>();
+const ProUserTable: React.FC<{ ProUserTableProps: any, ProUserTableOptions: any }> = (props) => {
+  const {institutions, toolBarRender, actionRef} = props.ProUserTableProps;
   const formRef = useRef<FormInstance>();
   const [instId, setInstId] = useState<any>();
 
@@ -51,7 +52,7 @@ const ProUserTable: React.FC<{ ProUserTableProps: any, ProUserTableOptions: any,
     const institutionTreeData = instTreeToTree(institutions);
     return (
       <Card>
-        <Tree blockNode
+        <Tree style={{minWidth: 200}} blockNode
               onClick={(_, dataNode) => {
                 if (formRef.current) {
                   formRef.current.resetFields()
@@ -67,17 +68,20 @@ const ProUserTable: React.FC<{ ProUserTableProps: any, ProUserTableOptions: any,
 
   return (
     <ProTable<TableListItem>
+      scroll={{x: 2000}}
+
       formRef={formRef}
       headerTitle="查询表格"
-      actionRef={props.actionRef || actionRef}
+      toolBarRender={toolBarRender}
+      actionRef={actionRef}
       rowKey="id"
       params={{instId}}
       search={{labelWidth: 120}}
       request={(params, sorter, filter) => queryUser({...params, sorter, filter})}
       {...props.ProUserTableOptions}
       tableRender={(_, dom) => (
-        <Row gutter={[10, 10]}>
-          <Col span={4}>
+        <Row gutter={[10, 10]} wrap={false}>
+          <Col style={{overflowX: "auto"}} span={4}>
             {
               institutionTree()
             }

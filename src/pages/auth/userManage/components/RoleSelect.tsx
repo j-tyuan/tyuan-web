@@ -5,7 +5,7 @@ import { loadUserRoles } from "../service";
 interface Props {
   // 默认选择
   uid?: any;
-  roles?:any[];
+  roles?: any[];
   onChange: (roleIds: any[]) => void;
 }
 
@@ -44,7 +44,7 @@ const RoleSelect: React.FC<Props> = (props) => {
               setCheckedList([...newList])
               onChange([...newList])
             }
-          }}>{item.name}</Checkbox>
+          }}>{item.roleName}</Checkbox>
         ))
       }
     </>

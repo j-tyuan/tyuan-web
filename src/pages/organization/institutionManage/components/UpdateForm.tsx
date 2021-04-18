@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Button, Cascader, Drawer, Form, Input, message, Radio, Space} from 'antd';
 import {TableListItem} from '../data';
 import {FormInstance} from "antd/es/form";
@@ -6,7 +6,7 @@ import Settings from "../../../../../config/defaultSettings";
 import {useIntl} from "umi";
 import {update} from "../service";
 import {InputNumber} from "antd/es";
-import {findParentPathIds} from "@/utils/utils";
+import {findParentPathIds, recursionTree} from "@/utils/utils";
 import UserSelect from "@/components/UserSelect";
 
 
@@ -41,20 +41,35 @@ const handleUpdate = async (fields: TableListItem) => {
 
 const UpdateForm: React.FC<UpdateFormProps> = (props) => {
   const {modalVisible, onClose, onFinish, values, institutions} = props;
-  const {parentId} = values;
+  const {parentId, id} = values;
 
   const [loading, setLoading] = useState<boolean>(false);
   const formRef = React.createRef<FormInstance>();
 
+  useEffect(() => {
+    let item = {disabled: false};
+    if (institutions) {
+      recursionTree(institutions, (val: any) => {
+        if (val.id === id) {
+          item = val;
+        }
+      })
+      item.disabled = true;
+    }
+    return () => {
+      // 还原显示
+      item.disabled = false;
+    }
+  }, [id])
   return (
     <Drawer
       destroyOnClose
       title="修改机构"
       width={Settings.form.drawer.width}
       visible={modalVisible}
-      afterVisibleChange={() => {
-        if (institutions) {
-          const paths = findParentPathIds(parentId, [...institutions]);
+      afterVisibleChange={(visible) => {
+        if (institutions && visible) {
+          const paths = findParentPathIds(parentId, institutions);
           // 反显
           if (formRef.current) {
             // temporaryParentId 临时变量，为了反显，不保存

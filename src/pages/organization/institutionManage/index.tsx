@@ -58,6 +58,7 @@ const TableList: React.FC<{}> = () => {
           },
         ],
       },
+      width: 200
     },
     {
       title: '机构编码',
@@ -69,7 +70,8 @@ const TableList: React.FC<{}> = () => {
             message: '名称为必填项',
           },
         ],
-      }
+      },
+      width: 150
     },
     {
       title: "机构类型",
@@ -88,6 +90,7 @@ const TableList: React.FC<{}> = () => {
           },
         ],
       },
+      width: 100
     },
     {
       title: "机构状态",
@@ -98,6 +101,7 @@ const TableList: React.FC<{}> = () => {
         0: {text: '启用', status: 0},
         1: {text: '停用', status: 1},
       },
+      width: 100
     },
     {
       title: "备注",
@@ -111,6 +115,7 @@ const TableList: React.FC<{}> = () => {
       hideInForm: true,
       search: false,
       valueType: 'dateTime',
+      width: 200,
     },
     {
       width: 300,
@@ -181,6 +186,7 @@ const TableList: React.FC<{}> = () => {
       {
         dataSource ? (
           <ProTable<TableListItem>
+            scroll={{x:1200}}
             defaultExpandAllRows
             footer={() => {
               return <>
@@ -233,7 +239,7 @@ const TableList: React.FC<{}> = () => {
 
       <Authorized authority="sys:organize:institution:edit" noMatch={null}>
         <UpdateForm
-          institutions={dataSource}
+          institutions={[...(dataSource || [])]}
           modalVisible={updateModalVisible}
           onFinish={(success) => {
             if (success) {
