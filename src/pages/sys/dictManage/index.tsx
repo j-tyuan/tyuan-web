@@ -1,14 +1,14 @@
-import { PlusOutlined } from '@ant-design/icons';
-import { Button, Divider, message, Modal } from 'antd';
-import React, { useEffect, useRef, useState } from 'react';
-import { PageContainer } from '@ant-design/pro-layout';
-import ProTable, { ActionType, ProColumns } from '@ant-design/pro-table';
+import {PlusOutlined} from '@ant-design/icons';
+import {Button, Divider, message, Modal} from 'antd';
+import React, {useEffect, useRef, useState} from 'react';
+import {PageContainer} from '@ant-design/pro-layout';
+import ProTable, {ActionType, ProColumns} from '@ant-design/pro-table';
 import CreateForm from './components/CreateForm';
 import UpdateForm from './components/UpdateForm';
-import { TableListItem } from './data';
-import { add, queryRule, queryTypes, remove } from './service';
-import Settings from '../../../../config/defaultSettings';
-import Authorized from '@/utils/Authorized';
+import {TableListItem} from './data';
+import {addDict, queryDict, queryTypes, removeDict} from './service';
+import Settings from "../../../../config/defaultSettings";
+import Authorized from "@/utils/Authorized";
 
 /**
  * 添加节点
@@ -17,7 +17,7 @@ import Authorized from '@/utils/Authorized';
 const handleAdd = async (fields: TableListItem) => {
   const hide = message.loading('正在添加');
   try {
-    const v = await add({ ...fields });
+    const v = await addDict({...fields});
     hide();
     if (v.errorCode === -1) {
       message.success('添加成功');
@@ -31,6 +31,7 @@ const handleAdd = async (fields: TableListItem) => {
   }
 };
 
+
 /**
  *  删除节点
  * @param selectedRows
@@ -40,7 +41,7 @@ const handleRemove = async (selectedRows: TableListItem[]) => {
   const hide = message.loading('正在删除');
   if (!selectedRows) return true;
   try {
-    const v = await remove({
+    const v = await removeDict({
       id: selectedRows.map((row) => row.id),
     });
     hide();
@@ -56,21 +57,21 @@ const handleRemove = async (selectedRows: TableListItem[]) => {
   }
 };
 const getTypes = async () => {
-  const result = await queryTypes();
+  const result = await queryTypes()
   const type = {};
   if (!result || !result.data) {
     return type;
   }
-  result.data.forEach((v: { type: string | number; description: any }) => {
-    type[v.type] = v.description;
-  });
+  result.data.forEach((v: { type: string | number; description: any; }) => {
+    type[v.type] = v.description
+  })
   return type;
 };
 
 let TYPES = {};
 
 const TableList: React.FC<{}> = () => {
-  const [types, setTypes] = useState<any>();
+  const [types, setTypes] = useState<any>()
   const [createModalVisible, handleModalVisible] = useState<boolean>(false);
   const [updateModalVisible, handleUpdateModalVisible] = useState<boolean>(false);
   const [updateFormValues, setUpdateFormValues] = useState({});
@@ -78,19 +79,19 @@ const TableList: React.FC<{}> = () => {
 
   useEffect(() => {
     if (Object.keys(TYPES).length >= 1) {
-      setTypes({ ...TYPES });
+      setTypes({...TYPES})
     } else {
       getTypes().then((value: any) => {
-        setTypes({ ...value });
-        TYPES = { ...value };
-      });
+        setTypes({...value})
+        TYPES = {...value}
+      })
     }
-  }, []);
+  }, [])
 
   const columns: ProColumns<TableListItem>[] = [
     {
       title: '字典标签',
-      dataIndex: 'label',
+      dataIndex: 'dictLabel',
       formItemProps: {
         rules: [
           {
@@ -98,11 +99,11 @@ const TableList: React.FC<{}> = () => {
             message: '标签为必填项',
           },
         ],
-      },
+      }
     },
     {
-      title: '字典类型',
-      dataIndex: 'type',
+      title: "字典类型",
+      dataIndex: "dictType",
       formItemProps: {
         rules: [
           {
@@ -111,13 +112,13 @@ const TableList: React.FC<{}> = () => {
           },
         ],
       },
-      valueType: 'select',
-      valueEnum: types,
+      valueType: "select",
+      valueEnum: types
     },
     {
-      title: '字典值',
-      dataIndex: 'value',
-      valueType: 'textarea',
+      title: "字典值",
+      dataIndex: "dictValue",
+      valueType: "textarea",
       formItemProps: {
         rules: [
           {
@@ -128,21 +129,21 @@ const TableList: React.FC<{}> = () => {
       },
     },
     {
-      title: '排序',
-      dataIndex: 'sort',
-      initialValue: '0',
-      search: false,
+      title: "排序",
+      dataIndex: "dictSort",
+      initialValue: "0",
+      search: false
     },
     {
-      title: '描述',
-      dataIndex: 'description',
-      valueType: 'textarea',
-      search: false,
+      title: "描述",
+      dataIndex: "remarks",
+      valueType: "textarea",
+      search: false
     },
 
     {
-      title: '编辑时间',
-      dataIndex: 'updateDate',
+      title: "编辑时间",
+      dataIndex: "updateTime",
       hideInForm: true,
       search: false,
       valueType: 'dateTime',
@@ -157,29 +158,28 @@ const TableList: React.FC<{}> = () => {
             <a
               onClick={() => {
                 Modal.confirm({
-                  title: '您确定删除？',
-                  okText: '确定',
-                  cancelText: '取消',
+                  title: "您确定删除？",
+                  okText: "确定",
+                  cancelText: "取消",
                   onOk() {
                     const state = handleRemove([record]);
                     state.then(() => {
                       actionRef.current?.reload();
-                    });
-                  },
-                });
-              }}
+                    })
+                  }
+                })
+              }
+              }
             >
               删除
             </a>
-            <Divider type="vertical" />
+            <Divider type="vertical"/>
           </Authorized>
           <Authorized authority="sys:dict:edit" noMatch={null}>
-            <a
-              onClick={() => {
-                setUpdateFormValues(record);
-                handleUpdateModalVisible(true);
-              }}
-            >
+            <a onClick={() => {
+              setUpdateFormValues(record);
+              handleUpdateModalVisible(true);
+            }}>
               编辑
             </a>
           </Authorized>
@@ -200,11 +200,11 @@ const TableList: React.FC<{}> = () => {
         toolBarRender={() => [
           <Authorized key="1" authority="sys:dict:add" noMatch={null}>
             <Button type="primary" onClick={() => handleModalVisible(true)}>
-              <PlusOutlined /> 新建
+              <PlusOutlined/> 新建
             </Button>
-          </Authorized>,
+          </Authorized>
         ]}
-        request={(params, sorter, filter) => queryRule({ ...params, sorter, filter })}
+        request={(params, sorter, filter) => queryDict({...params, sorter, filter})}
         columns={columns}
       />
 
@@ -219,13 +219,13 @@ const TableList: React.FC<{}> = () => {
           }}
           rowKey="id"
           type="form"
-          form={{ ...Settings.form.formItemLayout, layout: 'horizontal' }}
+          form={{...Settings.form.formItemLayout, layout: 'horizontal'}}
           columns={columns}
         />
       </CreateForm>
 
-      {types ? (
-        <UpdateForm
+      {
+        types ? (<UpdateForm
           modalVisible={updateModalVisible}
           types={types}
           onFinish={(success) => {
@@ -237,11 +237,12 @@ const TableList: React.FC<{}> = () => {
             handleUpdateModalVisible(false);
             setTimeout(() => {
               setUpdateFormValues({});
-            }, 300);
+            }, 300)
           }}
           values={updateFormValues}
-        />
-      ) : null}
+        />) : null
+      }
+
     </PageContainer>
   );
 };

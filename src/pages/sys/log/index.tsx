@@ -2,7 +2,7 @@ import React, {useEffect, useRef, useState} from 'react';
 import {PageContainer} from '@ant-design/pro-layout';
 import ProTable, {ActionType, ProColumns} from '@ant-design/pro-table';
 import {TableListItem} from './data';
-import {getLogType, query} from './service';
+import {getLogType, queryLog} from './service';
 import {Input, Modal} from "antd";
 import ReactJson from "react-json-view";
 import "./log.less"
@@ -41,14 +41,14 @@ const TableList: React.FC<{}> = () => {
     {
       title: "日志类型",
       width: 100,
-      dataIndex: "type",
+      dataIndex: "logType",
       valueType: "select",
       valueEnum: valueType
     },
     {
       width: 200,
       title: "日志标题",
-      dataIndex: "title",
+      dataIndex: "logTitle",
     },
     {
       title: "操作人",
@@ -131,7 +131,7 @@ const TableList: React.FC<{}> = () => {
     {
       width: 200,
       title: "操作时间",
-      dataIndex: "createDate",
+      dataIndex: "createTime",
       hideInForm: true,
       search: false,
       valueType: 'dateTime',
@@ -158,7 +158,7 @@ const TableList: React.FC<{}> = () => {
           labelWidth: 120,
         }}
         toolBarRender={() => []}
-        request={(params, sorter, filter) => query({...params, sorter, filter})}
+        request={(params, sorter, filter) => queryLog({...params, sorter, filter})}
         columns={columns}
       />
     </PageContainer>

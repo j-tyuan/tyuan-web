@@ -94,16 +94,16 @@ const Settings: React.FC<{}> = () => {
       <Form.Item hidden name='userid'>
         <Input/>
       </Form.Item>
-      <Form.Item label="邮箱" name='email' rules={[{required: true, type: 'email'}]}>
+      <Form.Item label="邮箱" name='userEmail' rules={[{required: true, type: 'email'}]}>
         <Input/>
       </Form.Item>
-      <Form.Item label="昵称" name='name' rules={[{required: true}]}>
+      <Form.Item label="昵称" name='userName' rules={[{required: true}]}>
         <Input/>
       </Form.Item>
       <Form.Item label="个人简介" name='remarks'>
         <TextArea/>
       </Form.Item>
-      <Form.Item label="联系电话" name='phone'
+      <Form.Item label="联系电话" name='userPhone'
                  rules={[{required: true, pattern: /^[1][3,4,5,7,8][0-9]{9}$/, message: "请输入正确的手机号"}]}>
         <Input/>
       </Form.Item>

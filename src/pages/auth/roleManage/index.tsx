@@ -1,14 +1,15 @@
-import { PlusOutlined } from '@ant-design/icons';
-import { Button, Divider, message, Modal } from 'antd';
-import React, { Key, useEffect, useRef, useState } from 'react';
-import { PageContainer } from '@ant-design/pro-layout';
-import ProTable, { ActionType, ProColumns } from '@ant-design/pro-table';
+import {PlusOutlined} from '@ant-design/icons';
+import {Button, Divider, message, Modal} from 'antd';
+import React, {Key, useEffect, useRef, useState} from 'react';
+import {PageContainer} from '@ant-design/pro-layout';
+import ProTable, {ActionType, ProColumns} from '@ant-design/pro-table';
 import CreateForm from './components/CreateForm';
 import UpdateForm from './components/UpdateForm';
-import { TableListItem } from './data';
-import { getAuthByRoleId, getByPermission, query, remove } from './service';
-import Authorized from '@/utils/Authorized';
-import { Link } from 'umi';
+import {TableListItem} from './data';
+import {getAuthByRoleId, getByPermission, queryRole, removeRole} from './service';
+import Authorized from "@/utils/Authorized";
+import {Link} from 'umi';
+
 
 /**
  *  删除节点
@@ -19,7 +20,7 @@ const handleRemove = async (selectedRows: TableListItem[]) => {
   const hide = message.loading('正在删除');
   if (!selectedRows) return true;
   try {
-    const v = await remove({
+    const v = await removeRole({
       id: selectedRows.map((row) => row.id),
     });
     hide();
@@ -37,40 +38,41 @@ const handleRemove = async (selectedRows: TableListItem[]) => {
 
 const handlePermission = async () => {
   const permission = await getByPermission();
-  const { errorCode, data } = permission;
+  const {errorCode, data} = permission;
   if (errorCode === -1) {
     return data;
   }
   return [];
-};
+}
 
-const loop = (treeData, pid: any) => {
+const loop = (treeData, pid: any, key, title) => {
   // @ts-ignore
-  const arr = [];
+  const arr = []
   // eslint-disable-next-line guard-for-in,no-restricted-syntax
   for (const i in treeData) {
     const val = treeData[i];
     if (val.parentId === pid) {
       const item = {
-        title: val.name,
-        key: val.id,
-      };
-      item.children = loop(treeData, val.id);
+        title: val[title],
+        key: val[key],
+      }
+      item.children = loop(treeData, val.id, key, title)
       item.isLeaf = item.children.length === 0;
-      arr.push(item);
+      arr.push(item)
     }
   }
   return arr;
-};
+}
 const getOneLevelId = (treeData: any[]) => {
   const arr: any[] = [];
-  treeData.forEach((e) => {
+  treeData.forEach(e => {
     if (e.parentId === 0) {
-      arr.push(e.id);
+      arr.push(e.id)
     }
-  });
+  })
   return arr;
-};
+}
+
 
 const TableList: React.FC<{}> = () => {
   const [createModalVisible, handleModalVisible] = useState<boolean>(false);
@@ -79,22 +81,22 @@ const TableList: React.FC<{}> = () => {
   const actionRef = useRef<ActionType>();
   const [permission, setPermission] = useState<[]>([]);
   const [oneLevelIds, setOneLevelIds] = useState<Key[]>([]);
-  const [initSelectAuth, setInitSelectAuth] = useState<Key[]>();
+  const [initSelectAuth, setInitSelectAuth] = useState<Key[]>()
 
   useEffect(() => {
     const p = handlePermission();
-    p.then((e) => {
-      const l = loop(e, 0);
-      setPermission(l);
+    p.then(e => {
+      const l = loop(e, 0, "id", "permissionName")
+      setPermission(l)
       const ids = getOneLevelId(e);
-      setOneLevelIds(ids);
-    });
-  }, []);
+      setOneLevelIds(ids)
+    })
+  }, [])
 
   const columns: ProColumns<TableListItem>[] = [
     {
-      title: '角色编码',
-      dataIndex: 'code',
+      title: "角色编码",
+      dataIndex: "roleCode",
       formItemProps: {
         rules: [
           {
@@ -106,7 +108,7 @@ const TableList: React.FC<{}> = () => {
     },
     {
       title: '角色名称',
-      dataIndex: 'name',
+      dataIndex: 'roleName',
       formItemProps: {
         rules: [
           {
@@ -114,18 +116,18 @@ const TableList: React.FC<{}> = () => {
             message: '必填项',
           },
         ],
-      },
+      }
     },
     {
-      title: '描述',
-      dataIndex: 'remarks',
-      valueType: 'textarea',
+      title: "描述",
+      dataIndex: "remarks",
+      valueType: "textarea",
       search: false,
-      width: '40%',
+      width: "40%"
     },
     {
-      title: '编辑时间',
-      dataIndex: 'updateDate',
+      title: "编辑时间",
+      dataIndex: "updateTime",
       hideInForm: true,
       search: false,
       valueType: 'dateTime',
@@ -140,46 +142,41 @@ const TableList: React.FC<{}> = () => {
             <a
               onClick={() => {
                 Modal.confirm({
-                  title: '您确定删除？',
-                  okText: '确定',
-                  cancelText: '取消',
+                  title: "您确定删除？",
+                  okText: "确定",
+                  cancelText: "取消",
                   onOk() {
                     const state = handleRemove([record]);
                     state.then(() => {
                       actionRef.current?.reload();
-                    });
-                  },
-                });
-              }}
+                    })
+                  }
+                })
+              }
+              }
             >
               删除
             </a>
-            <Divider type="vertical" />
+            <Divider type="vertical"/>
           </Authorized>
           <Authorized authority="sys:role:del" noMatch={null}>
-            <a
-              onClick={() => {
-                setUpdateFormValue(record);
-                const promise = getAuthByRoleId(record.id);
-                promise.then((e) => {
-                  setInitSelectAuth(e.data);
-                  handleUpdateModalVisible(true);
-                });
-              }}
-            >
+            <a onClick={() => {
+              setUpdateFormValue(record);
+              const promise = getAuthByRoleId(record.id)
+              promise.then(e => {
+                setInitSelectAuth(e.data)
+                handleUpdateModalVisible(true);
+              })
+            }}>
               编辑
             </a>
-            <Divider type="vertical" />
+            <Divider type="vertical"/>
           </Authorized>
           <Authorized authority="sys:role:binduser" noMatch={null}>
-            <Link
-              to={{
-                pathname: '/auth/role/user',
-                state: { roleId: record.id },
-              }}
-            >
-              分配用户
-            </Link>
+            <Link to={{
+              pathname: "/auth/role/user",
+              state: {roleId: record.id}
+            }}>分配用户</Link>
           </Authorized>
         </>
       ),
@@ -199,11 +196,11 @@ const TableList: React.FC<{}> = () => {
         toolBarRender={() => [
           <Authorized key="1" authority="sys:role:add" noMatch={null}>
             <Button type="primary" onClick={() => handleModalVisible(true)}>
-              <PlusOutlined /> 新建
+              <PlusOutlined/> 新建
             </Button>
-          </Authorized>,
+          </Authorized>
         ]}
-        request={(params, sorter, filter) => query({ ...params, sorter, filter })}
+        request={(params, sorter, filter) => queryRole({...params, sorter, filter})}
         columns={columns}
       />
 
@@ -219,22 +216,19 @@ const TableList: React.FC<{}> = () => {
           handleUpdateModalVisible(false);
           setTimeout(() => {
             setUpdateFormValue({});
-          }, 300);
+          }, 300)
         }}
         values={updateFormValue}
       />
 
-      {permission && permission.length ? (
-        <CreateForm
-          onClose={() => handleModalVisible(false)}
-          permission={permission}
-          oneLevelIds={oneLevelIds}
-          onFinish={() => {
-            actionRef.current?.reload();
-          }}
-          modalVisible={createModalVisible}
-        />
-      ) : null}
+      {permission && permission.length ? (<CreateForm
+        onClose={() => handleModalVisible(false)}
+        permission={permission}
+        oneLevelIds={oneLevelIds}
+        onFinish={() => {
+          actionRef.current?.reload();
+        }}
+        modalVisible={createModalVisible}/>) : null}
     </PageContainer>
   );
 };

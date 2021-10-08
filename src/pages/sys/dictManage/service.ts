@@ -8,7 +8,7 @@ export async function queryTypes() {
 };
 
 
-export async function queryRule(params?: TableListParams) {
+export async function queryDict(params?: TableListParams) {
   return request('/api/sys/dict', {
     method: 'POST',
     data: {
@@ -17,7 +17,7 @@ export async function queryRule(params?: TableListParams) {
   });
 }
 
-export async function remove(params: { id: number[] }) {
+export async function removeDict(params: { id: number[] }) {
   return request('/api/sys/dict/del', {
     method: 'POST',
     data: {
@@ -26,7 +26,7 @@ export async function remove(params: { id: number[] }) {
   });
 }
 
-export async function add(params: TableListItem) {
+export async function addDict(params: TableListItem) {
   return request('/api/sys/dict/add', {
     method: 'POST',
     data: {
@@ -35,7 +35,7 @@ export async function add(params: TableListItem) {
   });
 }
 
-export async function update(params: TableListItem) {
+export async function updateDict(params: TableListItem) {
   return request('/api/sys/dict/edit', {
     method: 'POST',
     data: {

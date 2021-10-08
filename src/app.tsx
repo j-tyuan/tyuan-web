@@ -30,15 +30,14 @@ const constructMenu = (menuData: any[]) => {
   const newMenuData: any[] = [];
   // pro5不支持二级icon
   menuData.forEach(item => {
-    const {children, isLeaf, icon} = item;
-    if (!isLeaf && (!children || children?.lenght === 0)) {
+    const {children, leaf, icon} = item;
+    if (!leaf && (!children || children?.lenght === 0)) {
       return;
     }
     let iconDom;
     if (icon) {
       iconDom = React.createElement(Icon[icon])
     }
-
     newMenuData.push({...item, icon: iconDom})
   })
   return newMenuData;
@@ -107,7 +106,6 @@ export async function getInitialState(): Promise<{
     // 构建自定义menu
     menuData = constructMenu(menuData);
     loadPermissions();
-
     const waterMarkData = (waterMark.enable && !waterMark.isFull) ? waterMark : {};
     return {
       menuData,

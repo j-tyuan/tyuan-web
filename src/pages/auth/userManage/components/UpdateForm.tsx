@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import { Button, Cascader, Drawer, Form, Input, message, Space } from 'antd';
-import Settings from '../../../../../config/defaultSettings';
-import { FormInstance } from 'antd/es/form';
-import TextArea from 'antd/es/input/TextArea';
-import KBPassword from '@/pages/auth/userManage/components/KBPassword';
-import { useIntl } from 'umi';
-import { TableListItem } from '../data';
-import { update, uploadUserAvatarAction } from '@/pages/auth/userManage/service';
-import { findParentPathIds } from '@/utils/utils';
-import UploadAvatar from '@/pages/auth/userManage/components/UploadAvatar';
-import RoleSelect from '@/pages/auth/userManage/components/RoleSelect';
+import React, {useEffect, useState} from 'react';
+import {Button, Cascader, Drawer, Form, Input, message, Space} from 'antd';
+import Settings from "../../../../../config/defaultSettings";
+import {FormInstance} from "antd/es/form";
+import TextArea from "antd/es/input/TextArea";
+import KBPassword from "@/pages/auth/userManage/components/KBPassword";
+import {useIntl} from "umi";
+import {TableListItem} from "../data";
+import {updateUser, uploadUserAvatarAction} from "@/pages/auth/userManage/service";
+import {findParentPathIds} from "@/utils/utils";
+import UploadAvatar from "@/pages/auth/userManage/components/UploadAvatar";
+import RoleSelect from "@/pages/auth/userManage/components/RoleSelect";
 
 interface UpdateFormProps {
   modalVisible: boolean;
@@ -27,7 +27,7 @@ interface UpdateFormProps {
 const handleUpdate = async (fields: TableListItem) => {
   const hide = message.loading('正在配置');
   try {
-    const v = await update({ ...fields });
+    const v = await updateUser({...fields});
     hide();
     if (v.errorCode === -1) {
       message.success('修改成功');
@@ -42,7 +42,7 @@ const handleUpdate = async (fields: TableListItem) => {
 };
 
 const UpdateForm: React.FC<UpdateFormProps> = (props) => {
-  const { modalVisible, onClose, onFinish, institutions, values, roles } = props;
+  const {modalVisible, onClose, onFinish, institutions, values, roles} = props;
   const [loading, setLoading] = useState<boolean>(false);
   const formRef = React.createRef<FormInstance>();
   useEffect(() => {
@@ -50,9 +50,9 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
     // 反显
     if (formRef.current) {
       // temporaryParentId 临时变量，为了反显，不保存
-      formRef.current.setFieldsValue({ temporaryInstId: [...paths] });
+      formRef.current.setFieldsValue({temporaryInstId: [...paths]})
     }
-  }, [values.updateDate]);
+  }, [values.updateTime])
 
   return (
     <Drawer
@@ -63,99 +63,83 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
       onClose={() => onClose()}
       footer={null}
     >
-      <Form
-        ref={formRef}
-        {...Settings.form.formItemLayout}
-        name="control-ref"
-        labelAlign="right"
-        initialValues={props.values}
-        onFinish={(e) => {
-          setLoading(true);
-          const promise = handleUpdate(e);
-          promise.then((result) => {
-            if (result) {
-              onClose();
+      <Form ref={formRef}
+            {...Settings.form.formItemLayout}
+            name="control-ref"
+            labelAlign="right"
+            initialValues={
+              props.values
             }
-            onFinish(result);
-            setLoading(false);
-          });
-        }}
-        layout="horizontal"
+            onFinish={(e) => {
+              setLoading(true)
+              const promise = handleUpdate(e);
+              promise.then(result => {
+                if (result) {
+                  onClose();
+                }
+                onFinish(result)
+                setLoading(false)
+              })
+            }}
+            layout="horizontal"
       >
-        <Form.Item hidden name="id">
-          <Input />
+        <Form.Item hidden name="id"><Input/></Form.Item>
+        <Form.Item name="instId" hidden><Input/></Form.Item>
+        <Form.Item name="userAccount" label="登陆账号" rules={[{required: true}]}><Input/></Form.Item>
+        <Form.Item name="userPwd" label="密码">
+          <KBPassword onChange={(e) => {
+            // @ts-ignore
+            formRef.current.setFieldsValue({userPwd: e})
+          }}/>
         </Form.Item>
-        <Form.Item name="instId" hidden>
-          <Input />
+        <Form.Item name="temporaryInstId" label="所属机构" rules={[{required: true}]}>
+          <Cascader changeOnSelect options={institutions} onChange={(value) => {
+            if (formRef.current) {
+              formRef.current.setFieldsValue({instId: value[value.length - 1]})
+            }
+          }} fieldNames={{label: "instName", value: "id"}}/>
         </Form.Item>
-        <Form.Item name="account" label="登陆账号" rules={[{ required: true }]}>
-          <Input />
+        <Form.Item
+          name="userName" label="用户名称" rules={[{required: true}]}>
+          <Input/>
         </Form.Item>
-        <Form.Item name="password" label="密码">
-          <KBPassword
-            onChange={(e) => {
-              // @ts-ignore
-              formRef.current.setFieldsValue({ password: e });
-            }}
-          />
+        <Form.Item
+          name="userPhone" label="手机号" rules={[{required: true}]}>
+          <Input/>
         </Form.Item>
-        <Form.Item name="temporaryInstId" label="所属机构" rules={[{ required: true }]}>
-          <Cascader
-            changeOnSelect
-            options={institutions}
-            onChange={(value) => {
-              if (formRef.current) {
-                formRef.current.setFieldsValue({ instId: value[value.length - 1] });
-              }
-            }}
-            fieldNames={{ label: 'instName', value: 'id' }}
-          />
-        </Form.Item>
-        <Form.Item name="name" label="用户名称" rules={[{ required: true }]}>
-          <Input />
-        </Form.Item>
-        <Form.Item name="phone" label="手机号" rules={[{ required: true }]}>
-          <Input />
-        </Form.Item>
-        <Form.Item name="email" label="电子邮箱">
-          <Input />
+        <Form.Item
+          name="userEmail" label="电子邮箱">
+          <Input/>
         </Form.Item>
         <Form.Item name="avatarId" label="头像">
-          <UploadAvatar
-            avatarUrl={values.avatar}
-            action={uploadUserAvatarAction}
-            onUploadBack={(request) => {
-              if (formRef.current && request.errorCode === -1) {
-                formRef.current.setFieldsValue({
-                  avatarId: request.data,
-                });
-              }
-            }}
-          />
+          <UploadAvatar avatarUrl={values.avatar} action={uploadUserAvatarAction} onUploadBack={(request) => {
+            if (formRef.current && request.errorCode === -1) {
+              formRef.current.setFieldsValue({
+                avatarId: request.data
+              })
+            }
+          }}/>
         </Form.Item>
         <Form.Item name="roleIds" label="选择角色">
-          <RoleSelect
-            roles={roles}
-            uid={values.id}
-            onChange={(ids) => {
-              if (formRef.current) {
-                formRef.current.setFieldsValue({
-                  roleIds: ids,
-                });
-              }
-            }}
-          />
+          <RoleSelect roles={roles} uid={values.id} onChange={(ids) => {
+            if (formRef.current) {
+              formRef.current.setFieldsValue({
+                roleIds: ids
+              })
+            }
+          }}/>
         </Form.Item>
-        <Form.Item name="remarks" label="备注">
-          <TextArea />
+        <Form.Item
+          name="remarks" label="备注">
+          <TextArea/>
         </Form.Item>
         <Form.Item>
           <Space>
             <Button htmlType="button" onClick={() => onClose()}>
-              {useIntl().formatMessage({ id: 'app.form.cancel' })}
+              {useIntl().formatMessage({id: 'app.form.cancel'})}
             </Button>
             <Button type="primary" htmlType="submit" loading={loading}>
-              {useIntl().formatMessage({ id: 'app.form.submit' })}
+              {useIntl().formatMessage({id: 'app.form.submit'})}
             </Button>
           </Space>
         </Form.Item>

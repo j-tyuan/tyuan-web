@@ -124,7 +124,7 @@ const CreateForm: React.FC<CreateFormProps> = (props) => {
         <Form.Item name="instSort" label="排序" rules={[{required: true}]}>
           <InputNumber/>
         </Form.Item>
-        <Form.Item name="desc" label="描述">
+        <Form.Item name="remarks" label="描述">
           <Input.TextArea/>
         </Form.Item>
         <Form.Item>

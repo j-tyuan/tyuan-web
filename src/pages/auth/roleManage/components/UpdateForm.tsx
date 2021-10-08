@@ -5,7 +5,7 @@ import {FormInstance} from "antd/es/form";
 import TextArea from "antd/es/input/TextArea";
 import {useIntl} from "umi";
 import {TableListItem} from "../data";
-import {update} from "@/pages/auth/roleManage/service";
+import {updateRole} from "@/pages/auth/roleManage/service";
 
 interface UpdateFormProps {
   modalVisible: boolean;
@@ -25,7 +25,7 @@ interface UpdateFormProps {
 const handleUpdate = async (fields: TableListItem) => {
   const hide = message.loading('正在配置');
   try {
-    const v = await update({...fields});
+    const v = await updateRole({...fields});
     hide();
     if (v.errorCode === -1) {
       message.success('配置成功');
@@ -39,11 +39,11 @@ const handleUpdate = async (fields: TableListItem) => {
   }
 };
 
-
 const UpdateForm: React.FC<UpdateFormProps> = (props) => {
   const {modalVisible, onClose, permission, oneLevelIds, initSelectAuth,onFinish} = props;
   const formRef = React.createRef<FormInstance>();
   const [loading, setLoading] = useState<boolean>(false);
+
 
   return (
     <Drawer
@@ -80,10 +80,10 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
           <Input/>
         </Form.Item>
         <Form.Item
-          name="code" label="角色编码" rules={[{required: true}]}>
+          name="roleCode" label="角色编码" rules={[{required: true}]}>
           <Input/>
         </Form.Item>
-        <Form.Item name="name" label="角色名称" rules={[{required: true}]}>
+        <Form.Item name="roleName" label="角色名称" rules={[{required: true}]}>
           <Input/>
         </Form.Item>
 
@@ -96,7 +96,8 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
         </Form.Item>
         <Form.Item
           name="permissionIds" label="选择权限">
-          <Tree defaultCheckedKeys={initSelectAuth} defaultExpandedKeys={oneLevelIds} checkable
+          <Tree defaultCheckedKeys={initSelectAuth}
+                defaultExpandedKeys={oneLevelIds} checkable
                 treeData={permission}
                 onCheck={(e) => {
                   // @ts-ignore

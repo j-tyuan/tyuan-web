@@ -133,3 +133,17 @@ export const findParentPathIds = (id: any, data: any[]) => {
   })
   return ids;
 }
+
+/**
+ * 递归设置树形结构
+ * @param data
+ * @param callBack
+ */
+export const recursionTree = (data: any[], callBack: any) => {
+  data.forEach(e => {
+    if (e.children) {
+      recursionTree(e.children, callBack)
+    }
+    callBack(e)
+  })
+}

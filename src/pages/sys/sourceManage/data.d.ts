@@ -1,18 +1,18 @@
 export interface TableListItem {
   id?: number;
-  updateDate?: Date;
-  createDate?: Date;
+  updateTime?: Date;
+  createTime?: Date;
 
-  name?: string;
-  href?: string;
-  target?: string;
-  sort?: any;
+  sourceName?: string;
+  sourceHref?: string;
+  sourceTarget?: string;
+  sourceSort?: any;
   parentId?: any;
-  icon?: string;
+  sourceIcon?: string;
   isLeaf?: boolean;
   isShow?: boolean;
   permissionId?: any;
-  children?: Array;
+  children?: any[];
 
   createBy?: string;
   updateBy?: string;

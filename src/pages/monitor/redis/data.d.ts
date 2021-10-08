@@ -1,7 +1,7 @@
 export interface TableListItem {
   id: number;
-  updateDate: Date;
-  createDate: Date;
+  updateTime: Date;
+  createTime: Date;
 
   value: string;
   label: string;

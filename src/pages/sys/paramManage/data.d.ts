@@ -5,8 +5,8 @@ export interface TableListItem {
   isSys: boolean;
   paramKey: Sring;
   paramName: Sring;
-  updateDate?: Date;
-  createDate?: Date;
+  updateTime?: Date;
+  createTime?: Date;
 }
 
 export interface TableListPagination {

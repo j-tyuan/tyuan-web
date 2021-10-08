@@ -7,8 +7,8 @@ export interface TableListItem {
   instStatus: number;
   instDesc: string;
   ownerUserId:number;
-  updateDate: Date;
-  createDate: Date;
+  updateTime: Date;
+  createTime: Date;
 }
 
 export interface TableListPagination {

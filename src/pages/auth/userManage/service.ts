@@ -3,7 +3,7 @@ import {TableListParams, TableListItem} from './data';
 
 export const uploadUserAvatarAction = "/api/sys/user/avatar"
 
-export async function query(params?: TableListParams) {
+export async function queryUser(params?: TableListParams) {
   const result = await request('/api/sys/user', {
     method: 'POST',
     data: {
@@ -13,7 +13,7 @@ export async function query(params?: TableListParams) {
   return result;
 }
 
-export async function remove(params: { id: number[] }) {
+export async function removeUser(params: { id: number[] }) {
   return request('/api/sys/user/del', {
     method: 'POST',
     data: {
@@ -22,7 +22,7 @@ export async function remove(params: { id: number[] }) {
   });
 }
 
-export async function add(params: TableListItem) {
+export async function addUser(params: TableListItem) {
   return request('/api/sys/user/add', {
     method: 'POST',
     data: {
@@ -31,7 +31,7 @@ export async function add(params: TableListItem) {
   });
 }
 
-export async function update(params: TableListItem) {
+export async function updateUser(params: TableListItem) {
   return request('/api/sys/user/edit', {
     method: 'POST',
     data: {
@@ -40,7 +40,7 @@ export async function update(params: TableListItem) {
   });
 }
 
-export async function disable(id: number, dis: number) {
+export async function disableUser(id: number, dis: number) {
   return request(`/api/sys/user/disable/${id}/${dis}`, {
     method: 'POST'
   });

@@ -5,7 +5,7 @@ export async function getSourceAll() {
   return  await request('/api/sys/source');
 }
 
-export async function remove(params: { id: (number | undefined)[] }) {
+export async function removeSource(params: { id: (number | undefined)[] }) {
   return request('/api/sys/source/del', {
     method: 'POST',
     data: {
@@ -14,7 +14,7 @@ export async function remove(params: { id: (number | undefined)[] }) {
   });
 }
 
-export async function add(params: TableListItem) {
+export async function addSouce(params: TableListItem) {
   return request('/api/sys/source/add', {
     method: 'POST',
     data: {
@@ -23,7 +23,7 @@ export async function add(params: TableListItem) {
   });
 }
 
-export async function update(params: TableListItem) {
+export async function updateSource(params: TableListItem) {
   return request('/api/sys/source/edit', {
     method: 'POST',
     data: {

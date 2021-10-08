@@ -5,7 +5,7 @@ import TextArea from "antd/es/input/TextArea";
 import {useIntl} from "umi";
 import {FormInstance} from "antd/es/form";
 import {TableListItem} from "../data";
-import {add} from "@/pages/auth/roleManage/service";
+import {addRole} from "@/pages/auth/roleManage/service";
 
 interface CreateFormProps {
   modalVisible: boolean;
@@ -22,7 +22,7 @@ interface CreateFormProps {
 const handleAdd = async (fields: TableListItem) => {
   const hide = message.loading('正在添加');
   try {
-    const v = await add({...fields});
+    const v = await addRole({...fields});
     hide();
     if (v.errorCode === -1) {
       message.success('添加成功');
@@ -68,10 +68,10 @@ const CreateForm: React.FC<CreateFormProps> = (props) => {
             layout="horizontal"
       >
         <Form.Item
-          name="code" label="角色编码" rules={[{required: true}]}>
+          name="role_code" label="角色编码" rules={[{required: true}]}>
           <Input/>
         </Form.Item>
-        <Form.Item name="name" label="角色名称" rules={[{required: true}]}>
+        <Form.Item name="role_name" label="角色名称" rules={[{required: true}]}>
           <Input/>
         </Form.Item>
 

@@ -1,13 +1,11 @@
 export interface TableListItem {
   id: number;
-  updateDate: Date;
-  createDate: Date;
+  updateTime: Date;
+  createTime: Date;
 
-  value: string;
-  label: string;
-  type: boolean;
-  sort?: any;
-  parentId?: any;
+  dictValue: string;
+  dictLabel: string;
+  dictType: boolean;
   createBy: string;
   updateBy: string;
   remarks: string;

@@ -1,23 +1,24 @@
-import { UserOutlined } from '@ant-design/icons';
-import { Avatar, Divider, message, Modal, Tooltip } from 'antd';
-import React, { useEffect, useRef, useState } from 'react';
-import { PageContainer } from '@ant-design/pro-layout';
-import { ActionType, ProColumns } from '@ant-design/pro-table';
+import {PlusOutlined, UserOutlined} from '@ant-design/icons';
+import {Avatar, Button, Divider, message, Modal, Tooltip} from 'antd';
+import React, {useEffect, useRef, useState} from 'react';
+import {PageContainer} from '@ant-design/pro-layout';
+import {ActionType, ProColumns} from '@ant-design/pro-table';
 import CreateForm from './components/CreateForm';
 import UpdateForm from './components/UpdateForm';
-import { TableListItem } from './data';
-import { disable, remove } from './service';
-import KBPassword from './components/KBPassword';
-import Authorized from '@/utils/Authorized';
-import { getInstAll } from '@/pages/organization/institutionManage/service';
-import { findParentPath } from '@/utils/utils';
-import { loadRoles } from '../roleManage/service';
-import ProUserTable from '@/components/ProUserTable';
+import {TableListItem} from './data';
+import KBPassword from "./components/KBPassword";
+import Authorized from "@/utils/Authorized";
+import {getInstAll} from "@/pages/organization/institutionManage/service";
+import {findParentPath} from "@/utils/utils";
+import {loadRoles} from '../roleManage/service';
+import ProUserTable from "@/components/ProUserTable";
+import {disableUser, removeUser} from "@/pages/auth/userManage/service";
+
 
 const handleDisable = async (row: TableListItem) => {
-  const hide = message.loading('正在操作');
+  const hide = message.loading('正在操作')
   try {
-    const v = await disable(row.id, row.disabled ? 0 : 1);
+    const v = await disableUser(row.id, row.disabled ? 0 : 1);
     hide();
     if (v.errorCode === -1) {
       message.success('操作成功');
@@ -27,12 +28,12 @@ const handleDisable = async (row: TableListItem) => {
 
     return null;
   } catch (error) {
-    hide();
-    message.error('操作失败，请重试');
+    hide()
+    message.error("操作失败，请重试")
 
     return false;
   }
-};
+}
 
 /**
  *  删除节点
@@ -43,7 +44,7 @@ const handleRemove = async (selectedRows: TableListItem[]) => {
   const hide = message.loading('正在删除');
   if (!selectedRows) return true;
   try {
-    const v = await remove({
+    const v = await removeUser({
       id: selectedRows.map((row) => row.id),
     });
     hide();
@@ -59,6 +60,7 @@ const handleRemove = async (selectedRows: TableListItem[]) => {
   }
 };
 
+
 const TableList: React.FC<{}> = () => {
   const [createModalVisible, handleModalVisible] = useState<boolean>(false);
   const [updateModalVisible, handleUpdateModalVisible] = useState<boolean>(false);
@@ -68,18 +70,18 @@ const TableList: React.FC<{}> = () => {
   const [roles, setRoles] = useState<any[]>();
   const loadInstitutions = () => {
     const promise = getInstAll();
-    promise.then((e) => {
-      const { errorCode, data } = e;
+    promise.then(e => {
+      const {errorCode, data} = e;
       if (errorCode === -1 && data) {
-        setInstitutions([...data]);
+        setInstitutions([...data])
       }
-    });
-  };
+    })
+  }
 
   const columns: ProColumns<TableListItem>[] = [
     {
-      title: '员工编号',
-      dataIndex: 'userNo',
+      title: "员工编号",
+      dataIndex: "userNo",
       formItemProps: {
         rules: [
           {
@@ -88,10 +90,12 @@ const TableList: React.FC<{}> = () => {
           },
         ],
       },
+      width: 150,
+      fixed: "left"
     },
     {
-      title: '登陆账号',
-      dataIndex: 'account',
+      title: "登陆账号",
+      dataIndex: "userAccount",
       formItemProps: {
         rules: [
           {
@@ -100,23 +104,24 @@ const TableList: React.FC<{}> = () => {
           },
         ],
       },
+      width: 150
     },
     {
-      title: '密码',
-      dataIndex: 'password',
+      title: "密码",
+      dataIndex: "userPwd",
       search: false,
       hideInTable: true,
-      valueType: 'password',
+      valueType: "password",
       renderFormItem(item, config, form) {
         return (
-          <KBPassword
-            onChange={(e) => {
+          <KBPassword onChange={
+            (e) => {
               form.setFieldsValue({
-                password: e,
-              });
-            }}
-          />
-        );
+                userPwd: e
+              })
+            }
+          }/>
+        )
       },
       formItemProps: {
         rules: [
@@ -125,20 +130,20 @@ const TableList: React.FC<{}> = () => {
             message: '必填项',
           },
         ],
-      },
+      }
     },
     {
-      title: '头像',
-      dataIndex: 'avatar',
+      title: "头像",
+      dataIndex: "avatar",
       search: false,
       hideInForm: true,
       render(_) {
-        return <Avatar shape="circle" size={32} icon={<UserOutlined />} src={_} />;
-      },
+        return (<Avatar shape="circle" size={32} icon={<UserOutlined/>} src={_}/>)
+      }
     },
     {
       title: '用户名称',
-      dataIndex: 'name',
+      dataIndex: 'userName',
       formItemProps: {
         rules: [
           {
@@ -147,10 +152,11 @@ const TableList: React.FC<{}> = () => {
           },
         ],
       },
+      width: 150
     },
     {
-      title: '手机号',
-      dataIndex: 'phone',
+      title: "手机号",
+      dataIndex: "userPhone",
       formItemProps: {
         rules: [
           {
@@ -158,74 +164,80 @@ const TableList: React.FC<{}> = () => {
             message: '必填项',
           },
           {
-            pattern: new RegExp('^1(3|4|5|7|8)\\d{9}$'),
-            message: '格式不正确',
-          },
+            pattern: new RegExp("^1(3|4|5|7|8)\\d{9}$"),
+            message: "格式不正确"
+          }
         ],
-      },
+      }
     },
     {
-      title: '电子邮箱',
+      title: "电子邮箱",
       search: false,
-      dataIndex: 'email',
+      dataIndex: "userEmail",
       formItemProps: {
         rules: [
           {
-            pattern: new RegExp(
-              '^[a-zA-Z0-9_.-]+@[a-zA-Z0-9-]+(\\.[a-zA-Z0-9-]+)*\\.[a-zA-Z0-9]{2,6}$',
-            ),
-            message: '格式不正确',
-          },
+            pattern: new RegExp("^[a-zA-Z0-9_.-]+@[a-zA-Z0-9-]+(\\.[a-zA-Z0-9-]+)*\\.[a-zA-Z0-9]{2,6}$"),
+            message: "格式不正确"
+          }
         ],
-      },
+      }
     },
     {
-      title: '所属机构',
-      dataIndex: 'instName',
+      title: "所属机构",
+      dataIndex: "instName",
       render(_, item) {
         const insts = findParentPath(item.instId, [...institutions]);
-        const names: any[] = [];
-        insts.forEach((e) => {
-          names.push(e.instName);
-        });
+        const names: any[] = []
+        insts.forEach(e => {
+          names.push(e.instName)
+        })
         return (
-          <Tooltip placement="left" title={`${names.join('/')}`}>
-            <a type="link">{_}</a>
+          <Tooltip placement="left" title={`${names.join("/")}`}>
+            <a type='link'>{_}</a>
           </Tooltip>
-        );
-      },
+        )
+      }
     },
     {
-      title: '状态',
-      dataIndex: 'disabled',
+      title: "状态",
+      dataIndex: "disabled",
       valueType: 'switch',
       hideInForm: true,
       search: false,
-      render: (_, record) => <>{record.disabled ? '禁用' : '启用'}</>,
+      render: (_, record) => (
+        <>
+          {
+            record.disabled ? '禁用' : '启用'
+          }
+        </>
+      )
     },
     {
-      title: '最后登陆时间',
-      dataIndex: 'loginDate',
+      title: "最后登陆时间",
+      dataIndex: "loginDate",
       valueType: 'dateTime',
       hideInForm: true,
+      width: 200
     },
     {
-      title: '描述',
-      dataIndex: 'remarks',
-      valueType: 'textarea',
-      search: false,
+      title: "描述",
+      dataIndex: "remarks",
+      valueType: "textarea",
+      search: false
     },
     {
-      title: '编辑时间',
-      dataIndex: 'updateDate',
+      title: "编辑时间",
+      dataIndex: "updateTime",
       hideInForm: true,
       search: false,
       valueType: 'dateTime',
+      width: 200
     },
     {
-      dataIndex: 'userType',
+      dataIndex: "userType",
       hideInForm: true,
-      hideInTable: true,
+      hideInTable: true
     },
     {
       title: '操作',
@@ -234,25 +246,25 @@ const TableList: React.FC<{}> = () => {
       render: (_, record) => (
         <>
           <Authorized key="1" authority="sys:user:del" noMatch={null}>
-            <a
-              disabled={record.userType === 1}
-              onClick={() => {
-                Modal.confirm({
-                  title: '您确定删除？',
-                  okText: '确定',
-                  cancelText: '取消',
-                  onOk() {
-                    const state = handleRemove([record]);
-                    state.then(() => {
-                      actionRef.current?.reload();
-                    });
-                  },
-                });
-              }}
+            <a disabled={record.userType === 1}
+               onClick={() => {
+                 Modal.confirm({
+                   title: "您确定删除？",
+                   okText: "确定",
+                   cancelText: "取消",
+                   onOk() {
+                     const state = handleRemove([record]);
+                     state.then(() => {
+                       actionRef.current?.reload();
+                     })
+                   }
+                 })
+               }
+               }
             >
               删除
             </a>
-            <Divider type="vertical" />
+            <Divider type="vertical"/>
           </Authorized>
           <Authorized key="2" authority="sys:user:edit" noMatch={null}>
             <a
@@ -260,23 +272,18 @@ const TableList: React.FC<{}> = () => {
               onClick={() => {
                 setUpdateFormValues(record);
                 handleUpdateModalVisible(true);
-              }}
-            >
+              }}>
               编辑
             </a>
-            <Divider type="vertical" />
+            <Divider type="vertical"/>
           </Authorized>
           <Authorized key="3" authority="sys:user:disable" noMatch={null}>
-            <a
-              type="link"
-              disabled={record.userType === 1}
-              onClick={async () => {
-                const success = await handleDisable(record);
-                if (success) {
-                  actionRef.current?.reload();
-                }
-              }}
-            >
+            <a type="link" disabled={record.userType === 1} onClick={async () => {
+              const success = await handleDisable(record)
+              if (success) {
+                actionRef.current?.reload();
+              }
+            }}>
               {record.disabled ? '启用' : '停用'}
             </a>
           </Authorized>
@@ -287,18 +294,29 @@ const TableList: React.FC<{}> = () => {
 
   useEffect(() => {
     const promise = loadRoles();
-    promise.then((arr) => {
-      setRoles([...arr]);
-    });
+    promise.then(arr => {
+      setRoles([...arr])
+    })
     loadInstitutions();
-  }, []);
+  }, [])
 
   return (
     <PageContainer>
       <ProUserTable
-        ProUserTableProps={{ institutions }}
-        ProUserTableOptions={{ columns, headerTitle: '用户列表' }}
-      />
+        ProUserTableProps={{
+          institutions,
+          actionRef,
+          toolBarRender() {
+            return [
+              <Authorized key="1" authority="sys:user:add" noMatch={null}>
+                <Button type="primary" onClick={() => handleModalVisible(true)}>
+                  <PlusOutlined/> 新建
+                </Button>
+              </Authorized>
+            ]
+          }
+        }}
+        ProUserTableOptions={{columns, headerTitle: "用户列表"}}/>
       <CreateForm
         institutions={institutions}
         roles={roles}
@@ -307,9 +325,7 @@ const TableList: React.FC<{}> = () => {
             actionRef.current?.reload();
           }
         }}
-        onClose={() => handleModalVisible(false)}
-        modalVisible={createModalVisible}
-      />
+        onClose={() => handleModalVisible(false)} modalVisible={createModalVisible}/>
 
       <UpdateForm
         roles={roles}
@@ -324,7 +340,7 @@ const TableList: React.FC<{}> = () => {
           handleUpdateModalVisible(false);
           setTimeout(() => {
             setUpdateFormValues({});
-          }, 300);
+          }, 300)
         }}
         values={updateFormValues}
       />
