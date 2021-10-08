@@ -59,7 +59,7 @@ const CreateForm: React.FC<CreateFormProps> = (props) => {
       afterVisibleChange={() => {
         if (dataSource) {
           const var1 = [{
-            name: "跟节点",
+            sourceName: "跟节点",
             id: 0,
             children: [...dataSource]
           }]

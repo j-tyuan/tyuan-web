@@ -57,7 +57,7 @@ const CreateForm: React.FC<CreateFormProps> = (props) => {
       afterVisibleChange={() => {
         if (dataSources) {
           const var1 = [{
-            name: "跟节点",
+            sourceName: "跟节点",
             id: 0,
             children: [...dataSources]
           }]
@@ -125,7 +125,7 @@ const CreateForm: React.FC<CreateFormProps> = (props) => {
               formRef.current.setFieldsValue({temporaryParentId: value})
               formRef.current.setFieldsValue({parentId: value[value.length - 1]})
             }
-          }} fieldNames={{label: "name", value: "id"}}/>
+          }} fieldNames={{label: "sourceName", value: "id"}}/>
         </Form.Item>
         <Form.Item name="permissionId" label="权限配置" rules={[{required: true}]}>
           <PermissionTreeSelect
