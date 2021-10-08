@@ -2,7 +2,7 @@
 ![alt 属性文本](./image/A56F01E5-E1E3-49F9-A917-7F533744EE97.png)
 
 ##### 演示地址
-* [在线演示](http://base.tyuan.design)
+* [在线演示](http://base.tyuan.design:6081)
 * 账号：admin
 * 密码：tyuan
 
