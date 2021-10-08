@@ -2,9 +2,9 @@
 
 ##### 演示地址
 
-- [在线演示](http://base.tyuan.design)
-- 账号：admin
-- 密码：tyuan
+* [在线演示](http://base.tyuan.design:6081)
+* 账号：admin
+* 密码：tyuan
 
 ##### 使用文档
 
