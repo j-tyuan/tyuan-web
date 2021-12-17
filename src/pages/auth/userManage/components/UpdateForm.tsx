@@ -85,7 +85,7 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
       >
         <Form.Item hidden name="id"><Input/></Form.Item>
         <Form.Item name="instId" hidden><Input/></Form.Item>
-        <Form.Item name="userAccount" label="登陆账号" rules={[{required: true}]}><Input/></Form.Item>
+        <Form.Item name="userAccount" label="登陆账号"><span>{props.values.userAccount}</span></Form.Item>
         <Form.Item name="userPwd" label="密码">
           <KBPassword onChange={(e) => {
             // @ts-ignore

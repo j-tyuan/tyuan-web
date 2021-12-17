@@ -4,7 +4,7 @@ import {DefaultFooter} from '@ant-design/pro-layout';
 
 export default () => (
   <DefaultFooter
-    copyright='<div className="copyright">Copyright © 2021 软达科技 |<a href="https://beian.miit.gov.cn/" target="_blank" style="text-decoration: underline;"> 豫ICP备2021007509号-1</a></div>'
+    copyright="Copyright © 2021 软达科技 |  豫ICP备2021007509号-1"
     links={[
       {
         key: 'TY Design',
