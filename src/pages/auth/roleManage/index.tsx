@@ -138,7 +138,7 @@ const TableList: React.FC<{}> = () => {
       valueType: 'option',
       render: (_, record) => (
         <>
-          <Authorized authority="sys:role:del" noMatch={null}>
+          <Authorized authority={["sys:role:del","SYS_ADMIN"]} noMatch={null}>
             <a
               onClick={() => {
                 Modal.confirm({
@@ -159,7 +159,7 @@ const TableList: React.FC<{}> = () => {
             </a>
             <Divider type="vertical"/>
           </Authorized>
-          <Authorized authority="sys:role:del" noMatch={null}>
+          <Authorized authority={["sys:role:del","SYS_ADMIN"]} noMatch={null}>
             <a onClick={() => {
               setUpdateFormValue(record);
               const promise = getAuthByRoleId(record.id)
@@ -172,7 +172,7 @@ const TableList: React.FC<{}> = () => {
             </a>
             <Divider type="vertical"/>
           </Authorized>
-          <Authorized authority="sys:role:binduser" noMatch={null}>
+          <Authorized authority={["sys:role:binduser","SYS_ADMIN"]} noMatch={null}>
             <Link to={{
               pathname: "/auth/role/user",
               state: {roleId: record.id}
@@ -194,7 +194,7 @@ const TableList: React.FC<{}> = () => {
           labelWidth: 120,
         }}
         toolBarRender={() => [
-          <Authorized key="1" authority="sys:role:add" noMatch={null}>
+          <Authorized key="1" authority={["sys:role:add", "SYS_ADMIN"]} noMatch={null}>
             <Button type="primary" onClick={() => handleModalVisible(true)}>
               <PlusOutlined/> 新建
             </Button>

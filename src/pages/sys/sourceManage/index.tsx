@@ -159,7 +159,7 @@ const TableList: React.FC<{}> = () => {
       valueType: 'option',
       render: (_, record) => (
         <>
-          <Authorized authority="sys:source:del" noMatch={null}>
+          <Authorized authority="SYS_ADMIN" noMatch={null}>
             <a onClick={() => {
               Modal.confirm({
                 title: "您确定删除？",
@@ -179,7 +179,7 @@ const TableList: React.FC<{}> = () => {
             </a>
             <Divider type="vertical"/>
           </Authorized>
-          <Authorized authority="sys:source:edit" noMatch={null}>
+          <Authorized authority="SYS_ADMIN" noMatch={null}>
             <a onClick={() => {
               setUpdateFormValues(record);
               handleUpdateModalVisible(true);
@@ -188,7 +188,7 @@ const TableList: React.FC<{}> = () => {
             </a>
             <Divider type="vertical"/>
           </Authorized>
-          <Authorized authority="sys:source:edit" noMatch={null}>
+          <Authorized authority="SYS_ADMIN" noMatch={null}>
             <a disabled={record.isLeaf} onClick={() => {
               setParentId(record.id)
               handleModalVisible(true);
@@ -226,7 +226,7 @@ const TableList: React.FC<{}> = () => {
             search={false}
             dataSource={dataSource}
             toolBarRender={() => [
-              <Authorized key="1" authority="sys:source:add" noMatch={null}>
+              <Authorized key="1" authority="SYS_ADMIN" noMatch={null}>
                 <Button type="primary" onClick={() => {
                   setParentId(0);
                   handleModalVisible(true);

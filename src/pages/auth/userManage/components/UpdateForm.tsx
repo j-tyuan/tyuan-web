@@ -108,6 +108,7 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
           <Input/>
         </Form.Item>
         <Form.Item
+          rules={[{type: 'email' }]}
           name="userEmail" label="电子邮箱">
           <Input/>
         </Form.Item>

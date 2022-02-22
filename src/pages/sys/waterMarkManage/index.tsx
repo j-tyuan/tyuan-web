@@ -83,7 +83,7 @@ export default () => {
 
   useEffect(() => {
     setLoading(true)
-    getParamsByKey("sys.watermark").then(e => {
+    getParamsByKey(decodeURI("sys.watermark")).then(e => {
       const {errorCode, data} = e;
       if (errorCode === -1 && data) {
         const {paramVal, id} = data;

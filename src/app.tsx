@@ -4,7 +4,7 @@ import {message, notification} from 'antd';
 import {history, RequestConfig} from 'umi';
 import RightContent from '@/components/RightContent';
 import Footer from '@/components/Footer';
-import {ResponseError, ResponseInterceptor} from 'umi-request';
+import {RequestInterceptor, RequestOptionsInit, ResponseError, ResponseInterceptor} from 'umi-request';
 import {qureyAccount} from './services/user';
 import defaultSettings from '../config/defaultSettings';
 import {permissions, queryMenuData} from "@/services/sys";
@@ -14,6 +14,7 @@ import {API} from "@/services/API";
 import {WaterMarkProps} from "@ant-design/pro-layout/lib/components/WaterMark";
 import {loadWaterMark} from "@/pages/sys/waterMarkManage/service";
 import {setWatermark} from "@/utils/utils";
+import token from "@/utils/token";
 
 /**
  * 获取用户信息比较慢的时候会展示一个 loading
@@ -177,7 +178,13 @@ const codeMessage = {
  */
 const errorHandler = (error: ResponseError) => {
   const {response} = error;
+
   if (response && response.status) {
+    if (response.status === 401) {
+      history.push('/login');
+      message.error(codeMessage[response.status])
+      return;
+    }
     const errorText = codeMessage[response.status] || response.statusText;
     const {status, url} = response;
 
@@ -196,28 +203,35 @@ const errorHandler = (error: ResponseError) => {
   throw error;
 };
 
+const requestInterceptors: RequestInterceptor[] = [
+  (url: string, options: RequestOptionsInit) => {
+    const {headers} = options;
+    if (headers) {
+      headers["Authorization"] = token.get();
+    }
+    return {url, options};
+  }
+]
+
 /**
  * 自定义拦截器
  */
 const responseInterceptors: ResponseInterceptor[] = [
   async (response: Response) => {
-    const result = await response.clone().json()
-    const {errorCode, errorMessage} = result;
-    if (errorCode === 2001) {
-      history.push('/login');
-      if (errorMessage) {
+    if (response.status === 200) {
+      const result = await response.clone().json()
+      const {errorCode, errorMessage} = result;
+
+      if (errorCode && errorCode !== -1) {
         message.error(errorMessage)
       }
-      return response;
-    }
-    if (errorCode && errorCode !== -1) {
-      message.error(errorMessage)
     }
     return response;
   }
 ]
 
 export const request: RequestConfig = {
+  requestInterceptors,
   responseInterceptors,
   errorHandler,
 };

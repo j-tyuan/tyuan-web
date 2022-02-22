@@ -245,7 +245,7 @@ const TableList: React.FC<{}> = () => {
       valueType: 'option',
       render: (_, record) => (
         <>
-          <Authorized key="1" authority="sys:user:del" noMatch={null}>
+          <Authorized key="1" authority={["sys:user:del", "SYS_ADMIN"]} noMatch={null}>
             <a disabled={record.userType === 1}
                onClick={() => {
                  Modal.confirm({
@@ -266,7 +266,7 @@ const TableList: React.FC<{}> = () => {
             </a>
             <Divider type="vertical"/>
           </Authorized>
-          <Authorized key="2" authority="sys:user:edit" noMatch={null}>
+          <Authorized key="2" authority={["sys:user:edit", "SYS_ADMIN"]} noMatch={null}>
             <a
               disabled={record.userType === 1}
               onClick={() => {
@@ -277,7 +277,7 @@ const TableList: React.FC<{}> = () => {
             </a>
             <Divider type="vertical"/>
           </Authorized>
-          <Authorized key="3" authority="sys:user:disable" noMatch={null}>
+          <Authorized key="3" authority={["sys:user:disable", "SYS_ADMIN"]} noMatch={null}>
             <a type="link" disabled={record.userType === 1} onClick={async () => {
               const success = await handleDisable(record)
               if (success) {
@@ -308,7 +308,7 @@ const TableList: React.FC<{}> = () => {
           actionRef,
           toolBarRender() {
             return [
-              <Authorized key="1" authority="sys:user:add" noMatch={null}>
+              <Authorized key="1" authority={["sys:user:add", "SYS_ADMIN"]} noMatch={null}>
                 <Button type="primary" onClick={() => handleModalVisible(true)}>
                   <PlusOutlined/> 新建
                 </Button>

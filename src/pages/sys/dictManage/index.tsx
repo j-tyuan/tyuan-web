@@ -154,7 +154,7 @@ const TableList: React.FC<{}> = () => {
       valueType: 'option',
       render: (_, record) => (
         <>
-          <Authorized authority="sys:dict:del" noMatch={null}>
+          <Authorized authority="SYS_ADMIN" noMatch={null}>
             <a
               onClick={() => {
                 Modal.confirm({
@@ -175,7 +175,7 @@ const TableList: React.FC<{}> = () => {
             </a>
             <Divider type="vertical"/>
           </Authorized>
-          <Authorized authority="sys:dict:edit" noMatch={null}>
+          <Authorized authority="SYS_ADMIN" noMatch={null}>
             <a onClick={() => {
               setUpdateFormValues(record);
               handleUpdateModalVisible(true);
@@ -198,7 +198,7 @@ const TableList: React.FC<{}> = () => {
           labelWidth: 120,
         }}
         toolBarRender={() => [
-          <Authorized key="1" authority="sys:dict:add" noMatch={null}>
+          <Authorized key="1" authority="SYS_ADMIN" noMatch={null}>
             <Button type="primary" onClick={() => handleModalVisible(true)}>
               <PlusOutlined/> 新建
             </Button>

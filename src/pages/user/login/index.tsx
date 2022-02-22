@@ -7,6 +7,7 @@ import {
   UserOutlined,
   WeiboCircleOutlined,
 } from '@ant-design/icons';
+import token from "@/utils/token";
 import {Alert, Space, message, Tabs} from 'antd';
 import React, {useState} from 'react';
 import ProForm, {ProFormCaptcha, ProFormCheckbox, ProFormText} from '@ant-design/pro-form';
@@ -57,19 +58,12 @@ const Login: React.FC<{}> = () => {
     setSubmitting(true);
     try {
       // 登录
-      const msg = await accountLogin({...values, type});
-      if (msg.status === 'ok') {
-        message.success('登录成功！');
-        goto();
-        return;
-      }
-      if (msg.status === 'disable') {
-        message.error('此账号已被禁用');
-      }
-      // 如果失败去设置用户错误信息
-      setUserLoginState(msg);
+      const data = await accountLogin({...values, type});
+      token.save(`Bearer ${data.token}`);
+      message.success('登录成功！');
+      goto();
     } catch (error) {
-      message.error('登录失败，请重试！');
+      console.log(error)
     }
     setSubmitting(false);
   };
